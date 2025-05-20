@@ -99,7 +99,7 @@ class WidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.station_name, station?.name ?: "No Stations Found")
 
                 Log.d("Widget[onUpdate]", "station.temperature: ${station?.temperature}")
-                val temperature = context.getTemp(station?.dewpoint, tempUnit)
+                val temperature = context.getTemp(station?.temperature, tempUnit)
                 Log.d("Widget[onUpdate]", "temperature: $temperature")
                 views.setTextViewText(R.id.station_temperature, temperature)
 
