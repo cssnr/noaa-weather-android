@@ -29,7 +29,7 @@
                     android:layout_height="match_parent"
                     android:maxLines="1"
                     android:ellipsize="end"
-                    android:text="Seattle, Seattle-Tacoma International Airport" />
+                    android:text="Seattle-Tacoma International Airport" />
             </LinearLayout>
 
             <LinearLayout
@@ -70,7 +70,7 @@
                         android:maxLines="1"
                         android:ellipsize="end"
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:text="69%" />
+                        android:text="69.0%" />
                 </LinearLayout>
             </LinearLayout>
 
