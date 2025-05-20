@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">NOAA Weather</string>
+    <string name="github_url">https://github.com/cssnr/noaa-weather-android</string>
+    <string name="version_string">v%s</string>
 
     <string name="home">Dashboard</string>
     <string name="stations">Stations</string>

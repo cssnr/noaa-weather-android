@@ -25,10 +25,6 @@ import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.stations.getCurrentConditions
 import java.io.InputStream
 
-//import androidx.lifecycle.lifecycleScope
-//import kotlinx.coroutines.launch
-//import org.cssnr.noaaweather.api.DiscordApi
-
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
@@ -86,18 +82,19 @@ class HomeFragment : Fragment() {
 
             binding.stationTemperature.text = appContext.getTemp(station.temperature, tempUnit)
             binding.stationDewpoint.text = appContext.getTemp(station.dewpoint, tempUnit)
+
             binding.stationHumidity.text =
-                getString(R.string.format_percent, station.relativeHumidity)
+                appContext.getValue(R.string.format_percent, station.relativeHumidity)
             binding.stationWindSpeed.text =
-                getString(R.string.format_km_h, station.windSpeed)
+                appContext.getValue(R.string.format_km_h, station.windSpeed)
             binding.stationWindDirection.text =
-                getString(R.string.format_direction, station.windDirection)
+                appContext.getValue(R.string.format_direction, station.windDirection)
             binding.stationPressureBaro.text =
-                getString(R.string.format_pa, station.barometricPressure)
+                appContext.getValue(R.string.format_pa, station.barometricPressure)
             binding.stationPressureSea.text =
-                getString(R.string.format_pa, station.seaLevelPressure)
+                appContext.getValue(R.string.format_pa, station.seaLevelPressure)
             binding.stationVisibility.text =
-                getString(R.string.format_meters, station.visibility)
+                appContext.getValue(R.string.format_meters, station.visibility)
 
             if (station.icon != null) {
                 Log.d(LOG_TAG, "station.icon: ${station.icon}")
@@ -120,11 +117,6 @@ class HomeFragment : Fragment() {
                 Log.w(LOG_TAG, "STATION IS NULL")
                 //Toast.makeText(this, "Station Not Found!", Toast.LENGTH_SHORT).show()
             }
-            //val api = WeatherApi(appContext)
-            //val response = api.getLatest(data.stationId)
-            //Log.d(LOG_TAG, "response.isSuccessful: ${response.isSuccessful}")
-            //val latest = response.body()
-            //Log.d(LOG_TAG, "latest: $latest")
         }
 
         binding.refreshDashboard.setOnClickListener { view ->
@@ -154,7 +146,7 @@ class HomeFragment : Fragment() {
         //// API Code
         //val api = DiscordApi(
         //    requireContext(),
-        //    "https://discord.com/api/webhooks/882795463856750694/B9Cc_JOpkfdnPm3I4m8Z0KKSfGVyZtHIDDmf4TMdisKgJ4uX_UWa3qooHVY2yBgTMM2X"
+        //    "https://discord.com/api/webhooks/000/xxx"
         //)
         //lifecycleScope.launch {
         //    val response = api.sendMessage("Home Fragment")
@@ -178,13 +170,20 @@ class HomeFragment : Fragment() {
     }
 }
 
+fun Context.getValue(stringId: Int, value: Double?): String {
+    if (value == null) {
+        return "N/A"
+    }
+    return getString(stringId, value)
+}
+
 fun Context.getTemp(value: Double?, unit: String? = "C"): String {
     //val tempF = (value * 9/5) + 32
     if (value == null) {
-        return "Unknown"
+        return "N/A"
     }
     val temp = if (unit == "F") (value * 9 / 5) + 32 else value
-    Log.d(LOG_TAG, "unit: $unit - value: $value / temp: $temp")
+    Log.d(LOG_TAG, "unit: $unit - value: $value - temp: $temp")
     val formatted = this.getString(R.string.format_temp, temp, unit)
     Log.d(LOG_TAG, "formatted: $formatted")
     return formatted

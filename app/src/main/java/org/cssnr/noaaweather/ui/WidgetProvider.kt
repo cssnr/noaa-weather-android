@@ -18,6 +18,7 @@ import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.db.StationDao
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.home.getTemp
+import org.cssnr.noaaweather.ui.home.getValue
 import org.cssnr.noaaweather.ui.stations.getCurrentConditions
 
 class WidgetProvider : AppWidgetProvider() {
@@ -104,7 +105,7 @@ class WidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.station_temperature, temperature)
 
                 Log.d("Widget[onUpdate]", "station.relativeHumidity: ${station?.relativeHumidity}")
-                val humidity = context.getString(R.string.format_percent, station?.relativeHumidity)
+                val humidity = context.getValue(R.string.format_percent, station?.relativeHumidity)
                 Log.d("Widget[onUpdate]", "humidity: $humidity")
                 views.setTextViewText(R.id.station_humidity, humidity)
 

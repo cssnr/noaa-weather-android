@@ -1,11 +1,15 @@
 package org.cssnr.noaaweather
 
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -25,7 +29,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
+import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
+import org.cssnr.noaaweather.ui.WidgetProvider
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -76,6 +82,16 @@ class MainActivity : AppCompatActivity() {
             false
         //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
 
+        val packageInfo = packageManager.getPackageInfo(this.packageName, 0)
+        val versionName = packageInfo.versionName
+        Log.d(LOG_TAG, "versionName: $versionName")
+
+        val headerView = binding.navView.getHeaderView(0)
+        val versionTextView = headerView.findViewById<TextView>(R.id.header_version)
+        val formattedVersion = getString(R.string.version_string, versionName)
+        Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
+        versionTextView.text = formattedVersion
+
         // The setNavigationItemSelectedListener is optional for manual processing
         //navView.setNavigationItemSelectedListener { item ->
         //    Log.d(LOG_TAG, "item: $item")
@@ -119,7 +135,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.action_support -> {
                 Log.d(LOG_TAG, "ACTION SUPPORT")
-                val url = "https://github.com/cssnr/noaa-weather-android"
+                val url = getString(R.string.github_url)
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 startActivity(intent)
                 true
@@ -140,4 +156,40 @@ class MainActivity : AppCompatActivity() {
         //val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    //override fun onStart() {
+    //    super.onStart()
+    //    Log.d(LOG_TAG, "MainActivity - onStart")
+    //}
+
+    //override fun onResume() {
+    //    super.onResume()
+    //    Log.d(LOG_TAG, "MainActivity - onResume")
+    //}
+
+    //override fun onPause() {
+    //    super.onPause()
+    //    Log.d(LOG_TAG, "MainActivity - onPause")
+    //}
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(LOG_TAG, "MainActivity - onStop")
+        this.updateWidget()
+    }
+}
+
+fun Context.updateWidget() {
+    Log.d(LOG_TAG, "Context.updateWidget")
+
+    //val appWidgetManager = AppWidgetManager.getInstance(this)
+    //val componentName = ComponentName(this, WidgetProvider::class.java)
+    //val ids = appWidgetManager.getAppWidgetIds(componentName)
+    //appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.widget_list_view)
+    //WidgetProvider().onUpdate(this, appWidgetManager, ids)
+
+    val appWidgetManager = AppWidgetManager.getInstance(this)
+    val componentName = ComponentName(this, WidgetProvider::class.java)
+    val ids = appWidgetManager.getAppWidgetIds(componentName)
+    WidgetProvider().onUpdate(this, appWidgetManager, ids)
 }

@@ -11,11 +11,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.View
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -85,24 +86,7 @@ class AddDialogFragment : DialogFragment() {
             val appContext = requireContext()
 
             dialog.setOnShowListener {
-                dialog.findViewById<Button>(R.id.btn_cancel)?.setOnClickListener {
-                    Log.d(LOG_TAG, "CANCEL")
-                    dialog.cancel()
-                }
-                dialog.findViewById<Button>(R.id.btn_search)?.setOnClickListener {
-                    Log.d(LOG_TAG, "SEARCH")
-                    //dialog.dismiss()
-                }
-
-                fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(appContext)
-
-                val requestButton = dialog.findViewById<Button>(R.id.btn_locate)
-                requestButton?.setOnClickListener {
-                    //requestLocation()
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                }
-
+                // Adapter
                 val suggestionsList = dialog.findViewById<RecyclerView>(R.id.suggestions_list)
                 suggestionsList?.layoutManager = LinearLayoutManager(appContext)
                 adapter = AddDialogAdapter(emptyList()) { data ->
@@ -140,56 +124,90 @@ class AddDialogFragment : DialogFragment() {
                 }
                 suggestionsList?.adapter = adapter
 
-                //val loadingText = dialog.findViewById<TextView>(R.id.loading_text)
+                // Input Text
                 val inputField = dialog.findViewById<EditText>(R.id.location)
                 inputField?.requestFocus()
+                inputField?.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(text: Editable?) {
+                        Log.d(LOG_TAG, "afterTextChanged: $text")
+                        getPlaceLocation(text.toString()) { addresses ->
+                            Log.d(LOG_TAG, "addresses: $addresses")
+                            if (!addresses.isNullOrEmpty()) {
+                                lifecycleScope.launch {
+                                    val data = requireContext().getStations(
+                                        addresses[0].latitude,
+                                        addresses[0].longitude
+                                    )
+                                    Log.d("Location", "data.features.size: ${data?.features?.size}")
+                                    if (data != null) {
+                                        withContext(Dispatchers.Main) {
+                                            adapter.updateData(data)
+                                        }
+                                    } else {
+                                        Log.i(LOG_TAG, "NO STATION RESULTS!") // TODO: Handle Error
+                                    }
+                                }
+                            } else {
+                                Log.i(LOG_TAG, "NO LOCATION RESULTS!") // TODO: Handle Error
+                            }
+                        }
+                    }
 
-                //inputField?.addTextChangedListener(object : TextWatcher {
-                //    override fun afterTextChanged(text: Editable?) {
-                //        Log.d(LOG_TAG, "afterTextChanged: $text")
-                //        searchRunnable?.let { handler.removeCallbacks(it) }
-                //        val query = text.toString()
-                //        searchRunnable = Runnable {
-                //            Log.i(LOG_TAG, "QUERY: $query")
-                //            if (query.isNotEmpty()) {
-                //                val geocoder = Geocoder(requireContext())
-                //                lifecycleScope.launch(Dispatchers.IO) {
-                //                    geocoder.getLocation(query) { addresses ->
-                //                        lifecycleScope.launch(Dispatchers.Main) {
-                //                            Log.d(LOG_TAG, "addresses?.size: ${addresses?.size}")
-                //                            Log.d(LOG_TAG, "addresses: $addresses")
-                //                            if (!addresses.isNullOrEmpty()) {
-                //                                loadingText?.visibility = View.GONE
-                //                                val adminAreas =
-                //                                    addresses.map { it.getAddressLine(0) }
-                //                                adapter.updateData(adminAreas)
-                //                            }
-                //                        }
-                //                    }
-                //                }
-                //            } else {
-                //                val results = listOf<String>()
-                //                adapter.updateData(results)
-                //                loadingText?.visibility = View.VISIBLE
-                //            }
-                //        }
-                //        handler.postDelayed(searchRunnable!!, 1000)
-                //    }
-                //
-                //    override fun beforeTextChanged(
-                //        s: CharSequence?, start: Int, count: Int, after: Int
-                //    ) {
-                //    }
-                //
-                //    override fun onTextChanged(
-                //        s: CharSequence?, start: Int, before: Int, count: Int
-                //    ) {
-                //    }
-                //})
+                    override fun beforeTextChanged(
+                        s: CharSequence?, start: Int, count: Int, after: Int
+                    ) {
+                    }
+
+                    override fun onTextChanged(
+                        s: CharSequence?, start: Int, before: Int, count: Int
+                    ) {
+                    }
+                })
+
+                // Cancel Button
+                dialog.findViewById<Button>(R.id.btn_cancel)?.setOnClickListener {
+                    Log.d(LOG_TAG, "CANCEL")
+                    dialog.cancel()
+                }
+
+                // Search Button
+                dialog.findViewById<Button>(R.id.btn_search)?.setOnClickListener {
+                    Log.d(LOG_TAG, "SEARCH")
+                    //dialog.dismiss()
+                }
+
+                // Locate Button
+                fusedLocationClient =
+                    LocationServices.getFusedLocationProviderClient(appContext)
+                val requestButton = dialog.findViewById<Button>(R.id.btn_locate)
+                requestButton?.setOnClickListener {
+                    //requestLocation()
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
             }
 
             return dialog
         } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    private fun getPlaceLocation(place: String, callback: (MutableList<Address>?) -> Unit) {
+        Log.d("getPlaceLocation", "place: $place")
+        searchRunnable?.let { handler.removeCallbacks(it) }
+        searchRunnable = Runnable {
+            if (place.isNotEmpty()) {
+                val geocoder = Geocoder(requireContext())
+                lifecycleScope.launch(Dispatchers.IO) {
+                    geocoder.getLocation(place) { addresses ->
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            Log.d(LOG_TAG, "addresses?.size: ${addresses?.size}")
+                            Log.d(LOG_TAG, "addresses: $addresses")
+                            callback(addresses)
+                        }
+                    }
+                }
+            }
+        }
+        handler.postDelayed(searchRunnable!!, 1000)
     }
 
     //@RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
@@ -208,7 +226,6 @@ class AddDialogFragment : DialogFragment() {
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
             if (location != null) {
-                val loadingText = dialog?.findViewById<TextView>(R.id.loading_text)
                 Log.d("Location", "location: $location")
                 Log.d("Location", "lat/lon: ${location.latitude} / ${location.longitude}")
                 CoroutineScope(Dispatchers.IO).launch {
@@ -219,10 +236,7 @@ class AddDialogFragment : DialogFragment() {
                         //Log.d("Location", "stringData: $stringData")
                         withContext(Dispatchers.Main) {
                             adapter.updateData(data)
-                            loadingText?.visibility = View.GONE
                         }
-                    } else {
-                        withContext(Dispatchers.Main) { loadingText?.visibility = View.VISIBLE }
                     }
                 }
             } else {

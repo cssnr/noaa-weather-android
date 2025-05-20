@@ -2,7 +2,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <PreferenceCategory android:title="App Settings">
+    <PreferenceCategory
+        android:key="app_settings"
+        android:title="App Settings">
         <ListPreference
             android:key="temp_unit"
             android:title="Temperature Unit"
@@ -20,6 +22,13 @@
             android:entries="@array/work_interval_entries"
             android:entryValues="@array/work_interval_values"
             tools:summary="15 Minutes" />
+
+        <Preference
+            android:key="battery_unrestricted"
+            android:title="Remove Background Restriction"
+            android:icon="@drawable/md_battery_profile_24px"
+            android:shouldDisableView="true"
+            android:summary="To Improve Widget Updates"/>
     </PreferenceCategory>
 
 </PreferenceScreen>
