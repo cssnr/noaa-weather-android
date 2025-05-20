@@ -9,6 +9,7 @@ import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
+import org.cssnr.noaaweather.R
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -164,7 +165,8 @@ class WeatherApi(val context: Context) {
     private fun createRetrofit(): Retrofit {
         val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
         Log.d("createRetrofit", "versionName: $versionName")
-        val userAgent = "NOAAWeather Android/${versionName}"
+        val githubUrl = context.getString(R.string.github_url)
+        val userAgent = "NOAAWeather Android/${versionName} - $githubUrl"
         Log.d("createRetrofit", "userAgent: $userAgent")
 
         val cacheDirectory = File(context.cacheDir, "weather_cache")
