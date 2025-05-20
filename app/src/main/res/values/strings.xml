@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">NOAA Weather</string>
+
+    <string name="home">Dashboard</string>
+    <string name="stations">Stations</string>
+    <string name="settings">Settings</string>
+
+    <string name="elevation_unit">%.1f %s</string>
+    <string name="coordinates">%s, %s</string>
+
+    <string-array name="dropdown_entries">
+        <item>15 Minutes</item>
+        <item>30 Minutes</item>
+        <item>1 Hour</item>
+        <item>2 Hours</item>
+        <item>4 Hours</item>
+        <item>6 Hours</item>
+        <item>Twice a Day</item>
+        <item>Once Daily</item>
+        <item>Never</item>
+    </string-array>
+    <string-array name="dropdown_values">
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
+        <item>120</item>
+        <item>240</item>
+        <item>360</item>
+        <item>720</item>
+        <item>1440</item>
+        <item>0</item>
+    </string-array>
+</resources>

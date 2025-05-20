@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.stations.StationsFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="8dp"
+        android:orientation="vertical"
+        tools:context=".ui.home.HomeFragment">
+
+
+        <TextView
+            android:id="@+id/station_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textSize="26sp"
+            android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
+            tools:text="Boeing Field - King County International Airport" />
+
+
+        <TextView
+            android:id="@+id/station_message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="KBFI 190153Z VRB05KT 10SM CLR 16/03 A3011 RMK AO2 SLP197 T01560028" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/station_id"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                tools:text="KHAF" />
+            <TextView
+                android:id="@+id/station_elevation"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:ellipsize="end"
+                tools:text="19.812 m" />
+            <TextView
+                android:id="@+id/station_coordinates"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                tools:text="-122.4996, 37.5135999" />
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/station_timestamp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            tools:text="2025-05-19T01:53:00+00:00" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:baselineAligned="false"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:paddingHorizontal="12dp"
+                android:divider="@drawable/spacer"
+                android:showDividers="middle">
+                <TextView
+                    android:id="@+id/station_temperature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_thermostat_24px"
+                    tools:text="13 degC" />
+                <TextView
+                    android:id="@+id/station_dewpoint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_dew_point_24px"
+                    tools:text="2.8 degC" />
+                <TextView
+                    android:id="@+id/station_humidity"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_humidity_mid_24px"
+                    tools:text="44.012345 percent" />
+                <TextView
+                    android:id="@+id/station_wind_speed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_air_24px"
+                    tools:text="9.36 km_h-1" />
+                <TextView
+                    android:id="@+id/station_wind_direction"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_explore_24px"
+                    tools:text="220.0 degree_(angle)" />
+                <TextView
+                    android:id="@+id/station_pressure_baro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_tire_repair_24px"
+                    tools:text="101970.0 Pa" />
+                <TextView
+                    android:id="@+id/station_pressure_sea"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_water_24px"
+                    tools:text="101970.0 Pa" />
+                <TextView
+                    android:id="@+id/station_visibility"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                    android:text="-"
+                    android:drawablePadding="16dp"
+                    app:drawableStartCompat="@drawable/md_visibility_24px"
+                    tools:text="16090.0 m" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+                <ImageView
+                    android:id="@+id/station_icon"
+                    android:layout_width="86dp"
+                    android:layout_height="86dp"
+                    android:contentDescription="Current Icon"
+                    tools:src="@tools:sample/avatars"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/refresh_dashboard"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/fab_padding"
+        android:layout_marginEnd="@dimen/fab_padding"
+        android:contentDescription="Refresh Dashboard"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:srcCompat="@drawable/md_refresh_24px"
+        app:backgroundTint="@color/secondary_color"
+        app:tint="@android:color/white"
+        app:fabSize="mini"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
