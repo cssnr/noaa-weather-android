@@ -184,7 +184,7 @@ fun Context.getTemp(value: Double?, unit: String? = "C"): String {
         return "Unknown"
     }
     val temp = if (unit == "F") (value * 9 / 5) + 32 else value
-    Log.d(LOG_TAG, "unit: $unit - value: $value // temp: $temp")
+    Log.d(LOG_TAG, "unit: $unit - value: $value / temp: $temp")
     val formatted = this.getString(R.string.format_temp, temp, unit)
     Log.d(LOG_TAG, "formatted: $formatted")
     return formatted
