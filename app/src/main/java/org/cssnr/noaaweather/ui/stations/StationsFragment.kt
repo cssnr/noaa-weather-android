@@ -18,7 +18,6 @@ import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
-import org.cssnr.noaaweather.api.WeatherApi.ObservationResponse.Properties.Value
 import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
@@ -189,6 +188,14 @@ suspend fun Context.getCurrentConditions(stationId: String): WeatherStation? {
             if (current == null) {
                 Log.e(LOG_TAG, "TODO: FIX THIS ERROR!!!") // TODO: NOT THIS!!!
                 return null
+            }
+            if (
+                latest.properties.temperature?.value == null &&
+                latest.properties.dewpoint?.value == null &&
+                latest.properties.relativeHumidity?.value == null
+            ) {
+                Log.w(LOG_TAG, "Rejecting New Data on null: temperature/dewpoint/humidity")
+                return current
             }
             val station = WeatherStation(
                 stationId = stationId,
