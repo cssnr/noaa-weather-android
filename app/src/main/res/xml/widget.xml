@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:minWidth="203dp"
-    android:minHeight="51dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:minWidth="180dp"
+    android:maxWidth="250dp"
+    android:minHeight="40dp"
+    android:maxHeight="40dp"
     android:updatePeriodMillis="1800000"
     android:initialLayout="@layout/widget_layout"
     android:previewLayout="@layout/widget_layout"
     android:resizeMode="horizontal|vertical"
-    android:widgetCategory="home_screen" />
+    android:widgetCategory="home_screen"
+    tools:targetApi="31" />
