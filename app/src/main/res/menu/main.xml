@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_station"
+        android:id="@+id/action_support"
         android:orderInCategory="100"
-        android:title="Add Station"
+        android:title="Open Support Site"
         app:showAsAction="never" />
 </menu>

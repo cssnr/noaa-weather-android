@@ -8,7 +8,23 @@
     <string name="elevation_unit">%.1f %s</string>
     <string name="coordinates">%s, %s</string>
 
-    <string-array name="dropdown_entries">
+    <string name="format_temp">%.1f°%s</string>
+    <string name="format_percent">%.1f%%</string>
+    <string name="format_km_h">%.2f km/h</string>
+    <string name="format_direction">%.0f°</string>
+    <string name="format_pa">%.0f Pa</string>
+    <string name="format_meters">%.1f m</string>
+
+    <string-array name="temp_unit_entries">
+        <item>°F</item>
+        <item>°C</item>
+    </string-array>
+    <string-array name="temp_unit_values">
+        <item>F</item>
+        <item>C</item>
+    </string-array>
+
+    <string-array name="work_interval_entries">
         <item>15 Minutes</item>
         <item>30 Minutes</item>
         <item>1 Hour</item>
@@ -19,7 +35,7 @@
         <item>Once Daily</item>
         <item>Never</item>
     </string-array>
-    <string-array name="dropdown_values">
+    <string-array name="work_interval_values">
         <item>15</item>
         <item>30</item>
         <item>60</item>

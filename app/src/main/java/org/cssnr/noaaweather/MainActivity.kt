@@ -1,5 +1,6 @@
 package org.cssnr.noaaweather
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -7,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.core.view.WindowCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
@@ -115,8 +117,11 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(LOG_TAG, "onOptionsItemSelected: $item")
         return when (item.itemId) {
-            R.id.action_station -> {
-                Log.d(LOG_TAG, "ACTION STATION")
+            R.id.action_support -> {
+                Log.d(LOG_TAG, "ACTION SUPPORT")
+                val url = "https://github.com/cssnr/noaa-weather-android"
+                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                startActivity(intent)
                 true
             }
 

@@ -1,5 +1,7 @@
 package org.cssnr.noaaweather.ui.home
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -65,25 +67,37 @@ class HomeFragment : Fragment() {
 
         val appContext = requireContext()
 
+        val sharedPreferences =
+            appContext.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+
         homeViewModel.data.observe(viewLifecycleOwner) { station ->
             Log.i(LOG_TAG, "homeViewModel.data.observe: $station")
+
+            val tempUnit = sharedPreferences.getString("temp_unit", null) ?: "C"
+            Log.i(LOG_TAG, "tempUnit: $tempUnit")
+
             binding.stationName.text = station.name
             binding.stationMessage.text = station.rawMessage
 
             binding.stationId.text = station.stationId
             binding.stationElevation.text = station.elevation
             binding.stationCoordinates.text = station.coordinates
-
             binding.stationTimestamp.text = station.timestamp
 
-            binding.stationTemperature.text = station.temperature ?: "-"
-            binding.stationDewpoint.text = station.dewpoint ?: "-"
-            binding.stationHumidity.text = station.relativeHumidity ?: "-"
-            binding.stationWindSpeed.text = station.windSpeed ?: "-"
-            binding.stationWindDirection.text = station.windDirection ?: "-"
-            binding.stationPressureBaro.text = station.barometricPressure ?: "-"
-            binding.stationPressureSea.text = station.seaLevelPressure ?: "-"
-            binding.stationVisibility.text = station.visibility ?: "-"
+            binding.stationTemperature.text = appContext.getTemp(station.temperature, tempUnit)
+            binding.stationDewpoint.text = appContext.getTemp(station.dewpoint, tempUnit)
+            binding.stationHumidity.text =
+                getString(R.string.format_percent, station.relativeHumidity)
+            binding.stationWindSpeed.text =
+                getString(R.string.format_km_h, station.windSpeed)
+            binding.stationWindDirection.text =
+                getString(R.string.format_direction, station.windDirection)
+            binding.stationPressureBaro.text =
+                getString(R.string.format_pa, station.barometricPressure)
+            binding.stationPressureSea.text =
+                getString(R.string.format_pa, station.seaLevelPressure)
+            binding.stationVisibility.text =
+                getString(R.string.format_meters, station.visibility)
 
             if (station.icon != null) {
                 Log.d(LOG_TAG, "station.icon: ${station.icon}")
@@ -162,6 +176,18 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+}
+
+fun Context.getTemp(value: Double?, unit: String? = "C"): String {
+    //val tempF = (value * 9/5) + 32
+    if (value == null) {
+        return "Unknown"
+    }
+    val temp = if (unit == "F") (value * 9 / 5) + 32 else value
+    Log.d(LOG_TAG, "unit: $unit - value: $value / temp: $temp")
+    val formatted = this.getString(R.string.format_temp, temp, unit)
+    Log.d(LOG_TAG, "formatted: $formatted")
+    return formatted
 }
 
 

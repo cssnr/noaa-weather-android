@@ -51,26 +51,27 @@ data class WeatherStation(
     val coordinates: String? = null,
     val elevation: String? = null,
     val forecast: String? = null,
-
     val station: String? = null,
+
     var timestamp: String? = null,
     var rawMessage: String?? = null,
     var textDescription: String? = null,
     var icon: String? = null,
-    var temperature: String? = null,
-    var dewpoint: String? = null,
-    var windDirection: String? = null,
-    var windSpeed: String? = null,
-    var windGust: String? = null,
-    var barometricPressure: String? = null,
-    var seaLevelPressure: String? = null,
-    var visibility: String? = null,
-    var relativeHumidity: String? = null,
+
+    var temperature: Double? = null,
+    var dewpoint: Double? = null,
+    var windDirection: Double? = null,
+    var windSpeed: Double? = null,
+    var windGust: Double? = null,
+    var barometricPressure: Double? = null,
+    var seaLevelPressure: Double? = null,
+    var visibility: Double? = null,
+    var relativeHumidity: Double? = null,
     //val cloudLayers: List<CloudLayer>? = null,
 )
 
 
-@Database(entities = [WeatherStation::class], version = 2)
+@Database(entities = [WeatherStation::class], version = 3)
 abstract class StationDatabase : RoomDatabase() {
     abstract fun stationDao(): StationDao
 
@@ -85,6 +86,7 @@ abstract class StationDatabase : RoomDatabase() {
                     StationDatabase::class.java,
                     "station-database"
                 )
+                    .fallbackToDestructiveMigration(true)
                     .build().also { instance = it }
             }
     }
