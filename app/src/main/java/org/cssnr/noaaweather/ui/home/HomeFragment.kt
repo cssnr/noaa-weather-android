@@ -1,5 +1,7 @@
 package org.cssnr.noaaweather.ui.home
 
+import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -65,8 +67,15 @@ class HomeFragment : Fragment() {
 
         val appContext = requireContext()
 
+        val sharedPreferences =
+            appContext.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+
         homeViewModel.data.observe(viewLifecycleOwner) { station ->
             Log.i(LOG_TAG, "homeViewModel.data.observe: $station")
+
+            val tempUnit = sharedPreferences.getString("temp_unit", null) ?: "C"
+            Log.i(LOG_TAG, "tempUnit: $tempUnit")
+
             binding.stationName.text = station.name
             binding.stationMessage.text = station.rawMessage
 
@@ -75,10 +84,8 @@ class HomeFragment : Fragment() {
             binding.stationCoordinates.text = station.coordinates
             binding.stationTimestamp.text = station.timestamp
 
-            binding.stationTemperature.text =
-                getString(R.string.format_temp_c, station.temperature, "°C")
-            binding.stationDewpoint.text =
-                getString(R.string.format_temp_c, station.dewpoint, "°C")
+            binding.stationTemperature.text = appContext.getTemp(station.temperature, tempUnit)
+            binding.stationDewpoint.text = appContext.getTemp(station.dewpoint, tempUnit)
             binding.stationHumidity.text =
                 getString(R.string.format_percent, station.relativeHumidity)
             binding.stationWindSpeed.text =
@@ -169,6 +176,18 @@ class HomeFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+}
+
+fun Context.getTemp(value: Double?, unit: String? = "C"): String {
+    //val tempF = (value * 9/5) + 32
+    if (value == null) {
+        return "Unknown"
+    }
+    val temp = if (unit == "F") (value * 9 / 5) + 32 else value
+    Log.d(LOG_TAG, "unit: $unit - value: $value // temp: $temp")
+    val formatted = this.getString(R.string.format_temp, temp, unit)
+    Log.d(LOG_TAG, "formatted: $formatted")
+    return formatted
 }
 
 

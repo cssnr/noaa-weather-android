@@ -22,6 +22,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
         preferenceManager.sharedPreferencesName = "org.cssnr.noaaweather"
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
+        val tempUnits = findPreference<ListPreference>("temp_unit")
+        Log.d(LOG_TAG, "tempUnits: $tempUnits")
+        tempUnits?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+
         val workInterval = findPreference<ListPreference>("work_interval")
         Log.d(LOG_TAG, "workInterval: $workInterval")
         workInterval?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()

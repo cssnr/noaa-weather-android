@@ -4,6 +4,7 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.util.Log
 import android.widget.RemoteViews
@@ -12,9 +13,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.cssnr.noaaweather.MainActivity
+import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.db.StationDao
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.ui.home.getTemp
 import org.cssnr.noaaweather.ui.stations.getCurrentConditions
 
 class WidgetProvider : AppWidgetProvider() {
@@ -57,6 +60,10 @@ class WidgetProvider : AppWidgetProvider() {
     ) {
         Log.d("Widget[onUpdate]", "appWidgetIds: $appWidgetIds")
 
+        val sharedPreferences = context.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+        val tempUnit = sharedPreferences.getString("temp_unit", null) ?: "C"
+        Log.i(LOG_TAG, "tempUnit: $tempUnit")
+
         appWidgetIds.forEach { appWidgetId ->
             Log.d("Widget[onUpdate]", "appWidgetId: $appWidgetId")
 
@@ -92,8 +99,7 @@ class WidgetProvider : AppWidgetProvider() {
                 views.setTextViewText(R.id.station_name, station?.name ?: "No Stations Found")
 
                 Log.d("Widget[onUpdate]", "station.temperature: ${station?.temperature}")
-                val temperature =
-                    context.getString(R.string.format_temp_c, station?.temperature, "°C")
+                val temperature = context.getTemp(station?.dewpoint, tempUnit)
                 Log.d("Widget[onUpdate]", "temperature: $temperature")
                 views.setTextViewText(R.id.station_temperature, temperature)
 
