@@ -71,7 +71,7 @@ data class WeatherStation(
 )
 
 
-@Database(entities = [WeatherStation::class], version = 2)
+@Database(entities = [WeatherStation::class], version = 3)
 abstract class StationDatabase : RoomDatabase() {
     abstract fun stationDao(): StationDao
 
@@ -86,6 +86,7 @@ abstract class StationDatabase : RoomDatabase() {
                     StationDatabase::class.java,
                     "station-database"
                 )
+                    .fallbackToDestructiveMigration(true)
                     .build().also { instance = it }
             }
     }
