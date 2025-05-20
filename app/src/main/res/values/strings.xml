@@ -8,6 +8,13 @@
     <string name="elevation_unit">%.1f %s</string>
     <string name="coordinates">%s, %s</string>
 
+    <string name="format_temp_c">%.1f %s</string>
+    <string name="format_percent">%.1f %%</string>
+    <string name="format_km_h">%.2f km/h</string>
+    <string name="format_direction">%.0f°</string>
+    <string name="format_pa">%.0f Pa</string>
+    <string name="format_meters">%.1f m</string>
+
     <string-array name="dropdown_entries">
         <item>15 Minutes</item>
         <item>30 Minutes</item>

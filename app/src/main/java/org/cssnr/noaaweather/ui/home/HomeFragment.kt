@@ -73,17 +73,24 @@ class HomeFragment : Fragment() {
             binding.stationId.text = station.stationId
             binding.stationElevation.text = station.elevation
             binding.stationCoordinates.text = station.coordinates
-
             binding.stationTimestamp.text = station.timestamp
 
-            binding.stationTemperature.text = station.temperature ?: "-"
-            binding.stationDewpoint.text = station.dewpoint ?: "-"
-            binding.stationHumidity.text = station.relativeHumidity ?: "-"
-            binding.stationWindSpeed.text = station.windSpeed ?: "-"
-            binding.stationWindDirection.text = station.windDirection ?: "-"
-            binding.stationPressureBaro.text = station.barometricPressure ?: "-"
-            binding.stationPressureSea.text = station.seaLevelPressure ?: "-"
-            binding.stationVisibility.text = station.visibility ?: "-"
+            binding.stationTemperature.text =
+                getString(R.string.format_temp_c, station.temperature, "°C")
+            binding.stationDewpoint.text =
+                getString(R.string.format_temp_c, station.dewpoint, "°C")
+            binding.stationHumidity.text =
+                getString(R.string.format_percent, station.relativeHumidity)
+            binding.stationWindSpeed.text =
+                getString(R.string.format_km_h, station.windSpeed)
+            binding.stationWindDirection.text =
+                getString(R.string.format_direction, station.windDirection)
+            binding.stationPressureBaro.text =
+                getString(R.string.format_pa, station.barometricPressure)
+            binding.stationPressureSea.text =
+                getString(R.string.format_pa, station.seaLevelPressure)
+            binding.stationVisibility.text =
+                getString(R.string.format_meters, station.visibility)
 
             if (station.icon != null) {
                 Log.d(LOG_TAG, "station.icon: ${station.icon}")

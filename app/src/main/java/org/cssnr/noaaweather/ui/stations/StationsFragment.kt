@@ -203,15 +203,15 @@ suspend fun Context.getCurrentConditions(stationId: String): WeatherStation? {
                 textDescription = latest.properties.textDescription,
                 icon = latest.properties.icon,
 
-                barometricPressure = getProperty(latest.properties.barometricPressure),
-                dewpoint = getProperty(latest.properties.dewpoint),
-                relativeHumidity = getProperty(latest.properties.relativeHumidity),
-                seaLevelPressure = getProperty(latest.properties.seaLevelPressure),
-                temperature = getProperty(latest.properties.temperature),
-                visibility = getProperty(latest.properties.visibility),
-                windDirection = getProperty(latest.properties.windDirection),
-                windSpeed = getProperty(latest.properties.windSpeed),
-                windGust = getProperty(latest.properties.windGust),
+                barometricPressure = latest.properties.barometricPressure?.value,
+                dewpoint = latest.properties.dewpoint?.value,
+                relativeHumidity = latest.properties.relativeHumidity?.value,
+                seaLevelPressure = latest.properties.seaLevelPressure?.value,
+                temperature = latest.properties.temperature?.value,
+                visibility = latest.properties.visibility?.value,
+                windDirection = latest.properties.windDirection?.value,
+                windSpeed = latest.properties.windSpeed?.value,
+                windGust = latest.properties.windGust?.value,
             )
             Log.d(LOG_TAG, "station: $station")
             dao.add(station)
@@ -221,15 +221,15 @@ suspend fun Context.getCurrentConditions(stationId: String): WeatherStation? {
     return current
 }
 
-fun getProperty(property: Value?): String? {
-    Log.d(LOG_TAG, "getProperty: $property")
-    if (property?.value != null) {
-        //val unitCode = property.value.toString().split(":")[1]
-        //Log.d(LOG_TAG, "unitCode: $unitCode")
-        val result = "${property.value} ${property.unitCode.toString().split(":")[1]}"
-        Log.d(LOG_TAG, "result: $result")
-        return result
-    }
-    Log.i(LOG_TAG, "result: NULL")
-    return null
-}
+//fun getProperty(property: Value?): String? {
+//    Log.d(LOG_TAG, "getProperty: $property")
+//    if (property?.value != null) {
+//        //val unitCode = property.value.toString().split(":")[1]
+//        //Log.d(LOG_TAG, "unitCode: $unitCode")
+//        val result = "${property.value} ${property.unitCode.toString().split(":")[1]}"
+//        Log.d(LOG_TAG, "result: $result")
+//        return result
+//    }
+//    Log.i(LOG_TAG, "result: NULL")
+//    return null
+//}

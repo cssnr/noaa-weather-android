@@ -90,11 +90,18 @@ class WidgetProvider : AppWidgetProvider() {
                 Log.d("Widget[onUpdate]", "station: $station")
                 Log.d("Widget[onUpdate]", "name: ${station?.name}")
                 views.setTextViewText(R.id.station_name, station?.name ?: "No Stations Found")
-                Log.d("Widget[onUpdate]", "temperature: ${station?.temperature}")
-                views.setTextViewText(R.id.station_temperature, station?.temperature ?: "Unknown")
-                Log.d("Widget[onUpdate]", "relativeHumidity: ${station?.relativeHumidity}")
-                views.setTextViewText(R.id.station_humidity, station?.relativeHumidity ?: "Unknown")
-                Log.d("Widget[onUpdate]", "updateAppWidget")
+
+                Log.d("Widget[onUpdate]", "station.temperature: ${station?.temperature}")
+                val temperature =
+                    context.getString(R.string.format_temp_c, station?.temperature, "°C")
+                Log.d("Widget[onUpdate]", "temperature: $temperature")
+                views.setTextViewText(R.id.station_temperature, temperature)
+
+                Log.d("Widget[onUpdate]", "station.relativeHumidity: ${station?.relativeHumidity}")
+                val humidity = context.getString(R.string.format_percent, station?.relativeHumidity)
+                Log.d("Widget[onUpdate]", "humidity: $humidity")
+                views.setTextViewText(R.id.station_humidity, humidity)
+
                 appWidgetManager.updateAppWidget(appWidgetId, views)
                 Log.d("Widget[onUpdate]", "updateAppWidget: DONE")
             }
