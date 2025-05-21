@@ -216,18 +216,18 @@
     </LinearLayout>
     </ScrollView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/refresh_dashboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/fab_padding"
-        android:layout_marginEnd="@dimen/fab_padding"
-        android:contentDescription="Refresh Dashboard"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/md_refresh_24px"
-        app:backgroundTint="@color/secondary_color"
-        app:tint="@android:color/white"
-        app:fabSize="mini"/>
+<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+<!--        android:id="@+id/refresh_dashboard"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="@dimen/fab_padding"-->
+<!--        android:layout_marginEnd="@dimen/fab_padding"-->
+<!--        android:contentDescription="Refresh Dashboard"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:srcCompat="@drawable/md_refresh_24px"-->
+<!--        app:backgroundTint="@color/secondary_color"-->
+<!--        app:tint="@android:color/white"-->
+<!--        app:fabSize="mini"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

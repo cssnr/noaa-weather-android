@@ -1,8 +1,10 @@
 package org.cssnr.noaaweather.ui.home
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,25 +14,145 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
-import com.bumptech.glide.integration.okhttp3.OkHttpUrlLoader
-import com.bumptech.glide.load.model.GlideUrl
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import okhttp3.OkHttpClient
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomeBinding
+import org.cssnr.noaaweather.databinding.FragmentHomePagerBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
-import org.cssnr.noaaweather.ui.stations.getCurrentConditions
-import java.io.InputStream
 import java.util.Locale
 
 class HomeFragment : Fragment() {
 
+    private var _binding: FragmentHomePagerBinding? = null
+    private val binding get() = _binding!!
+
+    private lateinit var demoCollectionAdapter: DemoCollectionAdapter
+    private lateinit var viewPager: ViewPager2
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentHomePagerBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+        return root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        Log.d(LOG_TAG, "HomeFragment - onViewCreated: ${savedInstanceState?.size()}")
+
+        val homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+        val appContext = requireContext()
+
+        lifecycleScope.launch {
+            val dao = StationDatabase.getInstance(appContext).stationDao()
+            val stations = withContext(Dispatchers.IO) {
+                dao.getAll()
+            }
+            Log.d(LOG_TAG, "stations.size: ${stations.size}")
+            if (!stations.isEmpty()) {
+                Log.i(LOG_TAG, "INITIALIZE VIEW MODEL")
+                homeViewModel.data.value = stations
+            } else {
+                Log.w(LOG_TAG, "STATION IS EMPTY")
+            }
+        }
+
+        demoCollectionAdapter = DemoCollectionAdapter(this, emptyList())
+        viewPager = binding.pager
+        binding.pager.adapter = demoCollectionAdapter
+
+        homeViewModel.data.observe(viewLifecycleOwner) { stations ->
+            Log.i(LOG_TAG, "data.observe: stations.size: ${stations.size}")
+            val startPosition = stations.indexOfFirst { it.active }
+            Log.i(LOG_TAG, "data.observe: startPosition: $startPosition")
+            demoCollectionAdapter.updateData(stations)
+            viewPager.setCurrentItem(startPosition, false)
+        }
+
+        // TODO: Update Refresh for ViewPager2...
+        binding.refreshDashboard.setOnClickListener { view ->
+            Log.d(LOG_TAG, "binding.refreshDashboard.setOnClickListener")
+            //lifecycleScope.launch {
+            //    val dao = StationDatabase.getInstance(appContext).stationDao()
+            //    val station = withContext(Dispatchers.IO) {
+            //        dao.getActive()
+            //    }
+            //    Log.d(LOG_TAG, "station: $station")
+            //    if (station != null) {
+            //        val current = withContext(Dispatchers.IO) {
+            //            appContext.getCurrentConditions(station.stationId)
+            //        }
+            //        Log.i(LOG_TAG, "UPDATE VIEW MODEL")
+            //        Log.d(LOG_TAG, "current: $current")
+            //        homeViewModel.data.value = current
+            //    }
+            //}
+            Snackbar.make(view, "Refresh Currently Disabled!", Snackbar.LENGTH_LONG)
+                .setAction("Action", null)
+                .setAnchorView(R.id.refresh_dashboard).show()
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+}
+
+fun Context.getValue(stringId: Int, value: Double?): String {
+    if (value == null) {
+        return "N/A"
+    }
+    return getString(stringId, value)
+}
+
+fun Context.getTemp(value: Double?, unit: String? = "C"): String {
+    //val tempF = (value * 9/5) + 32
+    if (value == null) {
+        return "N/A"
+    }
+    val temp = if (unit == "F") (value * 9 / 5) + 32 else value
+    Log.d(LOG_TAG, "unit: $unit - value: $value - temp: $temp")
+    val formatted = this.getString(R.string.format_temp, temp, unit)
+    Log.d(LOG_TAG, "formatted: $formatted")
+    return formatted
+}
+
+
+class DemoCollectionAdapter(fragment: Fragment, var stations: List<WeatherStation>) :
+    FragmentStateAdapter(fragment) {
+
+    override fun getItemCount(): Int = stations.size
+
+    override fun createFragment(position: Int): Fragment {
+        val fragment = DemoObjectFragment()
+        Log.i(LOG_TAG, "1 - createFragment: station: ${stations[position]}")
+        fragment.arguments = Bundle().apply {
+            putParcelable("station", stations[position])
+        }
+        return fragment
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun updateData(newItems: List<WeatherStation>) {
+        stations = newItems
+        notifyDataSetChanged()
+    }
+}
+
+
+class DemoObjectFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
@@ -40,39 +162,27 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val root: View = binding.root
-        return root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        Log.d(LOG_TAG, "HomeFragment - onViewCreated: ${savedInstanceState?.size()}")
-
-        val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor { chain ->
-                val request = chain.request().newBuilder()
-                    .header("User-Agent", "NOAAWeather Android")
-                    .build()
-                chain.proceed(request)
+        arguments?.takeIf { it.containsKey("station") }?.apply {
+            val station = if (Build.VERSION.SDK_INT >= 33) {
+                arguments?.getParcelable("station", WeatherStation::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                arguments?.getParcelable("station")
             }
-            .build()
-        val okHttpUrlLoader = OkHttpUrlLoader.Factory(okHttpClient)
-        Glide.get(requireContext()).registry.replace(
-            GlideUrl::class.java,
-            InputStream::class.java,
-            okHttpUrlLoader
-        )
+            Log.d(LOG_TAG, "2 - onViewCreated: station: $station")
+            if (station == null) {
+                Log.e(LOG_TAG, "STATION IS NULL")
+                return
+            }
 
-        val homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
+            val appContext = requireContext()
 
-        val appContext = requireContext()
-
-        val sharedPreferences =
-            appContext.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
-
-        homeViewModel.data.observe(viewLifecycleOwner) { station ->
-            Log.i(LOG_TAG, "homeViewModel.data.observe: $station")
-
+            val sharedPreferences =
+                appContext.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
             val tempUnit = sharedPreferences.getString("temp_unit", null) ?: "C"
             Log.i(LOG_TAG, "tempUnit: $tempUnit")
 
@@ -114,65 +224,6 @@ class HomeFragment : Fragment() {
                 openLink(station, it.tag as? String)
             }
         }
-
-        lifecycleScope.launch {
-            val dao = StationDatabase.getInstance(appContext).stationDao()
-            val station = withContext(Dispatchers.IO) {
-                dao.getActive()
-            }
-            Log.d(LOG_TAG, "station: $station")
-            if (station != null) {
-                Log.i(LOG_TAG, "INITIALIZE VIEW MODEL")
-                homeViewModel.data.value = station
-            } else {
-                Log.w(LOG_TAG, "STATION IS NULL")
-                //Toast.makeText(this, "Station Not Found!", Toast.LENGTH_SHORT).show()
-            }
-        }
-
-        binding.refreshDashboard.setOnClickListener { view ->
-            Log.d(LOG_TAG, "binding.refreshDashboard.setOnClickListener")
-
-            lifecycleScope.launch {
-                val dao = StationDatabase.getInstance(appContext).stationDao()
-                val station = withContext(Dispatchers.IO) {
-                    dao.getActive()
-                }
-                Log.d(LOG_TAG, "station: $station")
-                if (station != null) {
-                    val current = withContext(Dispatchers.IO) {
-                        appContext.getCurrentConditions(station.stationId)
-                    }
-                    Log.i(LOG_TAG, "UPDATE VIEW MODEL")
-                    Log.d(LOG_TAG, "current: $current")
-                    homeViewModel.data.value = current
-                }
-            }
-
-            Snackbar.make(view, "Dashboard Updated", Snackbar.LENGTH_LONG)
-                .setAction("Action", null)
-                .setAnchorView(R.id.refresh_dashboard).show()
-        }
-
-        //// API Code
-        //val api = DiscordApi(
-        //    requireContext(),
-        //    "https://discord.com/api/webhooks/000/xxx"
-        //)
-        //lifecycleScope.launch {
-        //    val response = api.sendMessage("Home Fragment")
-        //    Log.d(LOG_TAG, "response: $response")
-        //}
-
-        // Geocoder Code
-        //fun callback(lat: Double?, lon: Double?) {
-        //    Log.d(LOG_TAG, "$lat / $lon")
-        //}
-        //val geocoder = Geocoder(requireContext())
-        //lifecycleScope.launch {
-        //    geocoder.getLocation("Seattle, WA", ::callback)
-        //}
-
     }
 
     override fun onDestroyView() {
@@ -218,26 +269,6 @@ class HomeFragment : Fragment() {
         }
     }
 }
-
-fun Context.getValue(stringId: Int, value: Double?): String {
-    if (value == null) {
-        return "N/A"
-    }
-    return getString(stringId, value)
-}
-
-fun Context.getTemp(value: Double?, unit: String? = "C"): String {
-    //val tempF = (value * 9/5) + 32
-    if (value == null) {
-        return "N/A"
-    }
-    val temp = if (unit == "F") (value * 9 / 5) + 32 else value
-    Log.d(LOG_TAG, "unit: $unit - value: $value - temp: $temp")
-    val formatted = this.getString(R.string.format_temp, temp, unit)
-    Log.d(LOG_TAG, "formatted: $formatted")
-    return formatted
-}
-
 
 //@Suppress("DEPRECATION")
 //fun Geocoder.getAddress(

@@ -1,6 +1,7 @@
 package org.cssnr.noaaweather.db
 
 import android.content.Context
+import android.os.Parcelable
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -10,6 +11,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Upsert
+import kotlinx.parcelize.Parcelize
 
 @Dao
 interface StationDao {
@@ -44,6 +46,7 @@ interface StationDao {
 
 
 @Entity
+@Parcelize
 data class WeatherStation(
     @PrimaryKey val stationId: String,
     val active: Boolean = false,
@@ -68,7 +71,7 @@ data class WeatherStation(
     var visibility: Double? = null,
     var relativeHumidity: Double? = null,
     //val cloudLayers: List<CloudLayer>? = null,
-)
+) : Parcelable
 
 
 @Database(entities = [WeatherStation::class], version = 3)

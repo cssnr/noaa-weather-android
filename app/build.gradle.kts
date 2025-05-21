@@ -1,7 +1,9 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.ksp)
 }
 
 android {
@@ -69,6 +71,9 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.okhttp3.integration)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.viewpager2)
+    //noinspection KaptUsageInsteadOfKsp
+    kapt(libs.glide.compiler)
     ksp(libs.androidx.room.compiler)
     ksp(libs.moshi.kotlin.codegen)
     testImplementation(libs.junit)
