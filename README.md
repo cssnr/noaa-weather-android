@@ -71,17 +71,17 @@ For more information, see [Release through a website](https://developer.android.
 
 ## Features
 
-- Add Multiple NOAA Stations using GPS Location
+- Add Multiple NOAA Stations with Search or GPS
 - Widget with Current Conditions from Selected Station
-- Settings with Custom Widget Update Interval
+- Custom Widget Update Interval and Temperature Unit
 
 ### Planned
 
-- Submit a Feature Request
+- [Submit a Feature Request](https://github.com/cssnr/noaa-weather-android/discussions/categories/feature-requests)
 
 ### Known Issues
 
-- Open an Issue
+- [Open an Issue](https://github.com/cssnr/noaa-weather-android/issues)
 
 # Development
 

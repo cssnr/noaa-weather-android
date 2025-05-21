@@ -2,11 +2,13 @@ package org.cssnr.noaaweather.ui.home
 
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -22,8 +24,10 @@ import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomeBinding
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.ui.stations.getCurrentConditions
 import java.io.InputStream
+import java.util.Locale
 
 class HomeFragment : Fragment() {
 
@@ -102,6 +106,13 @@ class HomeFragment : Fragment() {
             } else {
                 binding.stationIcon.setImageDrawable(null)
             }
+
+            binding.linkForecast.setOnClickListener {
+                openLink(station, it.tag as? String)
+            }
+            binding.linkHourly.setOnClickListener {
+                openLink(station, it.tag as? String)
+            }
         }
 
         lifecycleScope.launch {
@@ -167,6 +178,44 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun openLink(station: WeatherStation, tag: String?) {
+        Log.d(LOG_TAG, "${station.stationId} - tag: $tag")
+        Log.d(LOG_TAG, "station.coordinates: ${station.coordinates}")
+        if (station.coordinates != null) {
+            // TODO: Add function to format latitude/longitude...
+            val latitude = station.coordinates.split(",")[1].trim()
+            val longitude = station.coordinates.split(",")[0].trim()
+            Log.d(LOG_TAG, "\"$longitude\" - \"$longitude\"")
+            val lat = String.format(Locale.US, "%.4f", latitude.toDouble())
+            val lon = String.format(Locale.US, "%.4f", longitude.toDouble())
+            Log.d(LOG_TAG, "\"$lat\" - \"$lon\"")
+            val url = when (tag) {
+                "forecast" -> String.format(
+                    Locale.US,
+                    "https://forecast.weather.gov/MapClick.php?lat=%s&lon=%s",
+                    latitude,
+                    longitude
+                )
+
+                "hourly" -> String.format(
+                    Locale.US,
+                    "https://forecast.weather.gov/MapClick.php?lat=%s&lon=%s&FcstType=graphical",
+                    lat,
+                    lon
+                )
+
+                else -> null
+            }
+            Log.d(LOG_TAG, "url: \"$url\"")
+            if (url != null) {
+                val formattedUrl = String.format(Locale.US, url, lat, lon)
+                Log.d(LOG_TAG, "formattedUrl: \"$formattedUrl\"")
+                val intent = Intent(Intent.ACTION_VIEW, formattedUrl.toUri())
+                startActivity(intent)
+            }
+        }
     }
 }
 
