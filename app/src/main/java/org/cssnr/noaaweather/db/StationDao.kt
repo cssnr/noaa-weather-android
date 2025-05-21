@@ -48,8 +48,8 @@ data class WeatherStation(
     @PrimaryKey val stationId: String,
     val active: Boolean = false,
     val name: String = "",
-    val coordinates: String? = null,
-    val elevation: String? = null,
+    val coordinates: String? = null, // TODO: Store Double, non null
+    val elevation: String? = null, // TODO: Store Double, non null
     val forecast: String? = null,
     val station: String? = null,
 
