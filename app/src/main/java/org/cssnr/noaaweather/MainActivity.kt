@@ -106,7 +106,8 @@ class MainActivity : AppCompatActivity() {
 
         // TODO: Improve initialization of the WorkRequest
         val sharedPreferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
-        val workInterval = sharedPreferences.getString("work_interval", null) ?: "15"
+        // TODO: Improve initialization of default preferences
+        val workInterval = sharedPreferences.getString("work_interval", null) ?: "60"
         Log.i(LOG_TAG, "workInterval: $workInterval")
         Log.i(LOG_TAG, "raw: ${sharedPreferences.getString("work_interval", null)}")
         if (workInterval != "0") {

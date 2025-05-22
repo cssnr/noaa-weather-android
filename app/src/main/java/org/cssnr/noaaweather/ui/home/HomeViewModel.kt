@@ -6,6 +6,7 @@ import org.cssnr.noaaweather.db.WeatherStation
 
 class HomeViewModel : ViewModel() {
 
+    val position = MutableLiveData<Int?>()
     val data = MutableLiveData<List<WeatherStation>>()
 
 }

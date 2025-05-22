@@ -40,7 +40,7 @@ import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
-import org.cssnr.noaaweather.ui.stations.getCurrentConditions
+import org.cssnr.noaaweather.ui.stations.updateStation
 import java.util.Locale
 
 class AddDialogFragment : DialogFragment() {
@@ -111,7 +111,7 @@ class AddDialogFragment : DialogFragment() {
                         )
                         Log.d(LOG_TAG, "station: $station")
                         dao.add(station)
-                        GlobalScope.launch { appContext.getCurrentConditions(station.stationId) }
+                        GlobalScope.launch { appContext.updateStation(station.stationId) }
                         Log.i(LOG_TAG, "setFragmentResult: stations_updated: ${station.stationId}")
                         withContext(Dispatchers.Main) {
                             setFragmentResult(
