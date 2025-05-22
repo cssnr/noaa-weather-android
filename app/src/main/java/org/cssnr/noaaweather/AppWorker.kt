@@ -9,7 +9,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.WidgetProvider
-import org.cssnr.noaaweather.ui.stations.getCurrentConditions
+import org.cssnr.noaaweather.ui.stations.updateStation
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -23,7 +23,7 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             val station = dao.getActive()
             Log.d("AppWorker", "station: $station")
             if (station != null) {
-                applicationContext.getCurrentConditions(station.stationId)
+                applicationContext.updateStation(station.stationId)
             }
         } catch (e: Exception) {
             Log.e("AppWorker", "Update Current Conditions: Exception: $e")

@@ -17,11 +17,11 @@
         <ListPreference
             android:key="work_interval"
             android:title="Update Interval"
-            android:defaultValue="15"
+            android:defaultValue="60"
             android:icon="@drawable/md_timer_play_24px"
             android:entries="@array/work_interval_entries"
             android:entryValues="@array/work_interval_values"
-            tools:summary="15 Minutes" />
+            tools:summary="1 Hour" />
 
         <Preference
             android:key="battery_unrestricted"

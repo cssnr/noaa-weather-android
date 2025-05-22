@@ -19,7 +19,7 @@ import org.cssnr.noaaweather.db.StationDao
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.home.getTemp
 import org.cssnr.noaaweather.ui.home.getValue
-import org.cssnr.noaaweather.ui.stations.getCurrentConditions
+import org.cssnr.noaaweather.ui.stations.updateStation
 
 class WidgetProvider : AppWidgetProvider() {
 
@@ -43,7 +43,7 @@ class WidgetProvider : AppWidgetProvider() {
                 val station = dao.getActive()
                 Log.d("Widget[onReceive]", "station: $station")
                 if (station != null) {
-                    val current = context.getCurrentConditions(station.stationId)
+                    val current = context.updateStation(station.stationId)
                     Log.d("Widget[onReceive]", "current: $current")
                 }
                 val appWidgetManager = AppWidgetManager.getInstance(context)

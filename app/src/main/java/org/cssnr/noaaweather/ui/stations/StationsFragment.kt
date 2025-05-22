@@ -66,7 +66,7 @@ class StationsFragment : Fragment() {
                     adapter.updateData(stations)
                 }
 
-                withContext(Dispatchers.IO) { appContext.getCurrentConditions(data.stationId) }
+                withContext(Dispatchers.IO) { appContext.updateStation(data.stationId) }
 
                 //val api = WeatherApi(appContext)
                 //val response = api.getLatest(data.stationId)
@@ -172,7 +172,7 @@ private fun Context.deleteConfirmDialog(
 }
 
 
-suspend fun Context.getCurrentConditions(stationId: String): WeatherStation? {
+suspend fun Context.updateStation(stationId: String): WeatherStation? {
     val api = WeatherApi(this)
     val response = api.getLatest(stationId)
     Log.i(LOG_TAG, "response: ${response.code()} - isSuccessful: ${response.isSuccessful}")
@@ -189,43 +189,87 @@ suspend fun Context.getCurrentConditions(stationId: String): WeatherStation? {
                 Log.e(LOG_TAG, "TODO: FIX THIS ERROR!!!") // TODO: NOT THIS!!!
                 return null
             }
-            if (
-                latest.properties.temperature?.value == null &&
-                latest.properties.dewpoint?.value == null &&
-                latest.properties.relativeHumidity?.value == null
-            ) {
-                Log.w(LOG_TAG, "Rejecting New Data on null: temperature/dewpoint/humidity")
+            val station = responseToStation(current, latest)
+            Log.d(LOG_TAG, "station: $station")
+            if (station == null) {
+                Log.w(LOG_TAG, "New Data Rejected!")
                 return current
             }
-            val station = WeatherStation(
-                stationId = stationId,
-                active = current.active != false,
-                name = current.name,
-                elevation = current.elevation,
-                coordinates = current.coordinates,
-
-                station = latest.properties.station,
-                timestamp = latest.properties.timestamp,
-                rawMessage = latest.properties.rawMessage,
-                textDescription = latest.properties.textDescription,
-                icon = latest.properties.icon,
-
-                barometricPressure = latest.properties.barometricPressure?.value,
-                dewpoint = latest.properties.dewpoint?.value,
-                relativeHumidity = latest.properties.relativeHumidity?.value,
-                seaLevelPressure = latest.properties.seaLevelPressure?.value,
-                temperature = latest.properties.temperature?.value,
-                visibility = latest.properties.visibility?.value,
-                windDirection = latest.properties.windDirection?.value,
-                windSpeed = latest.properties.windSpeed?.value,
-                windGust = latest.properties.windGust?.value,
-            )
-            Log.d(LOG_TAG, "station: $station")
             dao.add(station)
             return station
         }
     }
     return current
+}
+
+
+suspend fun Context.updateStations(): List<WeatherStation> {
+    val dao = StationDatabase.getInstance(this).stationDao()
+    val stations = dao.getAll()
+    Log.d(LOG_TAG, "stations.size: ${stations.size}")
+    for (current in stations) {
+        Log.d(LOG_TAG, "Updating Station ID: ${current.stationId}")
+        val api = WeatherApi(this)
+        val response = api.getLatest(current.stationId)
+        Log.d(LOG_TAG, "response: ${response.code()} - isSuccessful: ${response.isSuccessful}")
+        if (response.code() == 200) {
+            val latest = response.body()
+            Log.d(LOG_TAG, "latest: $latest")
+            if (latest != null) {
+                val station = responseToStation(current, latest)
+                Log.d(LOG_TAG, "station: $station")
+                if (station != null) {
+                    if (station != current) {
+                        Log.i(LOG_TAG, "UPDATED: ${station.stationId}")
+                        dao.add(station)
+                    } else {
+                        Log.i(LOG_TAG, "NO CHANGE: ${station.stationId}")
+                    }
+                }
+            }
+        }
+    }
+    Log.i(LOG_TAG, "updateStations: DONE")
+    return dao.getAll()
+}
+
+
+fun responseToStation(
+    current: WeatherStation,
+    latest: WeatherApi.ObservationResponse,
+): WeatherStation? {
+    if (
+        latest.properties.temperature?.value == null &&
+        latest.properties.dewpoint?.value == null &&
+        latest.properties.relativeHumidity?.value == null
+    ) {
+        Log.w(LOG_TAG, "Rejecting New Data for Station: ${current.stationId}")
+        Log.w(LOG_TAG, "latest: $latest")
+        return null
+    }
+    return WeatherStation(
+        stationId = current.stationId,
+        active = current.active != false,
+        name = current.name,
+        elevation = current.elevation,
+        coordinates = current.coordinates,
+
+        station = latest.properties.station,
+        timestamp = latest.properties.timestamp,
+        rawMessage = latest.properties.rawMessage,
+        textDescription = latest.properties.textDescription,
+        icon = latest.properties.icon,
+
+        barometricPressure = latest.properties.barometricPressure?.value,
+        dewpoint = latest.properties.dewpoint?.value,
+        relativeHumidity = latest.properties.relativeHumidity?.value,
+        seaLevelPressure = latest.properties.seaLevelPressure?.value,
+        temperature = latest.properties.temperature?.value,
+        visibility = latest.properties.visibility?.value,
+        windDirection = latest.properties.windDirection?.value,
+        windSpeed = latest.properties.windSpeed?.value,
+        windGust = latest.properties.windGust?.value,
+    )
 }
 
 //fun getProperty(property: Value?): String? {
