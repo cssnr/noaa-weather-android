@@ -51,18 +51,22 @@ class HomeFragment : Fragment() {
         viewPager = binding.pager
         binding.pager.adapter = homeStationAdapter
 
+        // TODO: Cleanup Logic for Updating Fragments and Setting Start Position...
         homeViewModel.data.observe(viewLifecycleOwner) { stations ->
             Log.d(LOG_TAG, "data.observe: stations.size: ${stations.size}")
-            val startPosition = stations.indexOfFirst { it.active }
-            Log.d(LOG_TAG, "data.observe: startPosition: $startPosition")
+            val activeStationPos = stations.indexOfFirst { it.active }
+            Log.d(LOG_TAG, "data.observe: activeStationPos: $activeStationPos")
+            if (homeViewModel.active.value != activeStationPos) {
+                homeViewModel.active.value = activeStationPos
+                homeViewModel.position.value = activeStationPos
+                viewPager.setCurrentItem(activeStationPos, false)
+            }
             homeStationAdapter.updateData(stations)
             Log.d(LOG_TAG, "homeViewModel.position.value: ${homeViewModel.position.value}")
-            if (homeViewModel.position.value == null) {
-                homeViewModel.position.value = startPosition
-                viewPager.setCurrentItem(startPosition, false)
-            } else {
-                Log.w(LOG_TAG, "UPDATING ALL FRAGMENTS") // TODO: Handle this condition better...
-                viewPager.setCurrentItem(homeViewModel.position.value ?: startPosition, false)
+            // TODO: This condition is always true now...
+            if (homeViewModel.position.value != null) {
+                Log.w(LOG_TAG, "UPDATING ALL FRAGMENTS: ${homeViewModel.position.value}")
+                viewPager.setCurrentItem(homeViewModel.position.value ?: activeStationPos, false)
                 childFragmentManager.fragments.forEach { fragment ->
                     if (fragment is UpdatableFragment) {
                         val itemId =
@@ -100,6 +104,8 @@ class HomeFragment : Fragment() {
         // TODO: Update Refresh for ViewPager2...
         binding.refreshDashboard.setOnClickListener { view ->
             Log.d(LOG_TAG, "binding.refreshDashboard.setOnClickListener")
+            homeViewModel.position.value = binding.pager.currentItem
+            Log.i(LOG_TAG, "position.value set to: ${binding.pager.currentItem}")
             binding.refreshDashboard.isEnabled = false
             binding.refreshDashboard.alpha = 0.3f
             lifecycleScope.launch {
