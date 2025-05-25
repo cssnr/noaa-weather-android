@@ -22,7 +22,6 @@
         android:id="@+id/feedback_input"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
         android:padding="8dp"
         android:autofillHints="Request Features, Report Issues, or Send Feedback."
         android:inputType="textMultiLine"
