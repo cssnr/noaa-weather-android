@@ -1,15 +1,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
     <PreferenceCategory
         android:key="app_settings"
         android:title="App Settings">
+
         <ListPreference
             android:key="temp_unit"
             android:title="Temperature Unit"
-            android:defaultValue="C"
             android:icon="@drawable/md_thermostat_24px"
+            android:defaultValue="C"
             android:entries="@array/temp_unit_entries"
             android:entryValues="@array/temp_unit_values"
             tools:summary="°C" />
@@ -17,8 +17,8 @@
         <ListPreference
             android:key="work_interval"
             android:title="Update Interval"
-            android:defaultValue="60"
             android:icon="@drawable/md_timer_play_24px"
+            android:defaultValue="60"
             android:entries="@array/work_interval_entries"
             android:entryValues="@array/work_interval_values"
             tools:summary="1 Hour" />
@@ -26,9 +26,16 @@
         <Preference
             android:key="battery_unrestricted"
             android:title="Remove Background Restriction"
+            android:summary="To Improve Widget Updates"
             android:icon="@drawable/md_battery_profile_24px"
-            android:shouldDisableView="true"
-            android:summary="To Improve Widget Updates"/>
+            android:shouldDisableView="true" />
+
+        <Preference
+            android:key="send_feedback"
+            android:title="Send Feedback"
+            android:summary="Submit Suggestions or Bugs"
+            android:icon="@drawable/md_bug_report_24px" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>

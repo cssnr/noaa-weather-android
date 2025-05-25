@@ -6,7 +6,12 @@ import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
 import android.util.Log
+import android.view.LayoutInflater
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -15,9 +20,14 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.AppWorker
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
+import org.cssnr.noaaweather.api.FeedbackApi
 import java.util.concurrent.TimeUnit
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -111,5 +121,71 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             false
         }
+
+        val sendFeedback = findPreference<Preference>("send_feedback")
+        sendFeedback?.setOnPreferenceClickListener {
+            Log.d("sendFeedback", "setOnPreferenceClickListener")
+            showFeedbackDialog()
+            false
+        }
+    }
+
+    fun showFeedbackDialog() {
+        val inflater = LayoutInflater.from(context)
+        val view = inflater.inflate(R.layout.dialog_feedback, null)
+        val input = view.findViewById<EditText>(R.id.feedback_input)
+
+        val dialog = MaterialAlertDialogBuilder(requireContext())
+            .setView(view)
+            .setNegativeButton("Cancel", null)
+            .setPositiveButton("Send", null)
+            .create()
+
+        dialog.setOnShowListener {
+            val sendButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            sendButton.setOnClickListener {
+                sendButton.isEnabled = false
+                val message = input.text.toString().trim()
+                Log.d("showFeedbackDialog", "message: $message")
+                if (message.isNotEmpty()) {
+                    val api = FeedbackApi(requireContext())
+                    lifecycleScope.launch {
+                        val response = withContext(Dispatchers.IO) { api.sendFeedback(message) }
+                        Log.d("showFeedbackDialog", "response: $response")
+                        val msg = if (response.isSuccessful) {
+                            findPreference<Preference>("send_feedback")?.isEnabled = false
+                            dialog.dismiss()
+                            "Feedback Sent. Thank You!"
+                        } else {
+                            sendButton.isEnabled = true
+                            //val params = Bundle().apply {
+                            //    putString("message", response.message())
+                            //    putString("code", response.code().toString())
+                            //}
+                            //Firebase.analytics.logEvent("feedback_failed", params)
+                            "Error: ${response.code()}"
+                        }
+                        Log.d("showFeedbackDialog", "msg: $msg")
+                        Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+                    }
+                } else {
+                    sendButton.isEnabled = true
+                    input.error = "Feedback is Required"
+                }
+            }
+
+            input.requestFocus()
+
+            //val link = view.findViewById<TextView>(R.id.github_link)
+            //val linkText = getString(R.string.github_link, "Visit GitHub for More")
+            //link.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
+            //link.movementMethod = LinkMovementMethod.getInstance()
+
+            //val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            //imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
+        }
+
+        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Send") { _, _ -> }
+        dialog.show()
     }
 }
