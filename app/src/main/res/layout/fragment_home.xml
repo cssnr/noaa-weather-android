@@ -177,13 +177,31 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
-                <ImageView
-                    android:id="@+id/station_icon"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="86dp"
-                    android:layout_height="86dp"
-                    android:contentDescription="Current"
-                    android:background="@drawable/image_border"
-                    tools:src="@tools:sample/avatars"/>
+                    android:layout_height="86dp">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="N/A"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent" />
+                    <ImageView
+                        android:id="@+id/station_icon"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:contentDescription="Current"
+                        android:background="@drawable/image_border"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:src="@tools:sample/avatars"
+                        tools:visibility="visible" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <TextView
                     android:id="@+id/link_forecast"
                     android:tag="forecast"
