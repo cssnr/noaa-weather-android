@@ -5,4 +5,6 @@
 
     <dimen name="bottom_navigation_padding">80dp</dimen>
     <dimen name="fab_padding">16dp</dimen>
+
+    <dimen name="dialog_vertical_margin">8dp</dimen>
 </resources>
