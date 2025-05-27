@@ -1,7 +1,12 @@
 <resources>
     <string name="app_name">NOAA Weather</string>
-    <string name="github_url">https://github.com/cssnr/noaa-weather-android</string>
     <string name="version_string">v%s</string>
+
+    <string name="github_url">https://github.com/cssnr/noaa-weather-android</string>
+    <string name="github_link"><![CDATA[<a href="https://github.com/cssnr/tibs3dprints-android">%s</a>]]></string>
+
+    <string name="website_url">https://cssnr.com/</string>
+    <string name="website_link"><![CDATA[<a href="https://cssnr.com/">%s</a>]]></string>
 
     <string name="home">Dashboard</string>
     <string name="stations">Stations</string>

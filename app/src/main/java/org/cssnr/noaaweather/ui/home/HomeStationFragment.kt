@@ -15,6 +15,10 @@ import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomeBinding
 import org.cssnr.noaaweather.db.WeatherStation
+import java.time.ZoneId
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.Locale
 
 class HomeStationFragment : Fragment(), UpdatableFragment {
@@ -54,17 +58,18 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
         val tempUnit = sharedPreferences.getString("temp_unit", null) ?: "C"
         //Log.d(LOG_TAG, "tempUnit: $tempUnit")
 
+        // Top
         binding.stationName.text = station.name
-        binding.stationMessage.text = station.rawMessage
 
+        // Top Middle
         binding.stationId.text = station.stationId
         binding.stationElevation.text = station.elevation
         binding.stationCoordinates.text = station.coordinates
-        binding.stationTimestamp.text = station.timestamp
+        binding.stationTimestamp.text = formatDate(station.timestamp)
 
+        // Left Middle
         binding.stationTemperature.text = appContext.getTemp(station.temperature, tempUnit)
         binding.stationDewpoint.text = appContext.getTemp(station.dewpoint, tempUnit)
-
         binding.stationHumidity.text =
             appContext.getValue(R.string.format_percent, station.relativeHumidity)
         binding.stationWindSpeed.text =
@@ -78,19 +83,25 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
         binding.stationVisibility.text =
             appContext.getValue(R.string.format_meters, station.visibility)
 
+        // Right Middle
         if (station.icon != null) {
-            Log.d(LOG_TAG, "station.icon: ${station.icon}")
             Glide.with(appContext).load(station.icon).into(binding.stationIcon)
         } else {
             binding.stationIcon.setImageDrawable(null)
         }
-
         binding.linkForecast.setOnClickListener {
             openLink(station, it.tag as? String)
         }
         binding.linkHourly.setOnClickListener {
             openLink(station, it.tag as? String)
         }
+
+        //// Bottom - Extras
+        //if (!station.rawMessage.isNullOrEmpty()) {
+        //    binding.extrasDivider.visibility = View.VISIBLE
+        //    binding.stationHeading.visibility = View.VISIBLE
+        //    binding.stationMessage.text = station.rawMessage
+        //}
     }
 
     override fun onDestroyView() {
@@ -137,4 +148,10 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
 
 interface UpdatableFragment {
     fun updateData(newData: WeatherStation)
+}
+
+fun formatDate(dateString: String?): String {
+    val zonedDateTime = ZonedDateTime.parse(dateString)
+    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
+    return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).format(formatter)
 }
