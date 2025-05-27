@@ -126,6 +126,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             false
         }
 
+        // Send Feedback
         val sendFeedback = findPreference<Preference>("send_feedback")
         sendFeedback?.setOnPreferenceClickListener {
             Log.d("sendFeedback", "setOnPreferenceClickListener")
@@ -187,10 +188,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
             input.requestFocus()
 
-            //val link = view.findViewById<TextView>(R.id.github_link)
-            //val linkText = getString(R.string.github_link, "Visit GitHub for More")
-            //link.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
-            //link.movementMethod = LinkMovementMethod.getInstance()
+            val link = view.findViewById<TextView>(R.id.github_link)
+            val linkText = getString(R.string.github_link, link.tag)
+            link.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
+            link.movementMethod = LinkMovementMethod.getInstance()
 
             //val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             //imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
@@ -200,7 +201,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
         dialog.show()
     }
 }
-
 
 
 fun Context.showAppInfoDialog() {
