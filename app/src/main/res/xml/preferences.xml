@@ -23,12 +23,27 @@
             android:entryValues="@array/work_interval_values"
             tools:summary="1 Hour" />
 
+<!--        <ListPreference-->
+<!--            android:key="update_stations"-->
+<!--            android:title="Update Stations"-->
+<!--            android:icon="@drawable/md_published_with_changes_24px"-->
+<!--            android:defaultValue="active"-->
+<!--            android:entries="@array/update_stations_entries"-->
+<!--            android:entryValues="@array/update_stations_values"-->
+<!--            tools:summary="Only Active" />-->
+
         <Preference
             android:key="battery_unrestricted"
             android:title="Remove Background Restriction"
             android:summary="To Improve Widget Updates"
             android:icon="@drawable/md_battery_profile_24px"
             android:shouldDisableView="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="app_information"
+        android:title="App Information">
 
         <Preference
             android:key="send_feedback"
