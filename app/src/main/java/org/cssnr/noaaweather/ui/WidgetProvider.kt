@@ -109,6 +109,9 @@ class WidgetProvider : AppWidgetProvider() {
                 Log.d("Widget[onUpdate]", "humidity: $humidity")
                 views.setTextViewText(R.id.station_humidity, humidity)
 
+                val time = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
+                views.setTextViewText(R.id.update_time, time)
+
                 appWidgetManager.updateAppWidget(appWidgetId, views)
                 Log.d("Widget[onUpdate]", "updateAppWidget: DONE")
             }
