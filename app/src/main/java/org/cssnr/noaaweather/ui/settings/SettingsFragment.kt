@@ -92,6 +92,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
         }
 
+        //// Temperature Unit
+        //val updateStations = findPreference<ListPreference>("update_stations")
+        //Log.d(LOG_TAG, "updateStations: $updateStations")
+        //updateStations?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+
         // Background Restriction
         val packageName = requireContext().packageName
         Log.i(LOG_TAG, "packageName: $packageName")
