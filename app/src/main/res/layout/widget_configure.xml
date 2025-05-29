@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/config_root"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:paddingBottom="0dp"
+    android:orientation="vertical"
+    android:background="@drawable/config_bg"
+    android:fitsSystemWindows="true"
+    tools:ignore="HardcodedText">
+
+<!--    <LinearLayout-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_gravity="center_horizontal"-->
+<!--        android:orientation="vertical">-->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center_vertical"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:drawableStart="@mipmap/ic_launcher_round"
+            android:drawablePadding="16dp"
+            android:text="Widget Options"
+            tools:ignore="UseCompatTextViewDrawableXml" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Background color" />
+
+        <RadioGroup
+            android:id="@+id/background_options"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <RadioButton
+                android:id="@+id/option_white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="White" />
+            <RadioButton
+                android:id="@+id/option_black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Black" />
+            <RadioButton
+                android:id="@+id/option_transparent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Transparent" />
+        </RadioGroup>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text color" />
+
+    <RadioGroup
+        android:id="@+id/text_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <RadioButton
+            android:id="@+id/text_white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="White" />
+        <RadioButton
+            android:id="@+id/text_black"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Black" />
+    </RadioGroup>
+<!--    </LinearLayout>-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/confirm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:text="Save Widget Settings" />
+
+</LinearLayout>
