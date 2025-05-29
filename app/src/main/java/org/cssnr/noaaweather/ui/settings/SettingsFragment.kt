@@ -3,6 +3,7 @@ package org.cssnr.noaaweather.ui.settings
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
@@ -143,6 +144,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("app_info")?.setOnPreferenceClickListener {
             Log.d("app_info", "showAppInfoDialog")
             requireContext().showAppInfoDialog()
+            false
+        }
+
+        // Open App Settings
+        findPreference<Preference>("android_settings")?.setOnPreferenceClickListener {
+            Log.d("android_settings", "setOnPreferenceClickListener")
+            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                data = Uri.fromParts("package", packageName, null)
+            }
+            startActivity(intent)
             false
         }
     }
