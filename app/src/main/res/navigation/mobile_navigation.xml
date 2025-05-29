@@ -21,4 +21,8 @@
         android:id="@+id/nav_item_settings"
         android:name="org.cssnr.noaaweather.ui.settings.SettingsFragment"
         android:label="@string/settings" />
+    <fragment
+        android:id="@+id/nav_item_settings_widget"
+        android:name="org.cssnr.noaaweather.ui.settings.WidgetSettingsFragment"
+        android:label="Widget Settings" />
 </navigation>

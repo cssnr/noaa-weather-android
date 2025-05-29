@@ -15,7 +15,6 @@ import androidx.core.view.WindowCompat
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 
-
 class WidgetConfigurationActivity : Activity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -50,13 +49,10 @@ class WidgetConfigurationActivity : Activity() {
         val textColor = preferences.getString("widget_text_color", null) ?: "white"
         Log.i(LOG_TAG, "textColor: $textColor")
 
-        //val blackButton = findViewById<RadioButton>(R.id.option_black)
-        //Log.i(LOG_TAG, "blackButton: $blackButton")
-
-//        val w = "option_white"
-//        val resId = resources.getIdentifier(w, "id", packageName)
-//        val whiteButton = findViewById<RadioButton>(resId)
-//        Log.i(LOG_TAG, "whiteButton: $whiteButton")
+        //val w = "option_white"
+        //val resId = resources.getIdentifier(w, "id", packageName)
+        //val whiteButton = findViewById<RadioButton>(resId)
+        //Log.i(LOG_TAG, "whiteButton: $whiteButton")
 
         val bgColorId = mapOf(
             "white" to R.id.option_white,
