@@ -57,6 +57,12 @@
             android:summary="View Mobile App Details"
             android:icon="@drawable/md_mobile_info_24px" />
 
+        <Preference
+            android:key="android_settings"
+            android:title="Android Settings"
+            android:summary="Open Android Settings"
+            android:icon="@drawable/md_mobile_gear_24px" />
+
     </PreferenceCategory>
 
 </PreferenceScreen>
