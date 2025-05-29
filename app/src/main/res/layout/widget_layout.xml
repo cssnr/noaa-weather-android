@@ -98,7 +98,9 @@
             android:layout_gravity="top|end"
             android:background="?android:selectableItemBackgroundBorderless"
             android:src="@drawable/md_refresh_24px"
-            android:contentDescription="Refresh" />
+            android:tint="@android:color/white"
+            android:contentDescription="Refresh"
+            tools:ignore="UseAppTint" />
     </FrameLayout>
 
     <TextView
