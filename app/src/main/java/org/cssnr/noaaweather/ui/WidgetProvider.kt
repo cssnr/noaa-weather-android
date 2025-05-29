@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.graphics.Color
 import android.util.Log
 import android.widget.RemoteViews
 import kotlinx.coroutines.DelicateCoroutinesApi
@@ -13,7 +14,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.cssnr.noaaweather.MainActivity
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.db.StationDao
 import org.cssnr.noaaweather.db.StationDatabase
@@ -63,7 +63,23 @@ class WidgetProvider : AppWidgetProvider() {
 
         val sharedPreferences = context.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
         val tempUnit = sharedPreferences.getString("temp_unit", null) ?: "C"
-        Log.i(LOG_TAG, "tempUnit: $tempUnit")
+        Log.d("Widget[onUpdate]", "tempUnit: $tempUnit")
+
+        val bgColor = sharedPreferences.getString("widget_bg_color", null) ?: "transparent"
+        Log.i("Widget[onUpdate]", "bgColor: $bgColor")
+        val textColor = sharedPreferences.getString("widget_text_color", null) ?: "transparent"
+        Log.i("Widget[onUpdate]", "textColor: $textColor")
+
+        val colorMap = mapOf(
+            "white" to Color.WHITE,
+            "black" to Color.BLACK,
+            "transparent" to Color.TRANSPARENT
+        )
+
+        val selectedBgColor = colorMap[bgColor] ?: Color.TRANSPARENT
+        Log.d("Widget[onUpdate]", "selectedBgColor: $selectedBgColor")
+        val selectedTextColor = colorMap[textColor] ?: Color.WHITE
+        Log.d("Widget[onUpdate]", "selectedTextColor: $selectedTextColor")
 
         appWidgetIds.forEach { appWidgetId ->
             Log.d("Widget[onUpdate]", "appWidgetId: $appWidgetId")
@@ -76,6 +92,16 @@ class WidgetProvider : AppWidgetProvider() {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
             )
             views.setOnClickPendingIntent(R.id.widget_root, pendingIntent0)
+
+            // Set Colors
+            views.setInt(R.id.widget_root, "setBackgroundColor", selectedBgColor)
+            views.setTextColor(R.id.station_name, selectedTextColor)
+            views.setTextColor(R.id.station_temperature, selectedTextColor)
+            views.setTextColor(R.id.station_humidity, selectedTextColor)
+            views.setTextColor(R.id.update_time, selectedTextColor)
+            views.setInt(R.id.temperature_icon, "setColorFilter", selectedTextColor)
+            views.setInt(R.id.humidity_icon, "setColorFilter", selectedTextColor)
+            views.setInt(R.id.refresh_icon, "setColorFilter", selectedTextColor)
 
             // Refresh
             val intent1 = Intent(context, WidgetProvider::class.java).apply {
@@ -109,7 +135,8 @@ class WidgetProvider : AppWidgetProvider() {
                 Log.d("Widget[onUpdate]", "humidity: $humidity")
                 views.setTextViewText(R.id.station_humidity, humidity)
 
-                val time = java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
+                val time = java.time.LocalTime.now()
+                    .format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
                 Log.d("Widget[onUpdate]", "time: $time")
                 views.setTextViewText(R.id.update_time, time)
 

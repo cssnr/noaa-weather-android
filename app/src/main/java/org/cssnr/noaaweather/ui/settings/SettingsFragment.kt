@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
@@ -156,6 +157,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             startActivity(intent)
             false
         }
+
+        // Widget Settings
+        findPreference<Preference>("open_widget_settings")?.setOnPreferenceClickListener {
+            Log.d("open_widget_settings", "setOnPreferenceClickListener")
+            findNavController().navigate(R.id.nav_item_settings_widget)
+            false
+        }
     }
 
     fun showFeedbackDialog() {
@@ -254,5 +262,4 @@ fun Context.showAppInfoDialog() {
         websiteLink.movementMethod = LinkMovementMethod.getInstance()
     }
     dialog.show()
-
 }

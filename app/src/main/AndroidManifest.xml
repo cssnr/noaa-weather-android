@@ -28,6 +28,14 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.WidgetConfigurationActivity"
+            android:theme="@style/Theme.WidgetConfig.Transparent"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+
         <receiver android:name=".ui.WidgetProvider"
             android:exported="false">
             <intent-filter>

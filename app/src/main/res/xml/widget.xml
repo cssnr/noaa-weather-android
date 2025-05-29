@@ -6,8 +6,10 @@
     android:minHeight="40dp"
     android:maxHeight="40dp"
     android:updatePeriodMillis="1800000"
+    android:configure="org.cssnr.noaaweather.ui.WidgetConfigurationActivity"
     android:initialLayout="@layout/widget_layout"
     android:previewLayout="@layout/widget_layout"
     android:resizeMode="horizontal|vertical"
     android:widgetCategory="home_screen"
+    android:widgetFeatures="reconfigurable"
     tools:targetApi="31" />
