@@ -9,6 +9,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.util.Log
 import android.widget.RemoteViews
+import androidx.core.graphics.toColorInt
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -73,6 +74,8 @@ class WidgetProvider : AppWidgetProvider() {
         val colorMap = mapOf(
             "white" to Color.WHITE,
             "black" to Color.BLACK,
+            "blue1" to "#0085ca".toColorInt(),
+            "blue2" to "#003087".toColorInt(),
             "transparent" to Color.TRANSPARENT
         )
 
