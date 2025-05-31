@@ -13,7 +13,10 @@ import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
+import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.get
+import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
@@ -103,6 +106,24 @@ class MainActivity : AppCompatActivity() {
         //    binding.drawerLayout.closeDrawer(GravityCompat.START)
         //    true
         //}
+
+        // TODO: Ghetto manual fix for selecting items on sub item navigation...
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            Log.d(LOG_TAG, "NAV CONTROLLER - destination: ${destination.label}")
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+            when (destination.id) {
+                R.id.nav_item_settings_widget -> {
+                    Log.d(LOG_TAG, "nav_item_settings_widget")
+                    bottomNav.menu.findItem(R.id.nav_item_settings).isChecked = true
+                    //navView.setCheckedItem(R.id.nav_item_settings)
+                    val menu = navView.menu
+                    for (i in 0 until menu.size) {
+                        val item = menu[i]
+                        item.isChecked = item.itemId == R.id.nav_item_settings
+                    }
+                }
+            }
+        }
 
         // TODO: Improve initialization of the WorkRequest
         val sharedPreferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
