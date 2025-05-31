@@ -6,7 +6,8 @@
     android:id="@+id/home_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.stations.StationsFragment">
+    tools:context=".ui.stations.StationsFragment"
+    tools:ignore="HardcodedText">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
