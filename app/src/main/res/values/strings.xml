@@ -66,19 +66,27 @@
     <string-array name="widget_text_entries">
         <item>White</item>
         <item>Black</item>
+        <item>Light Blue</item>
+        <item>Dark Blue</item>
     </string-array>
     <string-array name="widget_text_values">
         <item>white</item>
         <item>black</item>
+        <item>blue1</item>
+        <item>blue2</item>
     </string-array>
     <string-array name="widget_bg_entries">
         <item>White</item>
         <item>Black</item>
+        <item>Light Blue</item>
+        <item>Dark Blue</item>
         <item>Transparent</item>
     </string-array>
     <string-array name="widget_bg_values">
         <item>white</item>
         <item>black</item>
+        <item>blue1</item>
+        <item>blue2</item>
         <item>transparent</item>
     </string-array>
 </resources>

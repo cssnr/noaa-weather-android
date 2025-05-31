@@ -20,7 +20,16 @@
     <fragment
         android:id="@+id/nav_item_settings"
         android:name="org.cssnr.noaaweather.ui.settings.SettingsFragment"
-        android:label="@string/settings" />
+        android:label="@string/settings">
+        <!-- Widget Settings -->
+        <action
+            android:id="@+id/nav_action_settings_widget"
+            app:destination="@id/nav_item_settings_widget"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
     <fragment
         android:id="@+id/nav_item_settings_widget"
         android:name="org.cssnr.noaaweather.ui.settings.WidgetSettingsFragment"

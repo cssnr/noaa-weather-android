@@ -3,15 +3,11 @@ package org.cssnr.noaaweather.ui
 import android.app.Activity
 import android.appwidget.AppWidgetManager
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.RadioGroup
 import androidx.core.content.edit
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 
@@ -22,14 +18,6 @@ class WidgetConfigurationActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.widget_configure)
-
-        val root = findViewById<LinearLayout>(R.id.config_root)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-            v.setPadding(24, 24, 24, 24)
-            insets
-        }
-        WindowCompat.setDecorFitsSystemWindows(window, false)
-        window.statusBarColor = Color.TRANSPARENT
 
         setResult(RESULT_CANCELED)
 
@@ -57,11 +45,15 @@ class WidgetConfigurationActivity : Activity() {
         val bgColorId = mapOf(
             "white" to R.id.option_white,
             "black" to R.id.option_black,
+            "blue1" to R.id.option_light_blue,
+            "blue2" to R.id.option_dark_blue,
             "transparent" to R.id.option_transparent
         )
         val textColorId = mapOf(
             "white" to R.id.text_white,
             "black" to R.id.text_black,
+            "blue1" to R.id.text_light_blue,
+            "blue2" to R.id.text_dark_blue,
         )
 
         val backgroundOptions = findViewById<RadioGroup>(R.id.background_options)
@@ -78,6 +70,8 @@ class WidgetConfigurationActivity : Activity() {
             val selectedBgColor = when (backgroundOptions.checkedRadioButtonId) {
                 R.id.option_white -> "white"
                 R.id.option_black -> "black"
+                R.id.option_light_blue -> "blue1"
+                R.id.option_dark_blue -> "blue2"
                 R.id.option_transparent -> "transparent"
                 else -> "transparent"
             }
@@ -87,6 +81,8 @@ class WidgetConfigurationActivity : Activity() {
             val selectedTextColor = when (textOptions.checkedRadioButtonId) {
                 R.id.text_white -> "white"
                 R.id.text_black -> "black"
+                R.id.text_light_blue -> "blue1"
+                R.id.text_dark_blue -> "blue2"
                 else -> "white"
             }
             Log.i(LOG_TAG, "selectedTextColor: $selectedTextColor")
