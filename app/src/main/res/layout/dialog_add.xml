@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    tools:ignore="HardcodedText">
 
     <TextView
         android:layout_width="wrap_content"
@@ -21,6 +22,7 @@
         android:orientation="horizontal">
         <EditText
             android:id="@+id/location"
+            android:autofillHints="Location"
             android:inputType="textEmailAddress"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -83,6 +85,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/suggestions_list"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        tools:itemCount="8"
+        tools:viewBindingType="androidx.recyclerview.widget.RecyclerView"
+        tools:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_suggestion" />
 
 </LinearLayout>
