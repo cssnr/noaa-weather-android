@@ -40,74 +40,32 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("BatteryLife")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        Log.d(LOG_TAG, "onCreatePreferences: rootKey: $rootKey")
-
+        Log.d("SettingsFragment", "rootKey: $rootKey - name: org.cssnr.noaaweather")
         preferenceManager.sharedPreferencesName = "org.cssnr.noaaweather"
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
-        // Temperature Unit
-        val tempUnits = findPreference<ListPreference>("temp_unit")
-        Log.d(LOG_TAG, "tempUnits: $tempUnits")
-        tempUnits?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+        val ctx = requireContext()
 
-        // Work Interval
+        // Temperature Unit
+        val tempUnit = findPreference<ListPreference>("temp_unit")
+        Log.d(LOG_TAG, "tempUnit: $tempUnit")
+        tempUnit?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+
+        // Background Update Interval
         val workInterval = findPreference<ListPreference>("work_interval")
-        Log.d(LOG_TAG, "workInterval: $workInterval")
         workInterval?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
-        workInterval?.setOnPreferenceChangeListener { _, rawValue ->
-            Log.d(LOG_TAG, "Current Value: ${workInterval.value}")
-            val newValue = rawValue.toString()
-            Log.d(LOG_TAG, "New Value: $newValue")
-            if (workInterval.value != newValue) {
-                Log.i(LOG_TAG, "Rescheduling Work Request")
-                val interval = newValue.toLongOrNull()
-                Log.d(LOG_TAG, "interval: $interval")
-                if (newValue != "0" && interval != null) {
-                    val newRequest =
-                        PeriodicWorkRequestBuilder<AppWorker>(interval, TimeUnit.MINUTES)
-                            .setConstraints(
-                                Constraints.Builder()
-                                    .setRequiresBatteryNotLow(true)
-                                    .setRequiresCharging(false)
-                                    .setRequiresDeviceIdle(false)
-                                    .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-                                    .build()
-                            )
-                            .build()
-                    WorkManager.getInstance(requireContext()).enqueueUniquePeriodicWork(
-                        "app_worker",
-                        ExistingPeriodicWorkPolicy.REPLACE,
-                        newRequest
-                    )
-                } else {
-                    if (interval == null) {
-                        Log.e(LOG_TAG, "Interval is null: $interval")
-                    }
-                    Log.i(LOG_TAG, "CANCEL WORK: app_worker")
-                    WorkManager.getInstance(requireContext()).cancelUniqueWork("app_worker")
-                }
-                Log.d(LOG_TAG, "true: ACCEPTED")
-                true
-            } else {
-                Log.d(LOG_TAG, "false: REJECTED")
-                false
-            }
+        workInterval?.setOnPreferenceChangeListener { _, newValue ->
+            Log.d("work_interval", "newValue: $newValue")
+            ctx.toggleWorkManager(workInterval, newValue)
         }
 
-        //// Temperature Unit
-        //val updateStations = findPreference<ListPreference>("update_stations")
-        //Log.d(LOG_TAG, "updateStations: $updateStations")
-        //updateStations?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
-
         // Background Restriction
-        val packageName = requireContext().packageName
-        Log.i(LOG_TAG, "packageName: $packageName")
-        val pm = requireContext().getSystemService(PowerManager::class.java)
-
+        Log.i(LOG_TAG, "packageName: ${ctx.packageName}")
+        val pm = ctx.getSystemService(PowerManager::class.java)
         val batteryRestrictedButton = findPreference<Preference>("battery_unrestricted")
 
         fun checkBackground(): Boolean {
-            val isIgnoring = pm.isIgnoringBatteryOptimizations(packageName)
+            val isIgnoring = pm.isIgnoringBatteryOptimizations(ctx.packageName)
             Log.i(LOG_TAG, "isIgnoring: $isIgnoring")
             if (isIgnoring) {
                 Log.i(LOG_TAG, "DISABLING BACKGROUND BUTTON")
@@ -122,7 +80,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         batteryRestrictedButton?.setOnPreferenceClickListener {
             Log.d(LOG_TAG, "batteryRestrictedButton?.setOnPreferenceClickListener")
             if (!checkBackground()) {
-                val uri = "package:$packageName".toUri()
+                val uri = "package:${ctx.packageName}".toUri()
                 Log.d(LOG_TAG, "uri: $uri")
                 val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS).apply {
                     data = uri
@@ -137,14 +95,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val sendFeedback = findPreference<Preference>("send_feedback")
         sendFeedback?.setOnPreferenceClickListener {
             Log.d("sendFeedback", "setOnPreferenceClickListener")
-            showFeedbackDialog()
+            ctx.showFeedbackDialog()
             false
         }
 
         // Show App Info
         findPreference<Preference>("app_info")?.setOnPreferenceClickListener {
             Log.d("app_info", "showAppInfoDialog")
-            requireContext().showAppInfoDialog()
+            ctx.showAppInfoDialog()
             false
         }
 
@@ -152,7 +110,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference>("android_settings")?.setOnPreferenceClickListener {
             Log.d("android_settings", "setOnPreferenceClickListener")
             val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", packageName, null)
+                data = Uri.fromParts("package", ctx.packageName, null)
             }
             startActivity(intent)
             false
@@ -166,12 +124,52 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    fun showFeedbackDialog() {
+    fun Context.toggleWorkManager(pref: ListPreference, newValue: Any): Boolean {
+        Log.d("toggleWorkManager", "newValue: $newValue")
+        val value = newValue as? String
+        Log.d("toggleWorkManager", "String value: $value")
+        if (value.isNullOrEmpty()) {
+            Log.w("toggleWorkManager", "NULL OR EMPTY - false")
+            return false
+        } else if (pref.value != value) {
+            Log.i("toggleWorkManager", "RESCHEDULING WORK - true")
+            val interval = value.toLongOrNull()
+            Log.i("toggleWorkManager", "interval: $interval")
+            if (interval != null) {
+                val newRequest =
+                    PeriodicWorkRequestBuilder<AppWorker>(interval, TimeUnit.MINUTES)
+                        .setConstraints(
+                            Constraints.Builder()
+                                .setRequiresBatteryNotLow(true)
+                                .setRequiresCharging(false)
+                                .setRequiresDeviceIdle(false)
+                                .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
+                                .build()
+                        )
+                        .build()
+                WorkManager.getInstance(this).enqueueUniquePeriodicWork(
+                    "daily_worker",
+                    ExistingPeriodicWorkPolicy.REPLACE,
+                    newRequest
+                )
+                return true
+            } else {
+                Log.i("toggleWorkManager", "DISABLING WORK - true")
+                WorkManager.getInstance(this).cancelUniqueWork("daily_worker")
+                return true
+            }
+        } else {
+            Log.i("toggleWorkManager", "NO CHANGE - false")
+            return false
+        }
+    }
+
+    fun Context.showFeedbackDialog() {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.dialog_feedback, null)
         val input = view.findViewById<EditText>(R.id.feedback_input)
 
-        val dialog = MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(this)
             .setView(view)
             .setNegativeButton("Cancel", null)
             .setPositiveButton("Send", null)
@@ -184,7 +182,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val message = input.text.toString().trim()
                 Log.d("showFeedbackDialog", "message: $message")
                 if (message.isNotEmpty()) {
-                    val api = FeedbackApi(requireContext())
+                    val api = FeedbackApi(this)
                     lifecycleScope.launch {
                         val response = withContext(Dispatchers.IO) { api.sendFeedback(message) }
                         Log.d("showFeedbackDialog", "response: $response")
@@ -202,7 +200,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             "Error: ${response.code()}"
                         }
                         Log.d("showFeedbackDialog", "msg: $msg")
-                        Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@showFeedbackDialog, msg, Toast.LENGTH_LONG).show()
                     }
                 } else {
                     sendButton.isEnabled = true
@@ -217,7 +215,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             link.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
             link.movementMethod = LinkMovementMethod.getInstance()
 
-            //val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            //val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             //imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
         }
 
