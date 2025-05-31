@@ -13,7 +13,8 @@
         android:gravity="center_horizontal"
         android:padding="24dp"
         android:orientation="vertical"
-        android:background="@drawable/bg_widget_config">
+        android:background="@drawable/bg_widget_config"
+        tools:ignore="UselessParent">
 
         <!-- Icon/Title -->
         <TextView
