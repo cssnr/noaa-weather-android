@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Color
+import android.text.format.DateFormat
 import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.graphics.toColorInt
@@ -21,6 +22,7 @@ import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.home.getTemp
 import org.cssnr.noaaweather.ui.home.getValue
 import org.cssnr.noaaweather.ui.stations.updateStation
+import java.util.Date
 
 class WidgetProvider : AppWidgetProvider() {
 
@@ -138,8 +140,7 @@ class WidgetProvider : AppWidgetProvider() {
                 Log.d("Widget[onUpdate]", "humidity: $humidity")
                 views.setTextViewText(R.id.station_humidity, humidity)
 
-                val time = java.time.LocalTime.now()
-                    .format(java.time.format.DateTimeFormatter.ofPattern("HH:mm"))
+                val time = DateFormat.getTimeFormat(context).format(Date())
                 Log.d("Widget[onUpdate]", "time: $time")
                 views.setTextViewText(R.id.update_time, time)
 
