@@ -7,11 +7,12 @@ import android.content.Intent
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import org.cssnr.noaaweather.MainActivity.Companion.LOG_FILE
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.WidgetProvider
 import org.cssnr.noaaweather.ui.stations.updateStation
 
-class AppWorker(appContext: Context, workerParams: WorkerParameters) :
+class AppWorker(val appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Log.d("AppWorker", "START: doWork")
@@ -25,8 +26,10 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             if (station != null) {
                 applicationContext.updateStation(station.stationId)
             }
+            appContext.appendLog(LOG_FILE, "Update Success.")
         } catch (e: Exception) {
             Log.e("AppWorker", "Update Current Conditions: Exception: $e")
+            appContext.appendLog(LOG_FILE, "Update Error: ${e.message}")
         }
 
         // Update Widget

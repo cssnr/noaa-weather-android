@@ -1,15 +1,21 @@
 package org.cssnr.noaaweather
 
 import android.appwidget.AppWidgetManager
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
@@ -35,12 +41,16 @@ import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
 import org.cssnr.noaaweather.ui.WidgetProvider
+import java.io.File
+import java.util.Date
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
     companion object {
         const val LOG_TAG = "NOAAWeather"
+        const val LOG_FILE = "debug_log"
     }
 
     private lateinit var navController: NavController
@@ -217,3 +227,30 @@ fun Context.updateWidget() {
     val ids = appWidgetManager.getAppWidgetIds(componentName)
     WidgetProvider().onUpdate(this, appWidgetManager, ids)
 }
+
+fun Context.copyToClipboard(text: String, msg: String? = null) {
+    val clipboard = this.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+    val clip = ClipData.newPlainText("Text", text)
+    clipboard.setPrimaryClip(clip)
+    Toast.makeText(this, msg ?: "Copied to Clipboard", Toast.LENGTH_SHORT).show()
+}
+
+fun Context.appendLog(name: String, message: String) {
+    val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+    val enableDebugLogs = preferences.getBoolean("enable_debug_logs", false)
+    if (!enableDebugLogs) return
+    val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
+    val timestamp = formatter.format(Date())
+    val logMessage = "$timestamp - ${message}\n"
+    Log.d(LOG_TAG, "logMessage: $logMessage")
+    val logFile = File(filesDir, "${name}.txt")
+    Log.d(LOG_TAG, "logFile: $logFile")
+    logFile.appendText(logMessage)
+}
+
+//fun Context.readLog(name: String): String {
+//    Log.d(LOG_TAG, "readLog: $name")
+//    val logFile = File(filesDir, "${name}.txt")
+//    Log.d(LOG_TAG, "logFile: $logFile")
+//    return if (logFile.exists()) logFile.readText() else "File Not Found: $logFile"
+//}
