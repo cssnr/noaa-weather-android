@@ -15,7 +15,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_FILE
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
@@ -173,7 +172,6 @@ private fun Context.deleteConfirmDialog(
         .show()
 }
 
-
 suspend fun Context.updateStation(stationId: String): WeatherStation? {
     val api = WeatherApi(this)
     val response = api.getLatest(stationId)
@@ -184,7 +182,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     Log.d(LOG_TAG, "current: $current")
 
     if (!response.isSuccessful) {
-        appendLog(LOG_FILE, "Update Error: ${response.code()} - ${response.message()}")
+        appendLog("Update Error: ${response.code()} - ${response.message()}")
     } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
@@ -205,7 +203,6 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     }
     return current
 }
-
 
 suspend fun Context.updateStations(): List<WeatherStation> {
     val dao = StationDatabase.getInstance(this).stationDao()

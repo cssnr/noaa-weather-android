@@ -38,7 +38,6 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
 import org.cssnr.noaaweather.ui.WidgetProvider
 import java.io.File
@@ -214,7 +213,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 fun Context.updateWidget() {
-    Log.d(LOG_TAG, "Context.updateWidget")
+    Log.d("updateWidget", "Context.updateWidget")
 
     //val appWidgetManager = AppWidgetManager.getInstance(this)
     //val componentName = ComponentName(this, WidgetProvider::class.java)
@@ -235,16 +234,16 @@ fun Context.copyToClipboard(text: String, msg: String? = null) {
     Toast.makeText(this, msg ?: "Copied to Clipboard", Toast.LENGTH_SHORT).show()
 }
 
-fun Context.appendLog(name: String, message: String) {
+fun Context.appendLog(message: String) {
     val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
     val enableDebugLogs = preferences.getBoolean("enable_debug_logs", false)
     if (!enableDebugLogs) return
     val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
     val timestamp = formatter.format(Date())
     val logMessage = "$timestamp - ${message}\n"
-    Log.d(LOG_TAG, "logMessage: $logMessage")
-    val logFile = File(filesDir, "${name}.txt")
-    Log.d(LOG_TAG, "logFile: $logFile")
+    Log.d("appendLog", "logMessage: $logMessage")
+    val logFile = File(filesDir, "${MainActivity.LOG_FILE}.txt")
+    Log.d("appendLog", "logFile: $logFile")
     logFile.appendText(logMessage)
 }
 
