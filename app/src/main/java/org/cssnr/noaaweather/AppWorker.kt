@@ -15,9 +15,10 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Log.d("AppWorker", "START: doWork")
+        applicationContext.appendLog("Executing Background Task.")
 
         // Update Current Conditions
-        Log.d("AppWorker", "--- Update Current Conditions")
+        Log.d("AppWorker", "Update Current Conditions")
         try {
             val dao = StationDatabase.getInstance(applicationContext).stationDao()
             val station = dao.getActive()
@@ -26,11 +27,12 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
                 applicationContext.updateStation(station.stationId)
             }
         } catch (e: Exception) {
-            Log.e("AppWorker", "Update Current Conditions: Exception: $e")
+            Log.e("AppWorker", "Exception: $e")
+            applicationContext.appendLog("Worker Error: ${e.message}")
         }
 
         // Update Widget
-        Log.d("AppWorker", "--- Update Widget")
+        Log.d("AppWorker", "Update Widget")
         val componentName = ComponentName(applicationContext, WidgetProvider::class.java)
         Log.d("AppWorker", "componentName: $componentName")
         val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).setClassName(

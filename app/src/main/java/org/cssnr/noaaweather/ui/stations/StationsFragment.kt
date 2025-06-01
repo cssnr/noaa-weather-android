@@ -18,6 +18,7 @@ import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
+import org.cssnr.noaaweather.appendLog
 import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
@@ -171,7 +172,6 @@ private fun Context.deleteConfirmDialog(
         .show()
 }
 
-
 suspend fun Context.updateStation(stationId: String): WeatherStation? {
     val api = WeatherApi(this)
     val response = api.getLatest(stationId)
@@ -181,7 +181,9 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     val current = dao.getById(stationId)
     Log.d(LOG_TAG, "current: $current")
 
-    if (response.code() == 200) {
+    if (!response.isSuccessful) {
+        appendLog("Update Error: ${response.code()} - ${response.message()}")
+    } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
         if (latest != null) {
@@ -201,7 +203,6 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     }
     return current
 }
-
 
 suspend fun Context.updateStations(): List<WeatherStation> {
     val dao = StationDatabase.getInstance(this).stationDao()

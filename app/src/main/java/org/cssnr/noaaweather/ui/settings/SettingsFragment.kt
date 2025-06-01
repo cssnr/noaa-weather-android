@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreferenceCompat
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
@@ -51,7 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         Log.d(LOG_TAG, "tempUnit: $tempUnit")
         tempUnit?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
 
-        // Background Update Interval
+        // Update Interval
         val workInterval = findPreference<ListPreference>("work_interval")
         workInterval?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
         workInterval?.setOnPreferenceChangeListener { _, newValue ->
@@ -91,6 +92,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             false
         }
 
+        // Widget Settings
+        findPreference<Preference>("open_widget_settings")?.setOnPreferenceClickListener {
+            Log.d("open_widget_settings", "setOnPreferenceClickListener")
+            findNavController().navigate(R.id.nav_action_settings_widget)
+            false
+        }
+
         // Send Feedback
         val sendFeedback = findPreference<Preference>("send_feedback")
         sendFeedback?.setOnPreferenceClickListener {
@@ -116,10 +124,18 @@ class SettingsFragment : PreferenceFragmentCompat() {
             false
         }
 
-        // Widget Settings
-        findPreference<Preference>("open_widget_settings")?.setOnPreferenceClickListener {
-            Log.d("open_widget_settings", "setOnPreferenceClickListener")
-            findNavController().navigate(R.id.nav_action_settings_widget)
+        // Debugging
+        val enableDebugLogs = findPreference<SwitchPreferenceCompat>("enable_debug_logs")
+        val viewDebugLogs = findPreference<Preference>("view_debug_logs")
+        enableDebugLogs?.setOnPreferenceChangeListener { _, newValue ->
+            Log.d("enableDebugLogs", "enable_debug_logs: $newValue")
+            viewDebugLogs?.isEnabled = newValue as? Boolean == true
+            true
+        }
+        viewDebugLogs?.isEnabled = enableDebugLogs?.isChecked  == true
+        viewDebugLogs?.setOnPreferenceClickListener {
+            Log.d("viewDebugLogs", "setOnPreferenceClickListener")
+            findNavController().navigate(R.id.nav_action_settings_debug)
             false
         }
     }

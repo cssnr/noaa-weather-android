@@ -3,7 +3,7 @@
 
     <PreferenceCategory
         android:key="app_settings"
-        android:title="App Settings">
+        android:title="Application">
 
         <ListPreference
             android:key="temp_unit"
@@ -43,7 +43,7 @@
 
     <PreferenceCategory
         android:key="widget_settings"
-        android:title="Widget Settings">
+        android:title="Widget">
 
         <Preference
             android:key="open_widget_settings"
@@ -54,14 +54,14 @@
     </PreferenceCategory>
 
     <PreferenceCategory
-        android:key="app_information"
-        android:title="App Information">
+        android:key="info_settings"
+        android:title="Information">
 
         <Preference
             android:key="send_feedback"
             android:title="Send Feedback"
             android:summary="Submit Suggestions or Bugs"
-            android:icon="@drawable/md_bug_report_24px" />
+            android:icon="@drawable/md_thumb_up_24px" />
 
         <Preference
             android:key="app_info"
@@ -74,6 +74,26 @@
             android:title="Android Settings"
             android:summary="Open Android Settings"
             android:icon="@drawable/md_mobile_gear_24px" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="debug_settings"
+        android:title="Debugging">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="enable_debug_logs"
+            android:title="Enable Debug Logs"
+            android:summary="For Debugging"
+            android:icon="@drawable/md_bug_report_24px" />
+
+        <Preference
+            android:key="view_debug_logs"
+            android:title="View Debug Logs"
+            android:summary="For Debugging"
+            android:icon="@drawable/md_manage_search_24px"
+            android:enabled="false" />
 
     </PreferenceCategory>
 
