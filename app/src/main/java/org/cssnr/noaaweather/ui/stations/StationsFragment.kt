@@ -15,9 +15,11 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.cssnr.noaaweather.MainActivity.Companion.LOG_FILE
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
+import org.cssnr.noaaweather.appendLog
 import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
@@ -181,7 +183,9 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     val current = dao.getById(stationId)
     Log.d(LOG_TAG, "current: $current")
 
-    if (response.code() == 200) {
+    if (!response.isSuccessful) {
+        appendLog(LOG_FILE, "Update Error: ${response.code()} - ${response.message()}")
+    } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
         if (latest != null) {

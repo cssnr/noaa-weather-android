@@ -16,6 +16,7 @@ class AppWorker(val appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Log.d("AppWorker", "START: doWork")
+        appContext.appendLog(LOG_FILE, "Executing Background Task.")
 
         // Update Current Conditions
         Log.d("AppWorker", "--- Update Current Conditions")
@@ -26,10 +27,9 @@ class AppWorker(val appContext: Context, workerParams: WorkerParameters) :
             if (station != null) {
                 applicationContext.updateStation(station.stationId)
             }
-            appContext.appendLog(LOG_FILE, "Update Success.")
         } catch (e: Exception) {
             Log.e("AppWorker", "Update Current Conditions: Exception: $e")
-            appContext.appendLog(LOG_FILE, "Update Error: ${e.message}")
+            appContext.appendLog(LOG_FILE, "Worker Error: ${e.message}")
         }
 
         // Update Widget
