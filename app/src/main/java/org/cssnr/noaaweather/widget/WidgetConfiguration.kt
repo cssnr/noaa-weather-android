@@ -1,4 +1,4 @@
-package org.cssnr.noaaweather.ui
+package org.cssnr.noaaweather.widget
 
 import android.app.Activity
 import android.appwidget.AppWidgetManager
@@ -7,11 +7,13 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.RadioGroup
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.core.content.edit
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 
-class WidgetConfigurationActivity : Activity() {
+class WidgetConfiguration : Activity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
@@ -32,10 +34,15 @@ class WidgetConfigurationActivity : Activity() {
         if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) finish()
 
         val preferences = getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
-        val bgColor = preferences.getString("widget_bg_color", null) ?: "transparent"
+        val bgColor = preferences.getString("widget_bg_color", null) ?: "black"
         Log.i(LOG_TAG, "bgColor: $bgColor")
         val textColor = preferences.getString("widget_text_color", null) ?: "white"
         Log.i(LOG_TAG, "textColor: $textColor")
+        val bgOpacity = preferences.getInt("widget_bg_opacity", 35)
+        Log.i("WidgetConfiguration", "bgOpacity: $bgOpacity")
+
+        val bgOpacityText = findViewById<TextView>(R.id.bg_opacity_percent)
+        bgOpacityText.text = getString(R.string.background_opacity, bgOpacity)
 
         //val w = "option_white"
         //val resId = resources.getIdentifier(w, "id", packageName)
@@ -47,7 +54,6 @@ class WidgetConfigurationActivity : Activity() {
             "black" to R.id.option_black,
             "blue1" to R.id.option_light_blue,
             "blue2" to R.id.option_dark_blue,
-            "transparent" to R.id.option_transparent
         )
         val textColorId = mapOf(
             "white" to R.id.text_white,
@@ -65,6 +71,28 @@ class WidgetConfigurationActivity : Activity() {
         val textSelected = textColorId[textColor]
         if (textSelected != null) textOptions.check(textSelected)
 
+        val seekBar = findViewById<SeekBar>(R.id.opacity_percent)
+        seekBar.progress = bgOpacity
+        //seekBar.progress = ((bgOpacity + 2) / 5) * 5
+        seekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                if (fromUser && seekBar != null) {
+                    val stepped = ((progress + 2) / 5) * 5
+                    seekBar.progress = stepped
+                    bgOpacityText.text = getString(R.string.background_opacity, stepped)
+                    Log.d("onProgressChanged", "stepped: $stepped")
+                }
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                Log.d("onProgressChanged", "START")
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                Log.d("onProgressChanged", "STOP")
+            }
+        })
+
         confirmButton.setOnClickListener {
             Log.i(LOG_TAG, "backgroundOptions: ${backgroundOptions.checkedRadioButtonId}")
             val selectedBgColor = when (backgroundOptions.checkedRadioButtonId) {
@@ -72,8 +100,7 @@ class WidgetConfigurationActivity : Activity() {
                 R.id.option_black -> "black"
                 R.id.option_light_blue -> "blue1"
                 R.id.option_dark_blue -> "blue2"
-                R.id.option_transparent -> "transparent"
-                else -> "transparent"
+                else -> "black"
             }
             Log.i(LOG_TAG, "selectedBgColor: $selectedBgColor")
 
@@ -87,9 +114,12 @@ class WidgetConfigurationActivity : Activity() {
             }
             Log.i(LOG_TAG, "selectedTextColor: $selectedTextColor")
 
+            Log.i("WidgetConfiguration", "seekBar.progress: ${seekBar.progress}")
+
             preferences.edit {
                 putString("widget_bg_color", selectedBgColor)
                 putString("widget_text_color", selectedTextColor)
+                putInt("widget_bg_opacity", seekBar.progress)
             }
 
             val updateIntent = Intent(

@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
-import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -18,6 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
@@ -31,18 +31,19 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import androidx.work.Constraints
+import androidx.preference.PreferenceManager
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
-import org.cssnr.noaaweather.ui.WidgetProvider
+import org.cssnr.noaaweather.widget.WidgetProvider
+import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
+import org.cssnr.noaaweather.work.AppWorker
 import java.io.File
-import java.util.Date
-import java.util.Locale
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -136,23 +137,28 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // TODO: Improve initialization of the WorkRequest
-        val sharedPreferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
-        // TODO: Improve initialization of default preferences
-        val workInterval = sharedPreferences.getString("work_interval", null) ?: "60"
+        // Setup Preferences
+        val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+        if (BuildConfig.DEBUG) {
+            Log.i(LOG_TAG, "DEBUG BUILD DETECTED!")
+            if (!preferences.contains("enable_debug_logs")) {
+                Log.i(LOG_TAG, "ENABLING DEBUG LOGGING...")
+                preferences.edit {
+                    putBoolean("enable_debug_logs", true)
+                }
+            }
+        }
+        // Set Default Preferences
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
+
+        // Set Work
+        val workInterval = preferences.getString("work_interval", null) ?: "60"
         Log.i(LOG_TAG, "workInterval: $workInterval")
-        Log.i(LOG_TAG, "raw: ${sharedPreferences.getString("work_interval", null)}")
         if (workInterval != "0") {
             val workRequest =
                 PeriodicWorkRequestBuilder<AppWorker>(workInterval.toLong(), TimeUnit.MINUTES)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiresBatteryNotLow(true)
-                            .setRequiresCharging(false)
-                            .setRequiresDeviceIdle(false)
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
+                    .setConstraints(APP_WORKER_CONSTRAINTS)
                     .build()
             Log.i(LOG_TAG, "workRequest: $workRequest")
             WorkManager.getInstance(this).enqueueUniquePeriodicWork(
@@ -210,21 +216,21 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "MainActivity - onStop")
         this.updateWidget()
     }
-}
 
-fun Context.updateWidget() {
-    Log.d("updateWidget", "Context.updateWidget")
+    fun Context.updateWidget() {
+        Log.d("updateWidget", "Context.updateWidget")
 
-    //val appWidgetManager = AppWidgetManager.getInstance(this)
-    //val componentName = ComponentName(this, WidgetProvider::class.java)
-    //val ids = appWidgetManager.getAppWidgetIds(componentName)
-    //appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.widget_list_view)
-    //WidgetProvider().onUpdate(this, appWidgetManager, ids)
+        //val appWidgetManager = AppWidgetManager.getInstance(this)
+        //val componentName = ComponentName(this, WidgetProvider::class.java)
+        //val ids = appWidgetManager.getAppWidgetIds(componentName)
+        //appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.widget_list_view)
+        //WidgetProvider().onUpdate(this, appWidgetManager, ids)
 
-    val appWidgetManager = AppWidgetManager.getInstance(this)
-    val componentName = ComponentName(this, WidgetProvider::class.java)
-    val ids = appWidgetManager.getAppWidgetIds(componentName)
-    WidgetProvider().onUpdate(this, appWidgetManager, ids)
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val componentName = ComponentName(this, WidgetProvider::class.java)
+        val ids = appWidgetManager.getAppWidgetIds(componentName)
+        WidgetProvider().onUpdate(this, appWidgetManager, ids)
+    }
 }
 
 fun Context.copyToClipboard(text: String, msg: String? = null) {
@@ -238,8 +244,7 @@ fun Context.appendLog(message: String) {
     val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
     val enableDebugLogs = preferences.getBoolean("enable_debug_logs", false)
     if (!enableDebugLogs) return
-    val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
-    val timestamp = formatter.format(Date())
+    val timestamp: String = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
     val logMessage = "$timestamp - ${message}\n"
     Log.d("appendLog", "logMessage: $logMessage")
     val logFile = File(filesDir, "${MainActivity.LOG_FILE}.txt")
