@@ -65,6 +65,7 @@ dependencies {
     implementation(libs.androidx.preference.ktx)
     implementation(libs.androidx.viewpager2)
     implementation(libs.androidx.work.runtime.ktx)
+    implementation(libs.androidx.swiperefreshlayout)
     implementation(libs.okhttp)
     implementation(libs.retrofit)
     implementation(libs.converter.moshi)
@@ -73,6 +74,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.glide)
     implementation(libs.okhttp3.integration)
+    implementation(libs.timber)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.glide.compiler)
     ksp(libs.androidx.room.compiler)

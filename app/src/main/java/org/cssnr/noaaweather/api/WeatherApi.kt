@@ -163,12 +163,6 @@ class WeatherApi(val context: Context) {
     }
 
     private fun createRetrofit(): Retrofit {
-        val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
-        Log.d("createRetrofit", "versionName: $versionName")
-        val githubUrl = context.getString(R.string.github_url)
-        val userAgent = "NOAAWeather Android/${versionName} - $githubUrl"
-        Log.d("createRetrofit", "userAgent: $userAgent")
-
         val cacheDirectory = File(context.cacheDir, "weather_cache")
         val cache = Cache(cacheDirectory, 50 * 1024 * 1024)
 
@@ -177,7 +171,7 @@ class WeatherApi(val context: Context) {
             .cookieJar(cookieJar)
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
-                    .header("User-Agent", userAgent)
+                    .header("User-Agent", context.getUserAgent())
                     .build()
                 chain.proceed(request)
             }
@@ -208,4 +202,13 @@ class WeatherApi(val context: Context) {
         //    cookieStore[url.host] = cookies
         //}
     }
+}
+
+fun Context.getUserAgent(): String {
+    val versionName = this.packageManager.getPackageInfo(this.packageName, 0).versionName
+    val appName = this.getString(R.string.app_name)
+    val githubUrl = this.getString(R.string.github_url)
+    val userAgent = "${appName}/${versionName} - $githubUrl"
+    Log.d("getUserAgent", "userAgent: $userAgent")
+    return userAgent
 }

@@ -7,16 +7,15 @@ import android.content.Intent
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import org.cssnr.noaaweather.appendLog
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
+import timber.log.Timber
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Log.d("AppWorker", "START: doWork")
-        applicationContext.appendLog("Executing Background Task.")
 
         // Update Current Conditions
         Log.d("AppWorker", "Update Current Conditions")
@@ -25,11 +24,12 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             val station = dao.getActive()
             Log.d("AppWorker", "station: $station")
             if (station != null) {
-                applicationContext.updateStation(station.stationId)
+                val result = applicationContext.updateStation(station.stationId)
+                Timber.d("Updated Station: ${result?.stationId}")
             }
         } catch (e: Exception) {
             Log.e("AppWorker", "Exception: $e")
-            applicationContext.appendLog("Worker Error: ${e.message}")
+            Timber.w("Background Error: ${e.message}")
         }
 
         // Update Widget

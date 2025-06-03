@@ -29,21 +29,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_FILE
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.FeedbackApi
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("BatteryLife")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        Log.d("SettingsFragment", "rootKey: $rootKey - name: org.cssnr.noaaweather")
-        preferenceManager.sharedPreferencesName = "org.cssnr.noaaweather"
+        Log.d("SettingsFragment", "rootKey: $rootKey")
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         val ctx = requireContext()
@@ -130,14 +127,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val viewDebugLogs = findPreference<Preference>("view_debug_logs")
         enableDebugLogs?.setOnPreferenceChangeListener { _, newValue ->
             Log.d("enableDebugLogs", "enable_debug_logs: $newValue")
-            val result = newValue as? Boolean == true
-            Log.d("enableDebugLogs", "result: $result")
-            viewDebugLogs?.isEnabled = result
-            if (!result) {
-                Log.d("enableDebugLogs", "Clearing Log File: ${LOG_FILE}.txt")
-                val logFile = File(ctx.filesDir, "${LOG_FILE}.txt")
-                logFile.writeText("")
-            }
+            val value = newValue as? Boolean == true
+            Log.d("enableDebugLogs", "Boolean value: $value")
+            viewDebugLogs?.isEnabled = value
             true
         }
         viewDebugLogs?.isEnabled = enableDebugLogs?.isChecked == true

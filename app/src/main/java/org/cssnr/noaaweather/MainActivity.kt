@@ -6,8 +6,8 @@ import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -38,12 +38,12 @@ import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
+import org.cssnr.noaaweather.log.FileLoggingTree
 import org.cssnr.noaaweather.widget.WidgetProvider
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
+import timber.log.Timber
 import java.io.File
-import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -56,6 +56,19 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
+
+    private lateinit var fileLoggingTree: FileLoggingTree
+
+    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
+
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+        Log.d("SharedPreferences", "OnSharedPreferenceChangeListener: $key")
+        if (key == "enable_debug_logs") {
+            val value = prefs.getBoolean(key, false)
+            Log.i("SharedPreferences", "isLoggingEnabled: $value")
+            fileLoggingTree.isLoggingEnabled = value
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -137,8 +150,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Setup Preferences
-        val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+        // Plant Timber
+        val logFile = File(filesDir, "debug_log.txt")
+        fileLoggingTree = FileLoggingTree(logFile)
+        Timber.plant(fileLoggingTree)
+
+        // Shared Preferences Listener
+        Log.d("Main[onCreate]", "registerOnSharedPreferenceChangeListener")
+        preferences.registerOnSharedPreferenceChangeListener(listener)
+
+        // Debug Preferences
         if (BuildConfig.DEBUG) {
             Log.i(LOG_TAG, "DEBUG BUILD DETECTED!")
             if (!preferences.contains("enable_debug_logs")) {
@@ -148,19 +169,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         // Set Default Preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
 
-        // Set Work
+        // Setup Work Manager
         val workInterval = preferences.getString("work_interval", null) ?: "60"
-        Log.i(LOG_TAG, "workInterval: $workInterval")
+        Log.d(LOG_TAG, "workInterval: $workInterval")
         if (workInterval != "0") {
             val workRequest =
                 PeriodicWorkRequestBuilder<AppWorker>(workInterval.toLong(), TimeUnit.MINUTES)
                     .setConstraints(APP_WORKER_CONSTRAINTS)
                     .build()
-            Log.i(LOG_TAG, "workRequest: $workRequest")
+            Log.d(LOG_TAG, "workRequest: $workRequest")
             WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 "app_worker",
                 ExistingPeriodicWorkPolicy.KEEP,
@@ -217,6 +239,12 @@ class MainActivity : AppCompatActivity() {
         this.updateWidget()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("Main[onDestroy]", "ON DESTROY")
+        preferences.unregisterOnSharedPreferenceChangeListener(listener)
+    }
+
     fun Context.updateWidget() {
         Log.d("updateWidget", "Context.updateWidget")
 
@@ -240,17 +268,17 @@ fun Context.copyToClipboard(text: String, msg: String? = null) {
     Toast.makeText(this, msg ?: "Copied to Clipboard", Toast.LENGTH_SHORT).show()
 }
 
-fun Context.appendLog(message: String) {
-    val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
-    val enableDebugLogs = preferences.getBoolean("enable_debug_logs", false)
-    if (!enableDebugLogs) return
-    val timestamp: String = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
-    val logMessage = "$timestamp - ${message}\n"
-    Log.d("appendLog", "logMessage: $logMessage")
-    val logFile = File(filesDir, "${MainActivity.LOG_FILE}.txt")
-    Log.d("appendLog", "logFile: $logFile")
-    logFile.appendText(logMessage)
-}
+//fun Context.appendLog(message: String) {
+//    val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+//    val enableDebugLogs = preferences.getBoolean("enable_debug_logs", false)
+//    if (!enableDebugLogs) return
+//    val timestamp: String = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
+//    val logMessage = "$timestamp - ${message}\n"
+//    Log.d("appendLog", "logMessage: $logMessage")
+//    val logFile = File(filesDir, "${MainActivity.LOG_FILE}.txt")
+//    Log.d("appendLog", "logFile: $logFile")
+//    logFile.appendText(logMessage)
+//}
 
 //fun Context.readLog(name: String): String {
 //    Log.d(LOG_TAG, "readLog: $name")
