@@ -58,7 +58,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         workInterval?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
         workInterval?.setOnPreferenceChangeListener { _, newValue ->
             Log.d("work_interval", "newValue: $newValue")
-            ctx.toggleWorkManager(workInterval, newValue)
+            ctx.updateWorkManager(workInterval, newValue)
         }
 
         // Background Restriction
@@ -148,18 +148,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    fun Context.toggleWorkManager(pref: ListPreference, newValue: Any): Boolean {
-        Log.d("toggleWorkManager", "newValue: $newValue")
+    fun Context.updateWorkManager(listPref: ListPreference, newValue: Any): Boolean {
+        Log.d("updateWorkManager", "listPref: ${listPref.value} - newValue: $newValue")
         val value = newValue as? String
-        Log.d("toggleWorkManager", "String value: $value")
+        Log.d("updateWorkManager", "String value: $value")
         if (value.isNullOrEmpty()) {
-            Log.w("toggleWorkManager", "NULL OR EMPTY - false")
+            Log.w("updateWorkManager", "NULL OR EMPTY - false")
             return false
-        } else if (pref.value != value) {
-            Log.i("toggleWorkManager", "RESCHEDULING WORK - true")
+        } else if (listPref.value == value) {
+            Log.i("updateWorkManager", "NO CHANGE - false")
+            return false
+        } else {
+            Log.i("updateWorkManager", "RESCHEDULING WORK - true")
             val interval = value.toLongOrNull()
-            Log.i("toggleWorkManager", "interval: $interval")
-            if (interval != null) {
+            Log.i("updateWorkManager", "interval: $interval")
+            if (interval == null || interval == 0L) {
+                Log.i("updateWorkManager", "DISABLING WORK")
+                WorkManager.getInstance(this).cancelUniqueWork("app_worker")
+                return true
+            } else {
                 val newRequest =
                     PeriodicWorkRequestBuilder<AppWorker>(interval, TimeUnit.MINUTES)
                         .setInitialDelay(1, TimeUnit.MINUTES)
@@ -171,14 +178,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     newRequest
                 )
                 return true
-            } else {
-                Log.i("toggleWorkManager", "DISABLING WORK - true")
-                WorkManager.getInstance(this).cancelUniqueWork("app_worker")
-                return true
             }
-        } else {
-            Log.i("toggleWorkManager", "NO CHANGE - false")
-            return false
         }
     }
 
