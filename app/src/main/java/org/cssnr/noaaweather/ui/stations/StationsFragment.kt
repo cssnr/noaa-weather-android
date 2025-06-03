@@ -182,7 +182,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     Log.d(LOG_TAG, "current: $current")
 
     if (!response.isSuccessful) {
-        Timber.w("Update Station Error: ${response.code()} - ${response.message()}")
+        Timber.w("updateStation: Error: ${response.code()} - ${response.message()}")
     } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
@@ -190,7 +190,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
             if (current == null) {
                 // TODO: Fix this and return a non-nullable WeatherStation
                 Log.e(LOG_TAG, "TODO: THIS SHOULD NEVER HAPPEN!!!")
-                Timber.e("Update Station Not Found: $stationId")
+                Timber.e("updateStation: Station Not Found: $stationId")
                 return null
             }
             val station = responseToStation(current, latest)

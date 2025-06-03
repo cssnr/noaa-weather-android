@@ -25,11 +25,13 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             Log.d("AppWorker", "station: $station")
             if (station != null) {
                 val result = applicationContext.updateStation(station.stationId)
-                Timber.d("Updated Station: ${result?.stationId}")
+                Timber.d("AppWorker: Update Station ${result?.stationId}")
+            } else {
+                Timber.d("AppWorker: No Active Station")
             }
         } catch (e: Exception) {
             Log.e("AppWorker", "Exception: $e")
-            Timber.w("Background Error: ${e.message}")
+            Timber.w("AppWorker: Exception: ${e.message}")
         }
 
         // Update Widget
