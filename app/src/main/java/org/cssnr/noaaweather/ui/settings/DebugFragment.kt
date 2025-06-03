@@ -14,6 +14,9 @@ import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.copyToClipboard
 import org.cssnr.noaaweather.databinding.FragmentDebugBinding
 import java.io.File
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 class DebugFragment : Fragment() {
@@ -61,15 +64,15 @@ class DebugFragment : Fragment() {
             Log.d(LOG_TAG, "clearLogs")
             val logFile = File(ctx.filesDir, "${LOG_FILE}.txt")
             logFile.writeText("")
-            binding.textView.text = ""
+            binding.textView.text = "Log File Cleared."
             Toast.makeText(ctx, "Logs Cleared.", Toast.LENGTH_SHORT).show()
         }
     }
 
-    fun Context.parseLog(name: String): String {
+    fun Context.parseLog(name: String, default: String = "No Log Entries."): String {
         val logFile = File(filesDir, "${name}.txt")
         Log.d(LOG_TAG, "logFile: $logFile")
-        if (!logFile.exists()) return "Log File Not Found: ${name}.txt"
+        if (!logFile.exists()) return default
 
         val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
         val builder = StringBuilder()
@@ -77,14 +80,28 @@ class DebugFragment : Fragment() {
         for (line in logFile.readLines().asReversed()) {
             val splitIndex = line.indexOf(" - ")
             if (splitIndex == -1) continue
-            val timestampStr = line.substring(0, splitIndex)
+            val timestampString = line.substring(0, splitIndex)
             val message = line.substring(splitIndex + 3)
-            // TODO: Reuse this format...
-            val date = runCatching { formatter.parse(timestampStr) }.getOrNull()
+
+            //val date = runCatching { formatter.parse(timestampString) }.getOrNull()
+            //val dateFormat = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
+            //val formatted = dateFormat.format(date)
+
+            val dateTime = runCatching {
+                ZonedDateTime.parse(
+                    timestampString,
+                    DateTimeFormatter.ISO_ZONED_DATE_TIME
+                )
+            }.getOrNull()
+            Log.d("WidgetUpdater", "dateTime: $dateTime")
+            val instant = dateTime?.toInstant()
+            val date = Date.from(instant)
             val dateFormat = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
             val formatted = dateFormat.format(date)
+
             builder.append("$formatted - $message\n")
         }
+        if (builder.isEmpty()) return default
         if (builder.endsWith("\n")) {
             builder.setLength(builder.length - 1)
         }

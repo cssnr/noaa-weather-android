@@ -16,7 +16,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NOAAWeather"
-        tools:targetApi="31">
+        tools:targetApi="36">
 
         <activity
             android:name=".MainActivity"
@@ -28,7 +28,7 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".ui.WidgetConfigurationActivity"
+        <activity android:name=".widget.WidgetConfiguration"
             android:theme="@style/Theme.WidgetConfig.Transparent"
             android:exported="true">
             <intent-filter>
@@ -36,7 +36,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".ui.WidgetProvider"
+        <receiver android:name=".widget.WidgetProvider"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

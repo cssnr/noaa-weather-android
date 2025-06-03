@@ -154,6 +154,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             if (interval != null) {
                 val newRequest =
                     PeriodicWorkRequestBuilder<AppWorker>(interval, TimeUnit.MINUTES)
+                        .setInitialDelay(1, TimeUnit.MINUTES)
                         .setConstraints(
                             Constraints.Builder()
                                 .setRequiresBatteryNotLow(true)
@@ -164,14 +165,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         )
                         .build()
                 WorkManager.getInstance(this).enqueueUniquePeriodicWork(
-                    "daily_worker",
+                    "app_worker",
                     ExistingPeriodicWorkPolicy.REPLACE,
                     newRequest
                 )
                 return true
             } else {
                 Log.i("toggleWorkManager", "DISABLING WORK - true")
-                WorkManager.getInstance(this).cancelUniqueWork("daily_worker")
+                WorkManager.getInstance(this).cancelUniqueWork("app_worker")
                 return true
             }
         } else {
