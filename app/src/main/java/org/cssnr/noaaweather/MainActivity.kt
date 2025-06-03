@@ -32,15 +32,15 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.preference.PreferenceManager
-import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
 import org.cssnr.noaaweather.widget.WidgetProvider
+import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
+import org.cssnr.noaaweather.work.AppWorker
 import java.io.File
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -158,14 +158,7 @@ class MainActivity : AppCompatActivity() {
         if (workInterval != "0") {
             val workRequest =
                 PeriodicWorkRequestBuilder<AppWorker>(workInterval.toLong(), TimeUnit.MINUTES)
-                    .setConstraints(
-                        Constraints.Builder()
-                            .setRequiresBatteryNotLow(true)
-                            .setRequiresCharging(false)
-                            .setRequiresDeviceIdle(false)
-                            .setRequiredNetworkType(NetworkType.CONNECTED)
-                            .build()
-                    )
+                    .setConstraints(APP_WORKER_CONSTRAINTS)
                     .build()
             Log.i(LOG_TAG, "workRequest: $workRequest")
             WorkManager.getInstance(this).enqueueUniquePeriodicWork(

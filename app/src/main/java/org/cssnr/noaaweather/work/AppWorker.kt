@@ -1,4 +1,4 @@
-package org.cssnr.noaaweather
+package org.cssnr.noaaweather.work
 
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -6,6 +6,7 @@ import android.content.Context
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import org.cssnr.noaaweather.appendLog
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
@@ -20,7 +21,7 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
         // Update Current Conditions
         Log.d("AppWorker", "Update Current Conditions")
         try {
-            val dao = StationDatabase.getInstance(applicationContext).stationDao()
+            val dao = StationDatabase.Companion.getInstance(applicationContext).stationDao()
             val station = dao.getActive()
             Log.d("AppWorker", "station: $station")
             if (station != null) {

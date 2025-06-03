@@ -22,19 +22,18 @@ import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreferenceCompat
-import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.cssnr.noaaweather.AppWorker
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.FeedbackApi
+import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
+import org.cssnr.noaaweather.work.AppWorker
 import java.util.concurrent.TimeUnit
 
 class SettingsFragment : PreferenceFragmentCompat() {
@@ -132,7 +131,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
             viewDebugLogs?.isEnabled = newValue as? Boolean == true
             true
         }
-        viewDebugLogs?.isEnabled = enableDebugLogs?.isChecked  == true
+        viewDebugLogs?.isEnabled = enableDebugLogs?.isChecked == true
         viewDebugLogs?.setOnPreferenceClickListener {
             Log.d("viewDebugLogs", "setOnPreferenceClickListener")
             findNavController().navigate(R.id.nav_action_settings_debug)
@@ -155,14 +154,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 val newRequest =
                     PeriodicWorkRequestBuilder<AppWorker>(interval, TimeUnit.MINUTES)
                         .setInitialDelay(1, TimeUnit.MINUTES)
-                        .setConstraints(
-                            Constraints.Builder()
-                                .setRequiresBatteryNotLow(true)
-                                .setRequiresCharging(false)
-                                .setRequiresDeviceIdle(false)
-                                .setRequiredNetworkType(NetworkType.NOT_REQUIRED)
-                                .build()
-                        )
+                        .setConstraints(APP_WORKER_CONSTRAINTS)
                         .build()
                 WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                     "app_worker",
