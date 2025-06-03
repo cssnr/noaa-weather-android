@@ -8,7 +8,9 @@ import okhttp3.Cache
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.cssnr.noaaweather.R
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -34,7 +36,13 @@ class WeatherApi(val context: Context) {
     //}
 
     suspend fun getLatest(station: String): Response<ObservationResponse> {
-        return api.getObservationData(station)
+        //return api.getObservationData(station)
+        return try {
+            api.getObservationData(station)
+        } catch (e: Exception) {
+            val errorBody = e.toString().toResponseBody("text/plain".toMediaTypeOrNull())
+            Response.error(520, errorBody)
+        }
     }
 
     suspend fun getStationFromPoint(

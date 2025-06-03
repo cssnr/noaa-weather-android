@@ -173,6 +173,7 @@ private fun Context.deleteConfirmDialog(
 }
 
 suspend fun Context.updateStation(stationId: String): WeatherStation? {
+    // TODO: This attempts to update a station and fails silently and should be refactored...
     val api = WeatherApi(this)
     val response = api.getLatest(stationId)
     Log.i(LOG_TAG, "response: ${response.code()} - isSuccessful: ${response.isSuccessful}")
@@ -209,33 +210,42 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
 suspend fun Context.updateStations(): List<WeatherStation> {
     val dao = StationDatabase.getInstance(this).stationDao()
     val stations = dao.getAll()
-    Log.d(LOG_TAG, "stations.size: ${stations.size}")
+    Log.i("updateStations", "BEGIN - stations.size: ${stations.size}")
+    var success = 0
     for (current in stations) {
-        Log.d(LOG_TAG, "Updating Station ID: ${current.stationId}")
-        val api = WeatherApi(this)
-        val response = api.getLatest(current.stationId)
-        Log.d(LOG_TAG, "response: ${response.code()} - isSuccessful: ${response.isSuccessful}")
-        if (response.code() == 200) {
-            val latest = response.body()
-            Log.d(LOG_TAG, "latest: $latest")
-            if (latest != null) {
-                val station = responseToStation(current, latest)
-                Log.d(LOG_TAG, "station: $station")
-                if (station != null) {
-                    if (station != current) {
-                        Log.i(LOG_TAG, "UPDATED: ${station.stationId}")
-                        dao.add(station)
-                    } else {
-                        Log.i(LOG_TAG, "NO CHANGE: ${station.stationId}")
+        try {
+            Log.d("updateStations", "Updating Station ID: ${current.stationId}")
+            val api = WeatherApi(this)
+            val response = api.getLatest(current.stationId)
+            Log.d(
+                "updateStations",
+                "response: ${response.code()} - isSuccessful: ${response.isSuccessful}"
+            )
+            if (response.code() == 200) {
+                val latest = response.body()
+                Log.d("updateStations", "latest: $latest")
+                if (latest != null) {
+                    val station = responseToStation(current, latest)
+                    Log.d("updateStations", "station: $station")
+                    if (station != null) {
+                        success += 1
+                        if (station != current) {
+                            Log.i("updateStations", "UPDATED: ${station.stationId}")
+                            dao.add(station)
+                        } else {
+                            Log.i("updateStations", "NO CHANGE: ${station.stationId}")
+                        }
                     }
                 }
             }
+        } catch (e: Exception) {
+            Log.e("updateStations", "EXCEPTION: ${current.stationId}: $e")
         }
     }
-    Log.i(LOG_TAG, "updateStations: DONE")
+    Log.i("updateStations", "FINISHED - successful: ${success}/${stations.size}")
+    Timber.d("updateStations: Updated ${success}/${stations.size} Stations")
     return dao.getAll()
 }
-
 
 fun responseToStation(
     current: WeatherStation,
