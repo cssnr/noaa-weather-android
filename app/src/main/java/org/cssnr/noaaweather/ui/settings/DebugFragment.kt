@@ -89,7 +89,7 @@ class DebugFragment : Fragment() {
                     DateTimeFormatter.ISO_ZONED_DATE_TIME
                 )
             }.getOrNull()
-            Log.d("WidgetUpdater", "dateTime: $dateTime")
+            Log.d(LOG_TAG, "dateTime: $dateTime")
             val instant = dateTime?.toInstant()
             val date = Date.from(instant)
             val formatted = dateFormat.format(date)

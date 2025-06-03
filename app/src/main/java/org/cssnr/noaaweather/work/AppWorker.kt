@@ -3,6 +3,7 @@ package org.cssnr.noaaweather.work
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
@@ -10,7 +11,6 @@ import org.cssnr.noaaweather.appendLog
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
-import org.cssnr.noaaweather.widget.WidgetUpdater
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -33,11 +33,20 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
         }
 
         // Update Widget
-        Log.d("AppWorker", "WidgetUpdater.updateWidget")
-        val manager = AppWidgetManager.getInstance(applicationContext)
-        val widgetIds =
-            manager.getAppWidgetIds(ComponentName(applicationContext, WidgetProvider::class.java))
-        WidgetUpdater.updateWidget(applicationContext, manager, widgetIds)
+        Log.d("AppWorker", "Update Widget")
+        val componentName = ComponentName(applicationContext, WidgetProvider::class.java)
+        Log.d("AppWorker", "componentName: $componentName")
+        val intent = Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE).setClassName(
+            applicationContext.packageName,
+            "org.cssnr.noaaweather.widget.WidgetProvider"
+        ).apply {
+            val ids =
+                AppWidgetManager.getInstance(applicationContext).getAppWidgetIds(componentName)
+            Log.d("AppWorker", "ids: $ids")
+            putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids)
+        }
+        Log.d("AppWorker", "sendBroadcast: $intent")
+        applicationContext.sendBroadcast(intent)
 
         Log.d("AppWorker", "DONE: doWork")
         return Result.success()
