@@ -74,7 +74,7 @@ class DebugFragment : Fragment() {
         Log.d(LOG_TAG, "logFile: $logFile")
         if (!logFile.exists()) return default
 
-        val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.US)
+        val dateFormat = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
         val builder = StringBuilder()
 
         for (line in logFile.readLines().asReversed()) {
@@ -82,10 +82,6 @@ class DebugFragment : Fragment() {
             if (splitIndex == -1) continue
             val timestampString = line.substring(0, splitIndex)
             val message = line.substring(splitIndex + 3)
-
-            //val date = runCatching { formatter.parse(timestampString) }.getOrNull()
-            //val dateFormat = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
-            //val formatted = dateFormat.format(date)
 
             val dateTime = runCatching {
                 ZonedDateTime.parse(
@@ -96,7 +92,6 @@ class DebugFragment : Fragment() {
             Log.d("WidgetUpdater", "dateTime: $dateTime")
             val instant = dateTime?.toInstant()
             val date = Date.from(instant)
-            val dateFormat = SimpleDateFormat("MM-dd HH:mm:ss", Locale.getDefault())
             val formatted = dateFormat.format(date)
 
             builder.append("$formatted - $message\n")

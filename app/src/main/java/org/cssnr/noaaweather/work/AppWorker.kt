@@ -32,7 +32,6 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             applicationContext.appendLog("Worker Error: ${e.message}")
         }
 
-
         // Update Widget
         Log.d("AppWorker", "WidgetUpdater.updateWidget")
         val manager = AppWidgetManager.getInstance(applicationContext)
