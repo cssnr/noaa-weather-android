@@ -18,11 +18,11 @@ import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
-import org.cssnr.noaaweather.appendLog
 import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.ui.stations.add.AddDialogFragment
+import timber.log.Timber
 
 //import androidx.lifecycle.Observer
 //import androidx.lifecycle.ViewModelProvider
@@ -182,13 +182,15 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     Log.d(LOG_TAG, "current: $current")
 
     if (!response.isSuccessful) {
-        appendLog("Update Error: ${response.code()} - ${response.message()}")
+        Timber.w("Update Station Error: ${response.code()} - ${response.message()}")
     } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
         if (latest != null) {
             if (current == null) {
-                Log.e(LOG_TAG, "TODO: FIX THIS ERROR!!!") // TODO: NOT THIS!!!
+                // TODO: Fix this and return a non-nullable WeatherStation
+                Log.e(LOG_TAG, "TODO: THIS SHOULD NEVER HAPPEN!!!")
+                Timber.e("Update Station Not Found: $stationId")
                 return null
             }
             val station = responseToStation(current, latest)
