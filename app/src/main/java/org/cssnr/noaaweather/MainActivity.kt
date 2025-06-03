@@ -151,15 +151,13 @@ class MainActivity : AppCompatActivity() {
         }
 
         // Plant Timber
+        Log.d(LOG_TAG, "Plant Timber")
         val logFile = File(filesDir, "debug_log.txt")
         fileLoggingTree = FileLoggingTree(logFile)
         Timber.plant(fileLoggingTree)
 
-        // Shared Preferences Listener
-        Log.d("Main[onCreate]", "registerOnSharedPreferenceChangeListener")
-        preferences.registerOnSharedPreferenceChangeListener(listener)
-
-        // Debug Preferences
+        // Set Debug Preferences
+        Log.d(LOG_TAG, "Set Debug Preferences")
         if (BuildConfig.DEBUG) {
             Log.i(LOG_TAG, "DEBUG BUILD DETECTED!")
             if (!preferences.contains("enable_debug_logs")) {
@@ -169,12 +167,21 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        val debugLogs = preferences.getBoolean("enable_debug_logs", false)
+        Log.d(LOG_TAG, "debugLogs: $debugLogs")
+        if (debugLogs) fileLoggingTree.isLoggingEnabled = true
 
         // Set Default Preferences
+        Log.d(LOG_TAG, "Set Default Preferences")
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
 
+        // Initialize Shared Preferences Listener
+        Log.d(LOG_TAG, "Initialize Shared Preferences Listener")
+        preferences.registerOnSharedPreferenceChangeListener(listener)
+
         // Setup Work Manager
+        Log.d(LOG_TAG, "Setup Work Manager")
         val workInterval = preferences.getString("work_interval", null) ?: "60"
         Log.d(LOG_TAG, "workInterval: $workInterval")
         if (workInterval != "0") {
@@ -241,7 +248,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("Main[onDestroy]", "ON DESTROY")
+        Log.d(LOG_TAG, "ON DESTROY")
         preferences.unregisterOnSharedPreferenceChangeListener(listener)
     }
 
