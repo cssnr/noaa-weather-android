@@ -4,7 +4,6 @@ import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.graphics.Color
 import android.text.format.DateFormat
@@ -12,6 +11,7 @@ import android.util.Log
 import android.widget.RemoteViews
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -66,7 +66,7 @@ class WidgetProvider : AppWidgetProvider() {
     ) {
         Log.i("Widget[onUpdate]", "BEGIN - appWidgetIds: $appWidgetIds")
 
-        val preferences = context.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
         val tempUnit = preferences.getString("temp_unit", null) ?: "C"
         Log.d("Widget[onUpdate]", "tempUnit: $tempUnit")
         val bgColor = preferences.getString("widget_bg_color", null) ?: "black"

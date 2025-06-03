@@ -11,7 +11,8 @@ import java.util.Locale
 class FileLoggingTree(private val logFile: File) : Timber.Tree() {
 
     private val logWriter = FileWriter(logFile, true)
-    @Volatile var isLoggingEnabled: Boolean = false
+    @Volatile
+    var isLoggingEnabled: Boolean = false
 
     override fun log(priority: Int, tag: String?, message: String, t: Throwable?) {
         if (!isLoggingEnabled) return

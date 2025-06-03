@@ -40,8 +40,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     @SuppressLint("BatteryLife")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        Log.d("SettingsFragment", "rootKey: $rootKey - name: org.cssnr.noaaweather")
-        preferenceManager.sharedPreferencesName = "org.cssnr.noaaweather"
+        Log.d("SettingsFragment", "rootKey: $rootKey")
         setPreferencesFromResource(R.xml.preferences, rootKey)
 
         val ctx = requireContext()

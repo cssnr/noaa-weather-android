@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var fileLoggingTree: FileLoggingTree
 
-    private val preferences by lazy { getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE) }
+    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
         Log.d("SharedPreferences", "OnSharedPreferenceChangeListener: $key")
@@ -150,15 +150,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Timber
+        // Plant Timber
         val logFile = File(filesDir, "debug_log.txt")
         fileLoggingTree = FileLoggingTree(logFile)
         Timber.plant(fileLoggingTree)
 
+        // Shared Preferences Listener
         Log.d("Main[onCreate]", "registerOnSharedPreferenceChangeListener")
         preferences.registerOnSharedPreferenceChangeListener(listener)
 
-        // Setup Preferences
+        // Debug Preferences
         if (BuildConfig.DEBUG) {
             Log.i(LOG_TAG, "DEBUG BUILD DETECTED!")
             if (!preferences.contains("enable_debug_logs")) {
@@ -168,30 +169,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
         // Set Default Preferences
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
         PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
 
-        // Set Work
+        // Setup Work Manager
         val workInterval = preferences.getString("work_interval", null) ?: "60"
-        Log.i(LOG_TAG, "workInterval: $workInterval")
+        Log.d(LOG_TAG, "workInterval: $workInterval")
         if (workInterval != "0") {
             val workRequest =
                 PeriodicWorkRequestBuilder<AppWorker>(workInterval.toLong(), TimeUnit.MINUTES)
                     .setConstraints(APP_WORKER_CONSTRAINTS)
                     .build()
-            Log.i(LOG_TAG, "workRequest: $workRequest")
+            Log.d(LOG_TAG, "workRequest: $workRequest")
             WorkManager.getInstance(this).enqueueUniquePeriodicWork(
                 "app_worker",
                 ExistingPeriodicWorkPolicy.KEEP,
                 workRequest
             )
         }
-
-        // Debug Logs
-        val debugLogs = preferences.getBoolean("enable_debug_logs", false)
-        Log.d(LOG_TAG, "debugLogs: $debugLogs")
-        if (debugLogs) fileLoggingTree.isLoggingEnabled = true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

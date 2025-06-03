@@ -10,8 +10,7 @@ import org.cssnr.noaaweather.R
 class WidgetSettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
-        Log.d("WidgetSettingsFragment", "rootKey: $rootKey - name: org.cssnr.noaaweather")
-        preferenceManager.sharedPreferencesName = "org.cssnr.noaaweather"
+        Log.d("WidgetSettingsFragment", "rootKey: $rootKey")
         setPreferencesFromResource(R.xml.preferences_widget, rootKey)
 
         // Text Color
