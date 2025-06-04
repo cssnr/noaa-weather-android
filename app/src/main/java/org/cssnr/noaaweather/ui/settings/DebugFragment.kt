@@ -27,9 +27,6 @@ class DebugFragment : Fragment() {
     private var _binding: FragmentDebugBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var logFile: File
-    private lateinit var logText: String
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,7 +52,7 @@ class DebugFragment : Fragment() {
 
         binding.copyLogs.setOnClickListener {
             Log.d(LOG_TAG, "copyLogs")
-            ctx.copyToClipboard(logText, "Logs Copied")
+            ctx.copyToClipboard(binding.textView.text.toString(), "Logs Copied")
         }
 
         binding.reloadLogs.setOnClickListener {
@@ -74,8 +71,8 @@ class DebugFragment : Fragment() {
                 .setMessage("Delete All Logs?")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Clear") { _, _ ->
+                    val logFile = File(ctx.filesDir, "debug_log.txt")
                     logFile.writeText("")
-                    logText = ""
                     binding.textView.text = ""
                     Toast.makeText(ctx, "Logs Cleared.", Toast.LENGTH_SHORT).show()
                 }
@@ -101,16 +98,16 @@ class DebugFragment : Fragment() {
         lifecycleScope.launch { binding.textView.text = requireContext().readLogFile() }
     }
 
-//    suspend fun Context.readLogFile(): String = withContext(Dispatchers.IO) {
-//        File(filesDir, "debug_log.txt").readLines().asReversed().joinToString("\n")
-//    }
+    //suspend fun Context.readLogFile(): String = withContext(Dispatchers.IO) {
+    //    File(filesDir, "debug_log.txt").readLines().asReversed().joinToString("\n")
+    //}
 
     suspend fun Context.readLogFile(): String = withContext(Dispatchers.IO) {
         try {
             val file = File(filesDir, "debug_log.txt")
             if (!file.canRead()) {
                 Log.e("readLogFile", "Log File Not Found or Not Readable: ${file.absolutePath}")
-                return@withContext "Unable to read logs: ${file.absolutePath}"
+                return@withContext "Unable to read log file: ${file.absolutePath}"
             }
             file.readLines().asReversed().joinToString("\n")
         } catch (e: Exception) {
