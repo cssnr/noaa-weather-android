@@ -8,14 +8,21 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.log.FileLoggingTree
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
 import timber.log.Timber
+import java.io.File
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Log.d("AppWorker", "START: doWork")
+
+        // Plant Timber
+        val logFile = File(applicationContext.filesDir, "debug_log.txt")
+        val fileLoggingTree = FileLoggingTree(logFile)
+        Timber.plant(fileLoggingTree)
 
         // Update Current Conditions
         Log.d("AppWorker", "Update Current Conditions")
@@ -50,6 +57,7 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
         Log.d("AppWorker", "sendBroadcast: $intent")
         applicationContext.sendBroadcast(intent)
 
+        fileLoggingTree.close()
         Log.d("AppWorker", "DONE: doWork")
         return Result.success()
     }

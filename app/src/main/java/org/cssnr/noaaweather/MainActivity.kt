@@ -153,6 +153,9 @@ class MainActivity : AppCompatActivity() {
         // Plant Timber
         Log.d(LOG_TAG, "Plant Timber")
         val logFile = File(filesDir, "debug_log.txt")
+        if (::fileLoggingTree.isInitialized) {
+            fileLoggingTree.close()
+        }
         fileLoggingTree = FileLoggingTree(logFile)
         Timber.plant(fileLoggingTree)
 
