@@ -47,7 +47,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val LOG_TAG = "NOAAWeather"
-        const val LOG_FILE = "debug_log"
     }
 
     private lateinit var navController: NavController
