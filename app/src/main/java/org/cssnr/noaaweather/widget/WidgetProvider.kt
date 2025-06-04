@@ -155,7 +155,6 @@ class WidgetProvider : AppWidgetProvider() {
                 // Interval
                 val interval = if (workInterval != "0") workInterval else "Off"
                 Log.d("Widget[onUpdate]", "interval: $interval")
-                Log.i("Widget[onUpdate]", "intervalintervalintervalintervalinterval: $interval")
                 views.setTextViewText(R.id.update_interval, interval)
 
                 ////val formatted = DateFormat.getTimeFormat(context).format(Date())

@@ -8,9 +8,9 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.log.debugLog
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
-import timber.log.Timber
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
@@ -25,13 +25,13 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             Log.d("AppWorker", "station: $station")
             if (station != null) {
                 val result = applicationContext.updateStation(station.stationId)
-                Timber.d("AppWorker: Update Station ${result?.stationId}")
+                applicationContext.debugLog("AppWorker: Update Station ${result?.stationId}")
             } else {
-                Timber.d("AppWorker: No Active Station")
+                applicationContext.debugLog("AppWorker: No Active Station")
             }
         } catch (e: Exception) {
             Log.e("AppWorker", "Exception: $e")
-            Timber.w("AppWorker: Exception: ${e.message}")
+            applicationContext.debugLog("AppWorker: Exception: ${e.message}")
         }
 
         // Update Widget

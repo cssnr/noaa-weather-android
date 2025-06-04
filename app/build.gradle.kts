@@ -74,7 +74,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.glide)
     implementation(libs.okhttp3.integration)
-    implementation(libs.timber)
+    //implementation(libs.timber)
     //noinspection KaptUsageInsteadOfKsp
     kapt(libs.glide.compiler)
     ksp(libs.androidx.room.compiler)

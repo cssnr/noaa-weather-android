@@ -38,12 +38,9 @@ import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
-import org.cssnr.noaaweather.log.FileLoggingTree
 import org.cssnr.noaaweather.widget.WidgetProvider
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
-import timber.log.Timber
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -57,17 +54,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var fileLoggingTree: FileLoggingTree
-
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
         Log.d("SharedPreferences", "OnSharedPreferenceChangeListener: $key")
-        if (key == "enable_debug_logs") {
-            val value = prefs.getBoolean(key, false)
-            Log.i("SharedPreferences", "isLoggingEnabled: $value")
-            fileLoggingTree.isLoggingEnabled = value
-        }
+        //if (key == "enable_debug_logs") {
+        //    val value = prefs.getBoolean(key, false)
+        //    Log.i("SharedPreferences", "isLoggingEnabled: $value")
+        //    fileLoggingTree.isLoggingEnabled = value
+        //}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,12 +145,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Plant Timber
-        Log.d(LOG_TAG, "Plant Timber")
-        val logFile = File(filesDir, "debug_log.txt")
-        fileLoggingTree = FileLoggingTree(logFile)
-        Timber.plant(fileLoggingTree)
-
         // Set Debug Preferences
         Log.d(LOG_TAG, "Set Debug Preferences")
         if (BuildConfig.DEBUG) {
@@ -167,9 +156,6 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        val debugLogs = preferences.getBoolean("enable_debug_logs", false)
-        Log.d(LOG_TAG, "debugLogs: $debugLogs")
-        if (debugLogs) fileLoggingTree.isLoggingEnabled = true
 
         // Set Default Preferences
         Log.d(LOG_TAG, "Set Default Preferences")
@@ -267,29 +253,3 @@ class MainActivity : AppCompatActivity() {
         WidgetProvider().onUpdate(this, appWidgetManager, ids)
     }
 }
-
-fun Context.copyToClipboard(text: String, msg: String? = null) {
-    val clipboard = this.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
-    val clip = ClipData.newPlainText("Text", text)
-    clipboard.setPrimaryClip(clip)
-    Toast.makeText(this, msg ?: "Copied to Clipboard", Toast.LENGTH_SHORT).show()
-}
-
-//fun Context.appendLog(message: String) {
-//    val preferences = this.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)
-//    val enableDebugLogs = preferences.getBoolean("enable_debug_logs", false)
-//    if (!enableDebugLogs) return
-//    val timestamp: String = ZonedDateTime.now().format(DateTimeFormatter.ISO_ZONED_DATE_TIME)
-//    val logMessage = "$timestamp - ${message}\n"
-//    Log.d("appendLog", "logMessage: $logMessage")
-//    val logFile = File(filesDir, "${MainActivity.LOG_FILE}.txt")
-//    Log.d("appendLog", "logFile: $logFile")
-//    logFile.appendText(logMessage)
-//}
-
-//fun Context.readLog(name: String): String {
-//    Log.d(LOG_TAG, "readLog: $name")
-//    val logFile = File(filesDir, "${name}.txt")
-//    Log.d(LOG_TAG, "logFile: $logFile")
-//    return if (logFile.exists()) logFile.readText() else "File Not Found: $logFile"
-//}
