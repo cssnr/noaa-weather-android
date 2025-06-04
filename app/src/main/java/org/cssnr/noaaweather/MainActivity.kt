@@ -1,11 +1,8 @@
 package org.cssnr.noaaweather
 
 import android.appwidget.AppWidgetManager
-import android.content.ClipData
-import android.content.ClipboardManager
 import android.content.ComponentName
 import android.content.Context
-import android.content.Context.CLIPBOARD_SERVICE
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -14,7 +11,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -47,7 +43,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object {
         const val LOG_TAG = "NOAAWeather"
-        const val LOG_FILE = "debug_log"
     }
 
     private lateinit var navController: NavController
