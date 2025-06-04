@@ -1,5 +1,9 @@
 package org.cssnr.noaaweather.ui.settings
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Context.CLIPBOARD_SERVICE
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,7 +16,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_FILE
 import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
-import org.cssnr.noaaweather.copyToClipboard
 import org.cssnr.noaaweather.databinding.FragmentDebugBinding
 import java.io.File
 
@@ -90,24 +93,19 @@ class DebugFragment : Fragment() {
         })
     }
 
-    //override fun onStart() {
-    //    super.onStart()
-    //    Log.d(LOG_TAG, "DebugFragment - onStart")
-    //}
-    //override fun onStop() {
-    //    super.onStop()
-    //    Log.d(LOG_TAG, "DebugFragment - onStop")
-    //}
     override fun onResume() {
         super.onResume()
         Log.d(LOG_TAG, "DebugFragment - onResume")
         logText = logFile.readLines().asReversed().joinToString("\n")
         binding.textView.text = logText
     }
-    //override fun onPause() {
-    //    super.onPause()
-    //    Log.d(LOG_TAG, "DebugFragment - onPause")
-    //}
+
+    fun Context.copyToClipboard(text: String, msg: String? = null) {
+        val clipboard = this.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager
+        val clip = ClipData.newPlainText("Text", text)
+        clipboard.setPrimaryClip(clip)
+        Toast.makeText(this, msg ?: "Copied to Clipboard", Toast.LENGTH_SHORT).show()
+    }
 
     //fun Context.parseLog(name: String, default: String = "No Log Entries."): String {
     //    val logFile = File(filesDir, "${name}.txt")
