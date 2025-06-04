@@ -21,8 +21,8 @@ import org.cssnr.noaaweather.api.WeatherApi
 import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
+import org.cssnr.noaaweather.log.debugLog
 import org.cssnr.noaaweather.ui.stations.add.AddDialogFragment
-import timber.log.Timber
 
 //import androidx.lifecycle.Observer
 //import androidx.lifecycle.ViewModelProvider
@@ -183,7 +183,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     Log.d(LOG_TAG, "current: $current")
 
     if (!response.isSuccessful) {
-        Timber.w("updateStation: Error: ${response.code()} - ${response.message()}")
+        debugLog("updateStation: Error: ${response.code()} - ${response.message()}")
     } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
@@ -191,7 +191,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
             if (current == null) {
                 // TODO: Fix this and return a non-nullable WeatherStation
                 Log.e(LOG_TAG, "TODO: THIS SHOULD NEVER HAPPEN!!!")
-                Timber.e("updateStation: Station Not Found: $stationId")
+                debugLog("updateStation: Station Not Found: $stationId")
                 return null
             }
             val station = responseToStation(current, latest)
@@ -243,7 +243,7 @@ suspend fun Context.updateStations(): List<WeatherStation> {
         }
     }
     Log.i("updateStations", "FINISHED - successful: ${success}/${stations.size}")
-    Timber.d("updateStations: Updated ${success}/${stations.size} Stations")
+    debugLog("updateStations: Updated ${success}/${stations.size} Stations")
     return dao.getAll()
 }
 

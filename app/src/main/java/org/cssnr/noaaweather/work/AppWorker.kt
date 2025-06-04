@@ -8,21 +8,14 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.cssnr.noaaweather.db.StationDatabase
-import org.cssnr.noaaweather.log.FileLoggingTree
+import org.cssnr.noaaweather.log.debugLog
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
-import timber.log.Timber
-import java.io.File
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         Log.d("AppWorker", "START: doWork")
-
-        // Plant Timber
-        val logFile = File(applicationContext.filesDir, "debug_log.txt")
-        val fileLoggingTree = FileLoggingTree(logFile)
-        Timber.plant(fileLoggingTree)
 
         // Update Current Conditions
         Log.d("AppWorker", "Update Current Conditions")
@@ -32,13 +25,13 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             Log.d("AppWorker", "station: $station")
             if (station != null) {
                 val result = applicationContext.updateStation(station.stationId)
-                Timber.d("AppWorker: Update Station ${result?.stationId}")
+                applicationContext.debugLog("AppWorker: Update Station ${result?.stationId}")
             } else {
-                Timber.d("AppWorker: No Active Station")
+                applicationContext.debugLog("AppWorker: No Active Station")
             }
         } catch (e: Exception) {
             Log.e("AppWorker", "Exception: $e")
-            Timber.w("AppWorker: Exception: ${e.message}")
+            applicationContext.debugLog("AppWorker: Exception: ${e.message}")
         }
 
         // Update Widget
@@ -57,7 +50,6 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
         Log.d("AppWorker", "sendBroadcast: $intent")
         applicationContext.sendBroadcast(intent)
 
-        fileLoggingTree.close()
         Log.d("AppWorker", "DONE: doWork")
         return Result.success()
     }

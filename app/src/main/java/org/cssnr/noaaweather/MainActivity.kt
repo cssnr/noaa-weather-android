@@ -38,12 +38,9 @@ import androidx.work.WorkManager
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
-import org.cssnr.noaaweather.log.FileLoggingTree
 import org.cssnr.noaaweather.widget.WidgetProvider
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
-import timber.log.Timber
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -57,17 +54,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
-    private lateinit var fileLoggingTree: FileLoggingTree
-
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
     private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
         Log.d("SharedPreferences", "OnSharedPreferenceChangeListener: $key")
-        if (key == "enable_debug_logs") {
-            val value = prefs.getBoolean(key, false)
-            Log.i("SharedPreferences", "isLoggingEnabled: $value")
-            fileLoggingTree.isLoggingEnabled = value
-        }
+        //if (key == "enable_debug_logs") {
+        //    val value = prefs.getBoolean(key, false)
+        //    Log.i("SharedPreferences", "isLoggingEnabled: $value")
+        //    fileLoggingTree.isLoggingEnabled = value
+        //}
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -150,14 +145,14 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Plant Timber
-        Log.d(LOG_TAG, "Plant Timber")
-        val logFile = File(filesDir, "debug_log.txt")
-        if (::fileLoggingTree.isInitialized) {
-            fileLoggingTree.close()
-        }
-        fileLoggingTree = FileLoggingTree(logFile)
-        Timber.plant(fileLoggingTree)
+        //// Plant Timber
+        //Log.d(LOG_TAG, "Plant Timber")
+        //val logFile = File(filesDir, "debug_log.txt")
+        //if (::fileLoggingTree.isInitialized) {
+        //    fileLoggingTree.close()
+        //}
+        //fileLoggingTree = FileLoggingTree(logFile)
+        //Timber.plant(fileLoggingTree)
 
         // Set Debug Preferences
         Log.d(LOG_TAG, "Set Debug Preferences")
@@ -170,9 +165,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        val debugLogs = preferences.getBoolean("enable_debug_logs", false)
-        Log.d(LOG_TAG, "debugLogs: $debugLogs")
-        if (debugLogs) fileLoggingTree.isLoggingEnabled = true
+        //val debugLogs = preferences.getBoolean("enable_debug_logs", false)
+        //Log.d(LOG_TAG, "debugLogs: $debugLogs")
+        //if (debugLogs) fileLoggingTree.isLoggingEnabled = true
 
         // Set Default Preferences
         Log.d(LOG_TAG, "Set Default Preferences")
