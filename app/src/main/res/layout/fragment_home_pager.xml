@@ -24,7 +24,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/md_refresh_24px"
-        app:backgroundTint="@color/secondary_color"
+        app:backgroundTint="?attr/colorPrimary"
         app:tint="@android:color/white"
         app:fabSize="mini" />
 

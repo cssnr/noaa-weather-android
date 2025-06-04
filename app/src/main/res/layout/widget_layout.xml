@@ -23,8 +23,8 @@
         android:background="?android:selectableItemBackgroundBorderless">
         <ImageButton
             android:id="@+id/refresh_icon"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
             android:layout_marginTop="6dp"
             android:layout_marginEnd="6dp"
             android:layout_gravity="top|end"
@@ -40,13 +40,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="24dp"
         android:gravity="center_vertical"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp">
             <TextView
                 android:id="@+id/station_name"
                 android:layout_width="match_parent"
@@ -60,6 +60,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
             android:baselineAligned="false">
             <LinearLayout
                 android:layout_width="0dp"
@@ -109,30 +110,33 @@
 
     </LinearLayout>
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
         android:layout_gravity="bottom">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
+            android:layout_marginStart="16dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
             android:orientation="horizontal"
             tools:ignore="UseCompoundDrawables">
             <ImageView
                 android:id="@+id/update_interval_icon"
-                android:layout_width="16dp"
-                android:layout_height="16dp"
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginTop="1dp"
                 android:contentDescription="STFU"
                 android:src="@drawable/md_avg_time_24px" />
             <TextView
                 android:id="@+id/update_interval"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="2dp"
                 android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                android:textSize="11sp"
                 android:text="Unknown"
                 tools:text="Unknown" />
         </LinearLayout>
@@ -146,5 +150,5 @@
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:text="--:--"
             tools:text="23:59" />
-    </FrameLayout>
+    </LinearLayout>
 </FrameLayout>

@@ -40,8 +40,9 @@
         android:layout_marginTop="24dp"
         android:layout_gravity="center"
         android:drawablePadding="8dp"
-        app:drawableStartCompat="@drawable/fa_github"
         android:text="More Info on GitHub"
-        android:tag="More Info on GitHub" />
+        android:tag="More Info on GitHub"
+        app:drawableStartCompat="@drawable/fa_github"
+        app:drawableTint="?android:attr/textColorPrimary" />
 
 </LinearLayout>
