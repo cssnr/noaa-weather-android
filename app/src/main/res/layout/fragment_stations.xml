@@ -35,7 +35,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:srcCompat="@drawable/md_add_circle_24px"
-        app:backgroundTint="@color/secondary_color"
+        app:backgroundTint="?attr/colorPrimary"
         app:tint="@android:color/white"
         app:fabSize="mini"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

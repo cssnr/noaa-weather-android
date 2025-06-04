@@ -23,6 +23,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -127,8 +128,9 @@ class MainActivity : AppCompatActivity() {
             Log.d(LOG_TAG, "NAV CONTROLLER - destination: ${destination.label}")
             binding.drawerLayout.closeDrawer(GravityCompat.START)
             when (destination.id) {
-                R.id.nav_item_settings_widget -> {
-                    Log.d(LOG_TAG, "nav_item_settings_widget")
+                R.id.nav_item_settings_widget,
+                R.id.nav_item_settings_debug -> {
+                    Log.d(LOG_TAG, "nav_item_settings_XXX")
                     bottomNav.menu.findItem(R.id.nav_item_settings).isChecked = true
                     //navView.setCheckedItem(R.id.nav_item_settings)
                     val menu = navView.menu
@@ -182,15 +184,24 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(LOG_TAG, "onOptionsItemSelected: $item")
         return when (item.itemId) {
-            R.id.action_support -> {
-                Log.d(LOG_TAG, "ACTION SUPPORT")
+            R.id.option_github -> {
+                Log.d(LOG_TAG, "GITHUB")
                 val url = getString(R.string.github_url)
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 startActivity(intent)
                 true
             }
 
-            else -> super.onOptionsItemSelected(item)
+            R.id.option_developer -> {
+                Log.d(LOG_TAG, "DEVELOPER")
+                val url = getString(R.string.website_url)
+                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                startActivity(intent)
+                true
+            }
+            //else -> super.onOptionsItemSelected(item)
+            else -> NavigationUI.onNavDestinationSelected(item, navController)
+                    || super.onOptionsItemSelected(item)
         }
     }
 

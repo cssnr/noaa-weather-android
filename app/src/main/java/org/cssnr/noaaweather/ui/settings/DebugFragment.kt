@@ -79,7 +79,6 @@ class DebugFragment : Fragment() {
                 .show()
         }
 
-        // Setup refresh listener which triggers new data loading
         binding.swiperefresh.setOnRefreshListener(object : OnRefreshListener {
             override fun onRefresh() {
                 Log.d(LOG_TAG, "setOnRefreshListener: onRefresh")
