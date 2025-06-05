@@ -173,3 +173,4 @@ You can also support other related projects:
 - [Django Files Android App](https://github.com/django-files/android-client)
 - [Zipline Android App](https://github.com/cssnr/zipline-android)
 - [Tibs3DPrints Android App](https://github.com/cssnr/tibs3dprints-android)
+- [Remote Wallpaper Android](https://github.com/cssnr/remote-wallpaper-android)
