@@ -34,6 +34,10 @@ class StationsFragment : Fragment() {
 
     private lateinit var adapter: StationsAdapter
 
+    companion object {
+        const val LOG_TAG = "StationsFragment"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -47,16 +51,16 @@ class StationsFragment : Fragment() {
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(LOG_TAG, "StationsFragment - onViewCreated: ${savedInstanceState?.size()}")
+        Log.d(LOG_TAG, "onViewCreated: ${savedInstanceState?.size()}")
 
-        val appContext = requireContext()
+        val ctx = requireContext()
         //val stationsViewModel = ViewModelProvider(this)[StationsViewModel::class.java]
 
         fun onClick(data: WeatherStation) {
             Log.i(LOG_TAG, "onClick: $data")
             lifecycleScope.launch {
                 if (!data.active) {
-                    val dao = StationDatabase.getInstance(appContext).stationDao()
+                    val dao = StationDatabase.getInstance(ctx).stationDao()
                     Log.d(LOG_TAG, "Activating: ${data.stationId}")
                     val stations = withContext(Dispatchers.IO) {
                         dao.deactivateAllStations()
@@ -67,9 +71,9 @@ class StationsFragment : Fragment() {
                     adapter.updateData(stations)
                 }
 
-                withContext(Dispatchers.IO) { appContext.updateStation(data.stationId) }
+                withContext(Dispatchers.IO) { ctx.updateStation(data.stationId) }
 
-                //val api = WeatherApi(appContext)
+                //val api = WeatherApi(ctx)
                 //val response = api.getLatest(data.stationId)
                 //Log.d(LOG_TAG, "response.isSuccessful: ${response.isSuccessful}")
                 //val latest = response.body()
@@ -82,7 +86,7 @@ class StationsFragment : Fragment() {
             fun callback(station: WeatherStation) {
                 Log.d(LOG_TAG, "callback: ${data.stationId}")
                 lifecycleScope.launch {
-                    val dao = StationDatabase.getInstance(appContext).stationDao()
+                    val dao = StationDatabase.getInstance(ctx).stationDao()
                     Log.i(LOG_TAG, "DELETING: ${data.stationId}")
                     val stations = withContext(Dispatchers.IO) {
                         dao.delete(station)
@@ -96,7 +100,7 @@ class StationsFragment : Fragment() {
                     //stationsViewModel.stationData.value = stations
                 }
             }
-            appContext.deleteConfirmDialog(data, ::callback)
+            ctx.deleteConfirmDialog(data, ::callback)
         }
 
         // Initialize Adapter
@@ -104,7 +108,7 @@ class StationsFragment : Fragment() {
             Log.i(LOG_TAG, "INITIALIZE: StationsAdapter")
             adapter = StationsAdapter(emptyList(), ::onClick, ::onLongClick)
         }
-        binding.stationsList.layoutManager = LinearLayoutManager(appContext)
+        binding.stationsList.layoutManager = LinearLayoutManager(ctx)
         if (binding.stationsList.adapter == null) {
             Log.i(LOG_TAG, "INITIALIZE: stationsList.adapter")
             binding.stationsList.adapter = adapter
@@ -119,7 +123,7 @@ class StationsFragment : Fragment() {
         //stationsViewModel.stationData.observe(requireActivity(), stationObserver)
 
         lifecycleScope.launch {
-            val dao = StationDatabase.getInstance(appContext).stationDao()
+            val dao = StationDatabase.getInstance(ctx).stationDao()
             val stations = withContext(Dispatchers.IO) { dao.getAll() }
             Log.d(LOG_TAG, "stations.size ${stations.size}")
             adapter.updateData(stations)
@@ -132,7 +136,7 @@ class StationsFragment : Fragment() {
             if (stationId != null) {
                 Log.i("setFragmentResultListener", "Added stationId: $stationId")
                 lifecycleScope.launch {
-                    val dao = StationDatabase.getInstance(appContext).stationDao()
+                    val dao = StationDatabase.getInstance(ctx).stationDao()
                     val stations = withContext(Dispatchers.IO) { dao.getAll() }
                     Log.d(LOG_TAG, "stations.size: ${stations.size}")
                     //stationsViewModel.stationData.value = stations
@@ -146,6 +150,14 @@ class StationsFragment : Fragment() {
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //    .setAction("Action", null)
             //    .setAnchorView(R.id.fab).show()
+            val newFragment = AddDialogFragment()
+            newFragment.show(parentFragmentManager, "AddDialogFragment")
+        }
+
+        val addStation = arguments?.getBoolean("add_station", false) == true
+        Log.i(LOG_TAG, "addStation: $addStation")
+        if (addStation) {
+            arguments?.remove("add_station")
             val newFragment = AddDialogFragment()
             newFragment.show(parentFragmentManager, "AddDialogFragment")
         }

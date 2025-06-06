@@ -15,6 +15,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.get
@@ -179,11 +180,32 @@ class MainActivity : AppCompatActivity() {
                 workRequest
             )
         }
+
+        if (!preferences.contains("first_run_shown")) {
+            Log.i(LOG_TAG, "FIRST RUN DETECTED")
+            preferences.edit {
+                putBoolean("first_run_shown", true)
+            }
+            val bundle = bundleOf("add_station" to true)
+            navController.navigate(R.id.nav_item_stations, bundle)
+            //navController.navigate(
+            //    R.id.nav_item_stations, bundle, NavOptions.Builder()
+            //        .setPopUpTo(R.id.nav_item_home, true)
+            //        .build()
+            //)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         Log.d(LOG_TAG, "onOptionsItemSelected: $item")
         return when (item.itemId) {
+            R.id.option_add_station -> {
+                Log.d(LOG_TAG, "ADD STATION")
+                val bundle = bundleOf("add_station" to true)
+                navController.navigate(R.id.nav_item_stations, bundle)
+                true
+            }
+
             R.id.option_github -> {
                 Log.d(LOG_TAG, "GITHUB")
                 val url = getString(R.string.github_url)

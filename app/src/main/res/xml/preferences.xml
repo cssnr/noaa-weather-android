@@ -39,12 +39,6 @@
             android:icon="@drawable/md_battery_profile_24px"
             android:shouldDisableView="true" />
 
-    </PreferenceCategory>
-
-    <PreferenceCategory
-        android:key="widget_settings"
-        android:title="Widget">
-
         <Preference
             android:key="open_widget_settings"
             android:title="Edit Widget Settings"
