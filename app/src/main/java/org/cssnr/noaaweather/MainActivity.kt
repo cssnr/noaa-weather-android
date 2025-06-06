@@ -22,6 +22,7 @@ import androidx.core.view.get
 import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -202,7 +203,14 @@ class MainActivity : AppCompatActivity() {
             R.id.option_add_station -> {
                 Log.d(LOG_TAG, "ADD STATION")
                 val bundle = bundleOf("add_station" to true)
-                navController.navigate(R.id.nav_item_stations, bundle)
+                //navController.navigate(R.id.nav_item_stations, bundle)
+                navController.navigate(
+                    R.id.nav_item_stations,
+                    bundle,
+                    NavOptions.Builder()
+                        .setPopUpTo(navController.currentDestination?.id!!, true)
+                        .build()
+                )
                 true
             }
 
