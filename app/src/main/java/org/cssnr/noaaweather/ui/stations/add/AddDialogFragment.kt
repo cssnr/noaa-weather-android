@@ -14,8 +14,10 @@ import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
@@ -35,9 +37,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
+import org.cssnr.noaaweather.api.WeatherApi.ObservationStationsResponse
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.ui.stations.updateStation
@@ -47,8 +49,13 @@ class AddDialogFragment : DialogFragment() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
+    private var emptyListView: LinearLayout? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var adapter: AddDialogAdapter
+
+    companion object {
+        const val LOG_TAG = "AddDialogFragment"
+    }
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
@@ -84,6 +91,8 @@ class AddDialogFragment : DialogFragment() {
             val dialog = builder.create()
 
             val appContext = requireContext()
+
+            emptyListView = dialog.findViewById<LinearLayout>(R.id.empty_layout)
 
             dialog.setOnShowListener {
                 // Adapter
@@ -138,9 +147,10 @@ class AddDialogFragment : DialogFragment() {
                                         addresses[0].latitude,
                                         addresses[0].longitude
                                     )
-                                    Log.d("Location", "data.features.size: ${data?.features?.size}")
+                                    Log.d(LOG_TAG, "data.features.size: ${data?.features?.size}")
                                     if (data != null) {
                                         withContext(Dispatchers.Main) {
+                                            emptyListView?.visibility = View.GONE
                                             adapter.updateData(data)
                                         }
                                     } else {
@@ -170,11 +180,11 @@ class AddDialogFragment : DialogFragment() {
                     dialog.cancel()
                 }
 
-                // Search Button
-                dialog.findViewById<Button>(R.id.btn_search)?.setOnClickListener {
-                    Log.d(LOG_TAG, "SEARCH")
-                    //dialog.dismiss()
-                }
+                //// Search Button
+                //dialog.findViewById<Button>(R.id.btn_search)?.setOnClickListener {
+                //    Log.d(LOG_TAG, "SEARCH")
+                //    //dialog.dismiss()
+                //}
 
                 // Locate Button
                 fusedLocationClient =
@@ -191,7 +201,7 @@ class AddDialogFragment : DialogFragment() {
     }
 
     private fun getPlaceLocation(place: String, callback: (MutableList<Address>?) -> Unit) {
-        Log.d("getPlaceLocation", "place: $place")
+        Log.d(LOG_TAG, "getPlaceLocation: place: $place")
         searchRunnable?.let { handler.removeCallbacks(it) }
         searchRunnable = Runnable {
             if (place.isNotEmpty()) {
@@ -235,6 +245,7 @@ class AddDialogFragment : DialogFragment() {
                         //val stringData = data.features.map { it.properties.name }
                         //Log.d("Location", "stringData: $stringData")
                         withContext(Dispatchers.Main) {
+                            emptyListView?.visibility = View.GONE
                             adapter.updateData(data)
                         }
                     }
@@ -255,13 +266,13 @@ class AddDialogFragment : DialogFragment() {
 suspend fun Context.getStations(
     latitude: Double,
     longitude: Double
-): WeatherApi.ObservationStationsResponse? {
-    Log.d(LOG_TAG, "getStations: $latitude / $longitude")
+): ObservationStationsResponse? {
+    Log.d("getStations", "getStations: $latitude / $longitude")
     val api = WeatherApi(this)
     val response = api.getStationFromPoint(latitude, longitude)
-    Log.d(LOG_TAG, "response: $response")
+    Log.d("getStations", "response: $response")
     val stationsResponse = response?.body()
-    Log.d(LOG_TAG, "stationsResponse?.features?.size: ${stationsResponse?.features?.size}")
+    Log.d("getStations", "stationsResponse?.features?.size: ${stationsResponse?.features?.size}")
     return stationsResponse
 }
 
@@ -272,21 +283,21 @@ suspend fun Geocoder.getLocation(
     maxResults: Int = 5,
     callback: (addresses: MutableList<Address>?) -> Unit,
 ) {
-    Log.d(LOG_TAG, "getLocation: maxResults: $maxResults - $name")
+    Log.d("getLocation", "getLocation: maxResults: $maxResults - $name")
     if (Build.VERSION.SDK_INT >= 33) {
-        Log.d(LOG_TAG, "SDK_INT >= 33")
+        Log.d("getLocation", "SDK_INT >= 33")
         this.getFromLocationName(name, maxResults, object : Geocoder.GeocodeListener {
             override fun onGeocode(addresses: MutableList<Address>) {
                 callback(addresses)
             }
 
             override fun onError(errorMessage: String?) {
-                Log.e(LOG_TAG, "errorMessage: $errorMessage")
+                Log.e("getLocation", "errorMessage: $errorMessage")
                 callback(null)
             }
         })
     } else {
-        Log.d(LOG_TAG, "DEPRECATION: SDK_INT < 33")
+        Log.d("getLocation", "DEPRECATION: SDK_INT < 33")
         val result = withContext(Dispatchers.IO) {
             this@getLocation.getFromLocationName(name, maxResults)
         }

@@ -9,9 +9,13 @@
         android:title="GitHub"
         app:showAsAction="ifRoom" />
     <item
+        android:id="@+id/option_add_station"
+        android:icon="@drawable/md_settings_24px"
+        android:title="Add Station" />
+    <item
         android:id="@+id/nav_item_settings"
         android:icon="@drawable/md_settings_24px"
-        android:title="Settings" />
+        android:title="Edit Settings" />
     <item
         android:id="@+id/option_developer"
         android:icon="@drawable/md_mobile_code_24px"
