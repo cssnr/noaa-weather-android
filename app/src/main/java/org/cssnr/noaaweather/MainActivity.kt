@@ -204,11 +204,22 @@ class MainActivity : AppCompatActivity() {
                 Log.d(LOG_TAG, "ADD STATION")
                 val bundle = bundleOf("add_station" to true)
                 //navController.navigate(R.id.nav_item_stations, bundle)
+                // TODO: YET ANOTHER GHETTO Navigation Hack...
+                val dest = when (navController.currentDestination?.id!!) {
+                    R.id.nav_item_settings_widget,
+                    R.id.nav_item_settings_debug -> {
+                        Log.d(LOG_TAG, "dest: nav_item_settings")
+                        R.id.nav_item_settings
+                    }
+
+                    else -> navController.currentDestination?.id!!
+                }
+                Log.d(LOG_TAG, "dest: $dest")
                 navController.navigate(
                     R.id.nav_item_stations,
                     bundle,
                     NavOptions.Builder()
-                        .setPopUpTo(navController.currentDestination?.id!!, true)
+                        .setPopUpTo(dest, true)
                         .build()
                 )
                 true
