@@ -22,6 +22,7 @@ import androidx.core.view.get
 import androidx.core.view.size
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -43,10 +44,6 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val LOG_TAG = "NOAAWeather"
-    }
-
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -60,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         //    Log.i("SharedPreferences", "isLoggingEnabled: $value")
         //    fileLoggingTree.isLoggingEnabled = value
         //}
+    }
+
+    companion object {
+        const val LOG_TAG = "NOAAWeather"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -202,7 +203,25 @@ class MainActivity : AppCompatActivity() {
             R.id.option_add_station -> {
                 Log.d(LOG_TAG, "ADD STATION")
                 val bundle = bundleOf("add_station" to true)
-                navController.navigate(R.id.nav_item_stations, bundle)
+                //navController.navigate(R.id.nav_item_stations, bundle)
+                // TODO: YET ANOTHER GHETTO Navigation Hack...
+                val dest = when (navController.currentDestination?.id!!) {
+                    R.id.nav_item_settings_widget,
+                    R.id.nav_item_settings_debug -> {
+                        Log.d(LOG_TAG, "dest: nav_item_settings")
+                        R.id.nav_item_settings
+                    }
+
+                    else -> navController.currentDestination?.id!!
+                }
+                Log.d(LOG_TAG, "dest: $dest")
+                navController.navigate(
+                    R.id.nav_item_stations,
+                    bundle,
+                    NavOptions.Builder()
+                        .setPopUpTo(dest, true)
+                        .build()
+                )
                 true
             }
 
