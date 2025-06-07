@@ -188,7 +188,12 @@ class MainActivity : AppCompatActivity() {
                 putBoolean("first_run_shown", true)
             }
             val bundle = bundleOf("add_station" to true)
-            navController.navigate(R.id.nav_item_stations, bundle)
+            //navController.navigate(R.id.nav_item_stations, bundle)
+            navController.navigate(
+                R.id.nav_item_stations, bundle, NavOptions.Builder()
+                    .setPopUpTo(navController.graph.startDestinationId, true)
+                    .build()
+            )
             //navController.navigate(
             //    R.id.nav_item_stations, bundle, NavOptions.Builder()
             //        .setPopUpTo(R.id.nav_item_home, true)
@@ -216,9 +221,7 @@ class MainActivity : AppCompatActivity() {
                 }
                 Log.d(LOG_TAG, "dest: $dest")
                 navController.navigate(
-                    R.id.nav_item_stations,
-                    bundle,
-                    NavOptions.Builder()
+                    R.id.nav_item_stations, bundle, NavOptions.Builder()
                         .setPopUpTo(dest, true)
                         .build()
                 )
