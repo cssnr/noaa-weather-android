@@ -44,10 +44,6 @@ import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
-    companion object {
-        const val LOG_TAG = "NOAAWeather"
-    }
-
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
@@ -61,6 +57,10 @@ class MainActivity : AppCompatActivity() {
         //    Log.i("SharedPreferences", "isLoggingEnabled: $value")
         //    fileLoggingTree.isLoggingEnabled = value
         //}
+    }
+
+    companion object {
+        const val LOG_TAG = "NOAAWeather"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
