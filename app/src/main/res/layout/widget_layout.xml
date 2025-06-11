@@ -88,6 +88,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:layout_marginEnd="12dp"
                 android:gravity="center_vertical"
                 tools:ignore="UseCompoundDrawables">
                 <ImageView
@@ -110,45 +111,44 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="70dp"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            tools:ignore="UseCompoundDrawables">
-            <ImageView
-                android:id="@+id/update_interval_icon"
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_marginTop="1dp"
-                android:contentDescription="STFU"
-                android:src="@drawable/md_avg_time_24px" />
-            <TextView
-                android:id="@+id/update_interval"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                android:textSize="11sp"
-                android:text="Unknown"
-                tools:text="Unknown" />
-        </LinearLayout>
+        <!--<LinearLayout-->
+        <!--    android:layout_width="0dp"-->
+        <!--    android:layout_height="wrap_content"-->
+        <!--    android:layout_gravity="center"-->
+        <!--    android:layout_weight="1"-->
+        <!--    android:gravity="center_vertical|end"-->
+        <!--    android:orientation="horizontal"-->
+        <!--    tools:ignore="UseCompoundDrawables">-->
+        <!--    <ImageView-->
+        <!--        android:id="@+id/update_interval_icon"-->
+        <!--        android:layout_width="12dp"-->
+        <!--        android:layout_height="12dp"-->
+        <!--        android:layout_marginEnd="8dp"-->
+        <!--        android:contentDescription="STFU"-->
+        <!--        android:src="@drawable/md_timer_24px" />-->
+        <!--    <TextView-->
+        <!--        android:id="@+id/update_interval"-->
+        <!--        android:layout_width="wrap_content"-->
+        <!--        android:layout_height="wrap_content"-->
+        <!--        android:textAppearance="@style/TextAppearance.Material3.BodySmall"-->
+        <!--        android:textSize="11sp"-->
+        <!--        android:text="Unknown"-->
+        <!--        tools:text="Unknown" />-->
+        <!--</LinearLayout>-->
 
         <TextView
             android:id="@+id/update_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="12dp"
+            android:layout_gravity="end"
             android:textAppearance="@style/TextAppearance.Material3.BodySmall"
             android:text="--:--"
-            tools:text="23:59" />
-    </LinearLayout>
+            tools:text="23:59 PM" />
+    </FrameLayout>
 </FrameLayout>
