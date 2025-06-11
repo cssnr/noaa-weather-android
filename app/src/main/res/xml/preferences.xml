@@ -1,5 +1,6 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <PreferenceCategory
         android:key="app_settings"
@@ -13,6 +14,14 @@
             android:entries="@array/temp_unit_entries"
             android:entryValues="@array/temp_unit_values"
             tools:summary="°C" />
+
+        <!--<Preference-->
+        <!--    android:key="manage_notifications"-->
+        <!--    android:title="Manage Notifications"-->
+        <!--    android:summary="Configure Notification Settings"-->
+        <!--    android:icon="@drawable/md_notification_settings_24px"-->
+        <!--    android:enabled="true"-->
+        <!--    tools:enabled="true" />-->
 
         <ListPreference
             android:key="work_interval"
@@ -44,6 +53,24 @@
             android:title="Edit Widget Settings"
             android:summary="Text and Background Color"
             android:icon="@drawable/md_widgets_24px" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="info_settings"
+        android:title="Notifications">
+
+        <SwitchPreferenceCompat
+            android:key="notifications_enabled"
+            android:title="General Channel"
+            android:summary="For Weather Alerts"
+            android:icon="@drawable/md_notifications_24px"
+            android:defaultValue="false" />
+
+        <Preference
+            android:key="default_channel_id_status"
+            android:summary="Alerts Status Text"
+            android:defaultValue="false" />
 
     </PreferenceCategory>
 

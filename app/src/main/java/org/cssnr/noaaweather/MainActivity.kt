@@ -1,5 +1,7 @@
 package org.cssnr.noaaweather
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Context
@@ -181,6 +183,19 @@ class MainActivity : AppCompatActivity() {
                 workRequest
             )
         }
+
+
+        val channelId = "default_channel_id"
+        val name = "Default Channel"
+        val descriptionText = "General Notifications Channel"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val mChannel = NotificationChannel(channelId, name, importance)
+        mChannel.description = descriptionText
+        // Register the channel with the system. You can't change the importance
+        // or other notification behaviors after this.
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(mChannel)
+
 
         if (!preferences.contains("first_run_shown")) {
             Log.i(LOG_TAG, "FIRST RUN DETECTED")

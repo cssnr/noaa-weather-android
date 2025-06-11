@@ -92,9 +92,9 @@ class AddDialogFragment : DialogFragment() {
 
             val appContext = requireContext()
 
-            emptyListView = dialog.findViewById<LinearLayout>(R.id.empty_layout)
-
             dialog.setOnShowListener {
+                emptyListView = dialog.findViewById<LinearLayout>(R.id.empty_layout)
+
                 // Adapter
                 val suggestionsList = dialog.findViewById<RecyclerView>(R.id.suggestions_list)
                 suggestionsList?.layoutManager = LinearLayoutManager(appContext)
