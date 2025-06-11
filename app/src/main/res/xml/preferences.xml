@@ -15,13 +15,6 @@
             android:entryValues="@array/temp_unit_values"
             tools:summary="°C" />
 
-        <SwitchPreferenceCompat
-            android:key="notifications_enabled"
-            android:title="Enable Notifications"
-            android:summary="For Weather Alerts"
-            android:icon="@drawable/md_notifications_24px"
-            android:defaultValue="false" />
-
         <!--<Preference-->
         <!--    android:key="manage_notifications"-->
         <!--    android:title="Manage Notifications"-->
@@ -60,6 +53,24 @@
             android:title="Edit Widget Settings"
             android:summary="Text and Background Color"
             android:icon="@drawable/md_widgets_24px" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="info_settings"
+        android:title="Notifications">
+
+        <SwitchPreferenceCompat
+            android:key="notifications_enabled"
+            android:title="General Channel"
+            android:summary="For Weather Alerts"
+            android:icon="@drawable/md_notifications_24px"
+            android:defaultValue="false" />
+
+        <Preference
+            android:key="default_channel_id_status"
+            android:summary="Alerts Status Text"
+            android:defaultValue="false" />
 
     </PreferenceCategory>
 

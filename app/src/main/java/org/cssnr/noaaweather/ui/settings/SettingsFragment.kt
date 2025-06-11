@@ -53,27 +53,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
 
-    override fun onResume() {
-        Log.d(LOG_TAG, "ON RESUME - checkPerms: $checkPerms")
-        super.onResume()
-        val notificationsEnabled = preferences.getBoolean("notifications_enabled", false)
-        Log.d(LOG_TAG, "notifications_enabled: $notificationsEnabled")
-        if (notificationsEnabled && context?.areNotificationsEnabled() == false) {
-            checkPerms = true
-        }
-        Log.d(LOG_TAG, "checkPerms: $checkPerms")
-
-        if (checkPerms) {
-            checkPerms = false
-            val enableNotifications =
-                findPreference<SwitchPreferenceCompat>("notifications_enabled")
-            enableNotifications?.isChecked = context?.areNotificationsEnabled() == true
-        }
-        //val notificationsEnabled = context?.areNotificationsEnabled() == true
-        //Log.i(LOG_TAG, "notificationsEnabled: $notificationsEnabled")
-        //enableNotifications?.isChecked = notificationsEnabled
-    }
-
     @SuppressLint("BatteryLife")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         Log.d("SettingsFragment", "rootKey: $rootKey")
@@ -87,7 +66,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         tempUnit?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
 
 
-        // Enable Notifications
+        // Notifications - Default Channel - TESTING ONLY
         val requestPermissionLauncher =
             registerForActivityResult(RequestPermission()) { result ->
                 Log.d(LOG_TAG, "result: $result")
@@ -98,13 +77,16 @@ class SettingsFragment : PreferenceFragmentCompat() {
             Log.d(LOG_TAG, "notifications_enabled: $newValue")
             if (newValue as Boolean && !ctx.areNotificationsEnabled()) {
                 checkPerms = true
-                ctx.requestPerms(requestPermissionLauncher, newValue)
+                ctx.requestPerms(requestPermissionLauncher, newValue, "default_channel_id")
                 false
             } else {
                 true
             }
         }
-
+        findPreference<Preference>("default_channel_id_status")?.setOnPreferenceClickListener {
+            ctx.launchNotificationSettings("default_channel_id")
+            false
+        }
         //// Manage Notifications
         //val manageNotifications = findPreference<Preference>("manage_notifications")
         //manageNotifications?.setOnPreferenceClickListener {
@@ -337,6 +319,77 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
         dialog.show()
     }
+
+    override fun onResume() {
+        Log.d(LOG_TAG, "ON RESUME - checkPerms: $checkPerms")
+        super.onResume()
+        val notificationsEnabled = preferences.getBoolean("notifications_enabled", false)
+        Log.d(LOG_TAG, "notifications_enabled: $notificationsEnabled")
+        if (notificationsEnabled && context?.areNotificationsEnabled() == false) {
+            checkPerms = true
+        }
+        Log.d(LOG_TAG, "checkPerms: $checkPerms")
+
+        if (checkPerms) {
+            checkPerms = false
+            val enableNotifications =
+                findPreference<SwitchPreferenceCompat>("notifications_enabled")
+            enableNotifications?.isChecked = context?.areNotificationsEnabled() == true
+        }
+        //val notificationsEnabled = context?.areNotificationsEnabled() == true
+        //Log.i(LOG_TAG, "notificationsEnabled: $notificationsEnabled")
+        //enableNotifications?.isChecked = notificationsEnabled
+        context?.updateNotificationStatus()
+    }
+
+    private fun Context.updateNotificationStatus() {
+        val notificationManager = NotificationManagerCompat.from(this)
+        val areNotificationsEnabled = notificationManager.areNotificationsEnabled()
+        Log.i(LOG_TAG, "areNotificationsEnabled: $areNotificationsEnabled")
+        for (channel in notificationManager.notificationChannels) {
+            Log.d(LOG_TAG, "pref key: ${channel.id}_status")
+            val pref = findPreference<Preference>("${channel.id}_status")
+            Log.d(LOG_TAG, "pref: $pref")
+            if (pref == null) continue
+
+            val alertsEnabled =
+                channel.importance != NotificationManager.IMPORTANCE_NONE && areNotificationsEnabled
+            Log.i(LOG_TAG, "alertsEnabled: $alertsEnabled")
+
+            val playsSound =
+                channel.sound != null && channel.importance >= NotificationManager.IMPORTANCE_DEFAULT
+            Log.i(LOG_TAG, "playsSound: $playsSound")
+
+            val hasVibration =
+                channel.shouldVibrate() && channel.importance >= NotificationManager.IMPORTANCE_DEFAULT
+            Log.i(LOG_TAG, "hasVibration: $hasVibration")
+
+            val isSilent = channel.importance <= NotificationManager.IMPORTANCE_LOW &&
+                    !playsSound &&
+                    !hasVibration
+            Log.i(LOG_TAG, "isSilent: $isSilent")
+
+            val statuses = mutableSetOf<String>()
+            if (!alertsEnabled) {
+                statuses.add("Blocked")
+            } else {
+                if (isSilent) {
+                    statuses.add("Silent")
+                }
+                if (playsSound) {
+                    statuses.add("Sound")
+                }
+                if (hasVibration) {
+                    statuses.add("Vibrate")
+                }
+            }
+            if (statuses.isEmpty()) {
+                statuses.add("No Sound or Vibration")
+            }
+            val result = statuses.joinToString(",")
+            pref.summary = "Status: $result"
+        }
+    }
 }
 
 internal fun Context.launchNotificationSettings(channelId: String = "default_channel_id") {
@@ -359,9 +412,10 @@ internal fun Context.launchNotificationSettings(channelId: String = "default_cha
 fun Context.requestPerms(
     requestPermissionLauncher: ActivityResultLauncher<String>,
     newValue: Boolean,
+    channelId: String = "default_channel_id",
 ) {
     if (newValue == false) {
-        launchNotificationSettings()
+        launchNotificationSettings(channelId)
         return
     }
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -370,12 +424,12 @@ fun Context.requestPerms(
             ContextCompat.checkSelfPermission(this, perm) ==
                     PackageManager.PERMISSION_GRANTED -> {
                 Log.d("requestPerms", "1 - Permission Already Granted")
-                launchNotificationSettings()
+                launchNotificationSettings(channelId)
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(this as Activity, perm) -> {
                 Log.d("requestPerms", "2 - shouldShowRequestPermissionRationale")
-                launchNotificationSettings()
+                launchNotificationSettings(channelId)
             }
 
             else -> {
@@ -385,7 +439,7 @@ fun Context.requestPerms(
         }
     } else {
         Log.d("requestPerms", "4 - PRE TIRAMISU")
-        launchNotificationSettings()
+        launchNotificationSettings(channelId)
     }
 }
 
