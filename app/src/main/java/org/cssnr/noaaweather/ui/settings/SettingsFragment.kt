@@ -65,7 +65,8 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         if (checkPerms) {
             checkPerms = false
-            val enableNotifications = findPreference<SwitchPreferenceCompat>("notifications_enabled")
+            val enableNotifications =
+                findPreference<SwitchPreferenceCompat>("notifications_enabled")
             enableNotifications?.isChecked = context?.areNotificationsEnabled() == true
         }
         //val notificationsEnabled = context?.areNotificationsEnabled() == true
@@ -338,7 +339,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
     }
 }
 
-fun Context.launchNotificationSettings(channelId: String = "default_channel_id") {
+internal fun Context.launchNotificationSettings(channelId: String = "default_channel_id") {
     val notificationManager = NotificationManagerCompat.from(this)
     val globalEnabled = notificationManager.areNotificationsEnabled()
     Log.i("areNotificationsEnabled", "globalEnabled: $globalEnabled")
@@ -373,16 +374,17 @@ fun Context.requestPerms(
             }
 
             ActivityCompat.shouldShowRequestPermissionRationale(this as Activity, perm) -> {
+                Log.d("requestPerms", "2 - shouldShowRequestPermissionRationale")
                 launchNotificationSettings()
             }
 
             else -> {
-                Log.d("requestPerms", "3 - Else: requestPermissionLauncher")
+                Log.d("requestPerms", "3 - requestPermissionLauncher")
                 requestPermissionLauncher.launch(perm)
             }
         }
     } else {
-        Log.i("requestPerms", "4 - PRE API 33, User Managed Only")
+        Log.d("requestPerms", "4 - PRE TIRAMISU")
         launchNotificationSettings()
     }
 }
