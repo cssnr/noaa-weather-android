@@ -5,3 +5,4 @@
 # Build
 **/dist/
 **/node_modules/
+.github/assets/
