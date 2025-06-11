@@ -84,7 +84,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:maxLines="1"
                 android:ellipsize="end"
-                tools:text="org.cssnr.tibs3dprints" />
+                tools:text="org.cssnr.noaaweather" />
             <TextView
                 android:id="@+id/app_name"
                 android:layout_width="wrap_content"

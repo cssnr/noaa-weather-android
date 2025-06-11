@@ -1,9 +1,14 @@
 package org.cssnr.noaaweather.ui.settings
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
@@ -14,13 +19,19 @@ import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.PreferenceManager
 import androidx.preference.SwitchPreferenceCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -38,6 +49,30 @@ import java.util.concurrent.TimeUnit
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    var checkPerms = false
+
+    private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(requireContext()) }
+
+    override fun onResume() {
+        Log.d(LOG_TAG, "ON RESUME - checkPerms: $checkPerms")
+        super.onResume()
+        val notificationsEnabled = preferences.getBoolean("notifications_enabled", false)
+        Log.d(LOG_TAG, "notifications_enabled: $notificationsEnabled")
+        if (notificationsEnabled && context?.areNotificationsEnabled() == false) {
+            checkPerms = true
+        }
+        Log.d(LOG_TAG, "checkPerms: $checkPerms")
+
+        if (checkPerms) {
+            checkPerms = false
+            val enableNotifications = findPreference<SwitchPreferenceCompat>("notifications_enabled")
+            enableNotifications?.isChecked = context?.areNotificationsEnabled() == true
+        }
+        //val notificationsEnabled = context?.areNotificationsEnabled() == true
+        //Log.i(LOG_TAG, "notificationsEnabled: $notificationsEnabled")
+        //enableNotifications?.isChecked = notificationsEnabled
+    }
+
     @SuppressLint("BatteryLife")
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         Log.d("SettingsFragment", "rootKey: $rootKey")
@@ -49,6 +84,38 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val tempUnit = findPreference<ListPreference>("temp_unit")
         Log.d(LOG_TAG, "tempUnit: $tempUnit")
         tempUnit?.summaryProvider = ListPreference.SimpleSummaryProvider.getInstance()
+
+
+        // Enable Notifications
+        val requestPermissionLauncher =
+            registerForActivityResult(RequestPermission()) { result ->
+                Log.d(LOG_TAG, "result: $result")
+            }
+        val enableNotifications = findPreference<SwitchPreferenceCompat>("notifications_enabled")
+        Log.d(LOG_TAG, "enableNotifications: $enableNotifications")
+        enableNotifications?.setOnPreferenceChangeListener { _, newValue ->
+            Log.d(LOG_TAG, "notifications_enabled: $newValue")
+            if (newValue as Boolean && !ctx.areNotificationsEnabled()) {
+                checkPerms = true
+                ctx.requestPerms(requestPermissionLauncher, newValue)
+                false
+            } else {
+                true
+            }
+        }
+
+        //// Manage Notifications
+        //val manageNotifications = findPreference<Preference>("manage_notifications")
+        //manageNotifications?.setOnPreferenceClickListener {
+        //    Log.d(LOG_TAG, "CLICK - manage_notifications")
+        //    val intent = Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+        //        putExtra(Settings.EXTRA_APP_PACKAGE, ctx.packageName)
+        //        putExtra(Settings.EXTRA_CHANNEL_ID, "default_channel_id")
+        //    }
+        //    startActivity(intent)
+        //    false
+        //}
+
 
         // Update Interval
         val workInterval = findPreference<ListPreference>("work_interval")
@@ -268,5 +335,66 @@ class SettingsFragment : PreferenceFragmentCompat() {
             websiteLink.movementMethod = LinkMovementMethod.getInstance()
         }
         dialog.show()
+    }
+}
+
+fun Context.launchNotificationSettings(channelId: String = "default_channel_id") {
+    val notificationManager = NotificationManagerCompat.from(this)
+    val globalEnabled = notificationManager.areNotificationsEnabled()
+    Log.i("areNotificationsEnabled", "globalEnabled: $globalEnabled")
+    val intent = if (globalEnabled) {
+        Intent(Settings.ACTION_CHANNEL_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+            putExtra(Settings.EXTRA_CHANNEL_ID, channelId)
+        }
+    } else {
+        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        }
+    }
+    startActivity(intent)
+}
+
+fun Context.requestPerms(
+    requestPermissionLauncher: ActivityResultLauncher<String>,
+    newValue: Boolean,
+) {
+    if (newValue == false) {
+        launchNotificationSettings()
+        return
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        val perm = Manifest.permission.POST_NOTIFICATIONS
+        when {
+            ContextCompat.checkSelfPermission(this, perm) ==
+                    PackageManager.PERMISSION_GRANTED -> {
+                Log.d("requestPerms", "1 - Permission Already Granted")
+                launchNotificationSettings()
+            }
+
+            ActivityCompat.shouldShowRequestPermissionRationale(this as Activity, perm) -> {
+                launchNotificationSettings()
+            }
+
+            else -> {
+                Log.d("requestPerms", "3 - Else: requestPermissionLauncher")
+                requestPermissionLauncher.launch(perm)
+            }
+        }
+    } else {
+        Log.i("requestPerms", "4 - PRE API 33, User Managed Only")
+        launchNotificationSettings()
+    }
+}
+
+fun Context.areNotificationsEnabled(): Boolean {
+    val notificationManager = NotificationManagerCompat.from(this)
+    return when {
+        notificationManager.areNotificationsEnabled().not() -> false
+        else -> {
+            notificationManager.notificationChannels.firstOrNull { channel ->
+                channel.importance == NotificationManager.IMPORTANCE_NONE
+            } == null
+        }
     }
 }
