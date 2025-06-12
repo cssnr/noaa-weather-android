@@ -29,10 +29,11 @@
             </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
-    <FrameLayout
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/bottom_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -41,22 +42,45 @@
         android:background="?attr/colorBackgroundFloating"
         android:orientation="horizontal">
         <Button
+            style="@style/CustomOutlinedStyle"
+            android:id="@+id/share_logs"
+            android:layout_width="72dp"
+            android:layout_height="wrap_content"
+            android:contentDescription="Share"
+            app:icon="@drawable/md_share_24px"
+            app:iconSize="24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
+        <Button
+            style="@style/CustomOutlinedStyle"
             android:id="@+id/copy_logs"
-            android:layout_width="wrap_content"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
-            android:text="Copy" />
+            android:contentDescription="Copy"
+            app:icon="@drawable/md_content_copy_24px"
+            app:iconSize="24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
         <Button
+            style="@style/CustomOutlinedStyle"
             android:id="@+id/reload_logs"
-            android:layout_width="wrap_content"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:text="Reload" />
+            android:contentDescription="Reload"
+            app:icon="@drawable/md_cached_24px"
+            app:iconSize="24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp" />
         <Button
+            style="@style/CustomOutlinedStyle"
             android:id="@+id/clear_logs"
-            android:layout_width="wrap_content"
+            android:layout_width="72dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:text="Clear"
+            android:contentDescription="Clear"
+            app:icon="@drawable/md_cleaning_services_24px"
+            app:iconSize="24dp"
+            app:iconGravity="textStart"
+            app:iconPadding="0dp"
             app:backgroundTint="@android:color/holo_red_dark" />
-    </FrameLayout>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 </androidx.constraintlayout.widget.ConstraintLayout>
