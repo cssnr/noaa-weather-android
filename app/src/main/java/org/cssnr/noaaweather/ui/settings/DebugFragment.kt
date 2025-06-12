@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Context.CLIPBOARD_SERVICE
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -52,7 +53,19 @@ class DebugFragment : Fragment() {
 
         binding.copyLogs.setOnClickListener {
             Log.d(LOG_TAG, "copyLogs")
-            ctx.copyToClipboard(binding.textView.text.toString(), "Logs Copied")
+            val text = binding.textView.text.toString().trim()
+            if (text.isNotEmpty()) ctx.copyToClipboard(text, "Logs Copied")
+        }
+
+        binding.shareLogs.setOnClickListener {
+            Log.d(LOG_TAG, "shareLogs")
+            val text = binding.textView.text.toString().trim()
+            if (text.isEmpty()) return@setOnClickListener
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT, binding.textView.text)
+            }
+            startActivity(Intent.createChooser(shareIntent, null))
         }
 
         binding.reloadLogs.setOnClickListener {
@@ -65,6 +78,8 @@ class DebugFragment : Fragment() {
 
         binding.clearLogs.setOnClickListener {
             Log.d(LOG_TAG, "clearLogs")
+            val text = binding.textView.text.toString().trim()
+            if (text.isEmpty()) return@setOnClickListener
             MaterialAlertDialogBuilder(ctx, R.style.AlertDialogTheme)
                 .setIcon(R.drawable.md_delete_24px)
                 .setTitle("Confirm")

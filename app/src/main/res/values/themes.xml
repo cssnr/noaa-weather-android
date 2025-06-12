@@ -13,7 +13,7 @@
 
     <style name="CustomMaterialButton" parent="Widget.Material3.Button">
 <!--        <item name="backgroundTint">@color/blue_light</item>-->
-        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textColor">?attr/colorPrimaryFixed</item>
     </style>
 
     <style name="Theme.NOAAWeather.NoActionBar">
@@ -43,6 +43,11 @@
 
 <!--        <item name="android:windowTranslucentNavigation">true</item>-->
 <!--        <item name="android:navigationBarColor">@android:color/transparent</item>-->
+    </style>
+
+    <style name="CustomOutlinedStyle" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="backgroundTint">@color/blue_light</item>
+        <item name="android:textColor">?attr/colorPrimaryFixed</item>
     </style>
 
 </resources>
