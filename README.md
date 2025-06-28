@@ -25,9 +25,7 @@
 - [Support](#Support)
 - [Contributing](#Contributing)
 
-NOAA Weather Android Application.
-
-- Supports Android 8 (API 26) 2017 +
+NOAA Weather Android Application with Widget.
 
 ## Install
 
