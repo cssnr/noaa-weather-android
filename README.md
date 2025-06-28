@@ -36,15 +36,17 @@ NOAA Weather Android Application.
 <a title="Obtainium" href="https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android/">
     <img alt="Obtainium" height="76" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/android/get/obtainium.png"></a>
 
-_Note: Until published on the play store, you may need to allow installation of apps from unknown sources._
-
 <details><summary>📲 Click to View QR Codes 📸</summary>
 
-[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/remote-wallpaper/qr-code-github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather-android/qr-code-github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 
-[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/remote-wallpaper/qr-code-obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android/)
+[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather-android/qr-code-obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android/)
 
 </details>
+
+_Note: Until published on the play store, you may need to allow installation of apps from unknown sources._
+
+- Supports Android 8 (API 26) 2017 +
 
 Downloading and Installing the [apk](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 should take you to the settings area to allow installation if not already enabled.
