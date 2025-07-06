@@ -30,7 +30,6 @@ NOAA Weather Android Application with Widget.
 
 ## Install
 
-
 [![Get on GitHub](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/android/get80/github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 [![Get on Obtainium](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/android/get80/obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android)
 
