@@ -158,12 +158,6 @@ class MainActivity : AppCompatActivity() {
         //    }
         //}
 
-
-        // Set Default Preferences
-        Log.d(LOG_TAG, "Set Default Preferences")
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
-
         // Set Debug Preferences
         Log.d(LOG_TAG, "Set Debug Preferences")
         if (BuildConfig.DEBUG) {
@@ -175,6 +169,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        // Set Default Preferences
+        Log.d(LOG_TAG, "Set Default Preferences")
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
 
         // Initialize Shared Preferences Listener
         Log.d(LOG_TAG, "Initialize Shared Preferences Listener")
