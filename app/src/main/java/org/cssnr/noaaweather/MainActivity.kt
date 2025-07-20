@@ -4,14 +4,12 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,16 +17,16 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
+import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
 import androidx.core.view.size
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
@@ -36,8 +34,6 @@ import androidx.preference.PreferenceManager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.navigation.NavigationView
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
 import org.cssnr.noaaweather.widget.WidgetProvider
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
@@ -47,6 +43,7 @@ import java.util.concurrent.TimeUnit
 class MainActivity : AppCompatActivity() {
 
     private lateinit var navController: NavController
+    private lateinit var navHostFragment: NavHostFragment
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var binding: ActivityMainBinding
 
@@ -67,84 +64,100 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d(LOG_TAG, "MainActivity: onCreate")
-
+        Log.d(LOG_TAG, "onCreate: savedInstanceState: ${savedInstanceState?.size()}")
         enableEdgeToEdge()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setSupportActionBar(binding.appBarMain.toolbar)
 
-        //binding.appBarMain.fab.setOnClickListener { view ->
-        //    Log.d(LOG_TAG, "binding.appBarMain.fab.setOnClickListener")
-        //    //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-        //    //    .setAction("Action", null)
-        //    //    .setAnchorView(R.id.fab).show()
-        //    val newFragment = AddDialogFragment()
-        //    newFragment.show(supportFragmentManager, "AddDialogFragment")
-        //}
-
-        val drawerLayout: DrawerLayout = binding.drawerLayout
-        val navView: NavigationView = binding.navView
-        val navHostFragment =
-            (supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment?)!!
+        // NavHostFragment
+        navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_content_main) as NavHostFragment
         navController = navHostFragment.navController
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.nav_item_home, R.id.nav_item_stations, R.id.nav_item_settings
-            ), drawerLayout
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
 
-        val bottomNav = findViewById<View?>(R.id.bottom_nav) as BottomNavigationView
-        setupWithNavController(bottomNav, navController)
-
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
-            false
-        //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
-
-        val packageInfo = packageManager.getPackageInfo(this.packageName, 0)
-        val versionName = packageInfo.versionName
-        Log.d(LOG_TAG, "versionName: $versionName")
-
-        val headerView = binding.navView.getHeaderView(0)
-        val versionTextView = headerView.findViewById<TextView>(R.id.header_version)
-        val formattedVersion = getString(R.string.version_string, versionName)
-        Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
-        versionTextView.text = formattedVersion
-
-        // The setNavigationItemSelectedListener is optional for manual processing
-        //navView.setNavigationItemSelectedListener { item ->
-        //    Log.d(LOG_TAG, "item: $item")
-        //    when (item.itemId) {
-        //        R.id.nav_home -> navController.navigate(R.id.nav_home)
-        //        R.id.nav_gallery -> navController.navigate(R.id.nav_gallery)
-        //        R.id.nav_slideshow -> navController.navigate(R.id.nav_slideshow)
-        //    }
-        //    binding.drawerLayout.closeDrawer(GravityCompat.START)
-        //    true
+        //// Start Destination
+        //if (savedInstanceState == null) {
+        //    val navGraph = navController.navInflater.inflate(R.navigation.mobile_navigation)
+        //    //val startPreference = preferences.getString("start_destination", null)
+        //    //Log.d("Main[onCreate]", "startPreference: $startPreference")
+        //    val startDestination = R.id.nav_home
+        //    navGraph.setStartDestination(startDestination)
+        //    navController.graph = navGraph
         //}
 
-        // TODO: Ghetto manual fix for selecting items on sub item navigation...
+        // Bottom Navigation
+        val bottomNav = binding.appBarMain.contentMain.bottomNav
+        bottomNav.setupWithNavController(navController)
+
+        // Navigation Drawer
+        binding.navView.setupWithNavController(navController)
+
+        // App Bar Configuration
+        setSupportActionBar(binding.appBarMain.contentMain.toolbar)
+        val topLevelItems =
+            setOf(R.id.nav_item_home, R.id.nav_item_stations, R.id.nav_item_settings)
+        appBarConfiguration = AppBarConfiguration(topLevelItems, binding.drawerLayout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+
+        // Destinations w/ a Parent Item
+        val destinationToBottomNavItem = mapOf(
+            R.id.nav_item_settings_widget to R.id.nav_item_settings,
+            R.id.nav_item_settings_debug to R.id.nav_item_settings,
+        )
+        // Destination w/ No Parent
+        val hiddenDestinations = setOf<Int>(
+            //R.id.nav_item_setup,
+        )
+        // Implement Navigation Hacks Because.......Android?
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            Log.d(LOG_TAG, "NAV CONTROLLER - destination: ${destination.label}")
+            Log.d("addOnDestinationChangedListener", "destination: ${destination.label}")
             binding.drawerLayout.closeDrawer(GravityCompat.START)
-            when (destination.id) {
-                R.id.nav_item_settings_widget,
-                R.id.nav_item_settings_debug -> {
-                    Log.d(LOG_TAG, "nav_item_settings_XXX")
-                    bottomNav.menu.findItem(R.id.nav_item_settings).isChecked = true
-                    //navView.setCheckedItem(R.id.nav_item_settings)
-                    val menu = navView.menu
-                    for (i in 0 until menu.size) {
-                        val item = menu[i]
-                        item.isChecked = item.itemId == R.id.nav_item_settings
-                    }
+
+            val destinationId = destination.id
+
+            if (destinationId in hiddenDestinations) {
+                Log.d("addOnDestinationChangedListener", "Set bottomNav to Hidden Item")
+                bottomNav.menu.findItem(R.id.nav_hidden).isChecked = true
+                return@addOnDestinationChangedListener
+            }
+
+            val matchedItem = destinationToBottomNavItem[destinationId]
+            if (matchedItem != null) {
+                Log.d("addOnDestinationChangedListener", "matched nav item: $matchedItem")
+                bottomNav.menu.findItem(matchedItem).isChecked = true
+                val menu = binding.navView.menu
+                for (i in 0 until menu.size) {
+                    val item = menu[i]
+                    item.isChecked = item.itemId == matchedItem
                 }
             }
         }
+
+        //// Handle Custom Navigation Items
+        //val navLinks = mapOf(
+        //    R.id.nav_item_tiktok to getString(R.string.tiktok_url),
+        //    R.id.nav_itewm_youtube to getString(R.string.youtube_url),
+        //    R.id.nav_item_website to getString(R.string.website_url),
+        //)
+        //binding.navView.setNavigationItemSelectedListener { menuItem ->
+        //    binding.drawerLayout.closeDrawers()
+        //    val path = navLinks[menuItem.itemId]
+        //    if (path != null) {
+        //        Log.d("Drawer", "path: $path")
+        //        val intent = Intent(Intent.ACTION_VIEW, path.toUri())
+        //        startActivity(intent)
+        //        true
+        //    } else {
+        //        val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
+        //        Log.d("Drawer", "handled: $handled")
+        //        handled
+        //    }
+        //}
+
+
+        // Set Default Preferences
+        Log.d(LOG_TAG, "Set Default Preferences")
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
+        PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
 
         // Set Debug Preferences
         Log.d(LOG_TAG, "Set Debug Preferences")
@@ -158,14 +171,35 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Set Default Preferences
-        Log.d(LOG_TAG, "Set Default Preferences")
-        PreferenceManager.setDefaultValues(this, R.xml.preferences, false)
-        PreferenceManager.setDefaultValues(this, R.xml.preferences_widget, false)
-
         // Initialize Shared Preferences Listener
         Log.d(LOG_TAG, "Initialize Shared Preferences Listener")
         preferences.registerOnSharedPreferenceChangeListener(listener)
+
+        // Update Drawer Header
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
+            false
+        //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
+
+        val headerView = binding.navView.getHeaderView(0)
+        ViewCompat.setOnApplyWindowInsetsListener(headerView) { view, insets ->
+            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            view.setPadding(
+                view.paddingLeft,
+                statusBarHeight,
+                view.paddingRight,
+                view.paddingBottom
+            )
+            insets
+        }
+        ViewCompat.requestApplyInsets(headerView)
+
+        val packageInfo = packageManager.getPackageInfo(this.packageName, 0)
+        val versionName = packageInfo.versionName
+        Log.d(LOG_TAG, "versionName: $versionName")
+        val versionTextView = headerView.findViewById<TextView>(R.id.header_version)
+        val formattedVersion = getString(R.string.version_string, versionName)
+        Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
+        versionTextView.text = formattedVersion
 
         // Setup Work Manager
         Log.d(LOG_TAG, "Setup Work Manager")
@@ -184,7 +218,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
 
-
+        // Setup Notifications
         val channelId = "default_channel_id"
         val name = "Default Channel"
         val descriptionText = "General Notifications Channel"
@@ -196,24 +230,16 @@ class MainActivity : AppCompatActivity() {
         val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(mChannel)
 
-
+        // Handle Intent (this is the only thing handled for now)
         if (!preferences.contains("first_run_shown")) {
             Log.i(LOG_TAG, "FIRST RUN DETECTED")
-            preferences.edit {
-                putBoolean("first_run_shown", true)
-            }
+            preferences.edit { putBoolean("first_run_shown", true) }
             val bundle = bundleOf("add_station" to true)
-            //navController.navigate(R.id.nav_item_stations, bundle)
             navController.navigate(
                 R.id.nav_item_stations, bundle, NavOptions.Builder()
                     .setPopUpTo(navController.graph.startDestinationId, true)
                     .build()
             )
-            //navController.navigate(
-            //    R.id.nav_item_stations, bundle, NavOptions.Builder()
-            //        .setPopUpTo(R.id.nav_item_home, true)
-            //        .build()
-            //)
         }
     }
 
@@ -223,23 +249,28 @@ class MainActivity : AppCompatActivity() {
             R.id.option_add_station -> {
                 Log.d(LOG_TAG, "ADD STATION")
                 val bundle = bundleOf("add_station" to true)
-                //navController.navigate(R.id.nav_item_stations, bundle)
-                // TODO: YET ANOTHER GHETTO Navigation Hack...
-                val dest = when (navController.currentDestination?.id!!) {
-                    R.id.nav_item_settings_widget,
-                    R.id.nav_item_settings_debug -> {
-                        Log.d(LOG_TAG, "dest: nav_item_settings")
-                        R.id.nav_item_settings
-                    }
-
-                    else -> navController.currentDestination?.id!!
-                }
-                Log.d(LOG_TAG, "dest: $dest")
                 navController.navigate(
                     R.id.nav_item_stations, bundle, NavOptions.Builder()
-                        .setPopUpTo(dest, true)
                         .build()
                 )
+
+                //navController.navigate(R.id.nav_item_stations, bundle)
+                // TODO: YET ANOTHER GHETTO Navigation Hack...
+                //val dest = when (navController.currentDestination?.id!!) {
+                //    R.id.nav_item_settings_widget,
+                //    R.id.nav_item_settings_debug -> {
+                //        Log.d(LOG_TAG, "dest: nav_item_settings")
+                //        R.id.nav_item_settings
+                //    }
+                //
+                //    else -> navController.currentDestination?.id!!
+                //}
+                //Log.d(LOG_TAG, "dest: $dest")
+                //navController.navigate(
+                //    R.id.nav_item_stations, bundle, NavOptions.Builder()
+                //        .setPopUpTo(dest, true)
+                //        .build()
+                //)
                 true
             }
 
@@ -287,34 +318,22 @@ class MainActivity : AppCompatActivity() {
     //}
 
     //override fun onPause() {
-    //    super.onPause()
     //    Log.d(LOG_TAG, "MainActivity - onPause")
+    //    super.onPause()
     //}
 
     override fun onStop() {
-        super.onStop()
         Log.d(LOG_TAG, "MainActivity - onStop")
-        this.updateWidget()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d(LOG_TAG, "ON DESTROY")
-        preferences.unregisterOnSharedPreferenceChangeListener(listener)
-    }
-
-    fun Context.updateWidget() {
-        Log.d("updateWidget", "Context.updateWidget")
-
-        //val appWidgetManager = AppWidgetManager.getInstance(this)
-        //val componentName = ComponentName(this, WidgetProvider::class.java)
-        //val ids = appWidgetManager.getAppWidgetIds(componentName)
-        //appWidgetManager.notifyAppWidgetViewDataChanged(ids, R.id.widget_list_view)
-        //WidgetProvider().onUpdate(this, appWidgetManager, ids)
-
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val componentName = ComponentName(this, WidgetProvider::class.java)
         val ids = appWidgetManager.getAppWidgetIds(componentName)
         WidgetProvider().onUpdate(this, appWidgetManager, ids)
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        Log.d(LOG_TAG, "ON DESTROY")
+        preferences.unregisterOnSharedPreferenceChangeListener(listener)
+        super.onDestroy()
     }
 }

@@ -17,5 +17,9 @@
             android:id="@+id/nav_item_settings"
             android:icon="@drawable/md_settings_24px"
             android:title="@string/settings" />
+
+        <item
+            android:id="@+id/nav_hidden"
+            android:visible="false" />
     </group>
 </menu>
