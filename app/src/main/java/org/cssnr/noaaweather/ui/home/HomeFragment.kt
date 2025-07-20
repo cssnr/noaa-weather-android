@@ -14,12 +14,13 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomePagerBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.ui.stations.updateStations
 import java.util.Locale
+
+const val LOG_TAG = "Home"
 
 class HomeFragment : Fragment() {
 

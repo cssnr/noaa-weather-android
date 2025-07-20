@@ -22,6 +22,7 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.get
 import androidx.core.view.size
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
@@ -34,7 +35,11 @@ import androidx.preference.PreferenceManager
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
+import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.widget.WidgetProvider
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
@@ -231,15 +236,40 @@ class MainActivity : AppCompatActivity() {
         notificationManager.createNotificationChannel(mChannel)
 
         // Handle Intent (this is the only thing handled for now)
-        if (!preferences.contains("first_run_shown")) {
-            Log.i(LOG_TAG, "FIRST RUN DETECTED")
-            preferences.edit { putBoolean("first_run_shown", true) }
-            val bundle = bundleOf("add_station" to true)
-            navController.navigate(
-                R.id.nav_item_stations, bundle, NavOptions.Builder()
-                    .setPopUpTo(navController.graph.startDestinationId, true)
-                    .build()
-            )
+        //if (!preferences.contains("first_run_shown")) {
+        //    Log.i(LOG_TAG, "FIRST RUN DETECTED")
+        //    preferences.edit { putBoolean("first_run_shown", true) }
+        //    val bundle = bundleOf("add_station" to true)
+        //    navController.navigate(
+        //        R.id.nav_item_stations, bundle, NavOptions.Builder()
+        //            .build()
+        //    )
+        //}
+        Log.d(LOG_TAG, "MainActivity: savedInstanceState: $savedInstanceState")
+        if (savedInstanceState == null) {
+            Log.d(LOG_TAG, "MainActivity: lifecycleScope.launch")
+            lifecycleScope.launch {
+                val dao = StationDatabase.Companion.getInstance(applicationContext).stationDao()
+                val station = withContext(Dispatchers.IO) { dao.getActive() }
+                Log.d(LOG_TAG, "MainActivity: station: $station")
+                if (station == null) {
+                    //navController.navigate(R.id.nav_item_stations, bundleOf("add_station" to true))
+
+                    //val bundle = bundleOf("add_station" to true)
+                    //navController.navigate(
+                    //    R.id.nav_item_stations, bundle, NavOptions.Builder()
+                    //        .build()
+                    //)
+
+                    Log.i(LOG_TAG, "navController.previousBackStackEntry: add_station: true")
+                    //navController.currentBackStackEntry?.savedStateHandle?.set("add_station", true)
+                    navController.previousBackStackEntry?.savedStateHandle?.set("add_station", true)
+
+                    //binding.appBarMain.contentMain.bottomNav.selectedItemId = R.id.nav_item_stations
+                    val menuItem = binding.navView.menu.findItem(R.id.nav_item_stations)
+                    NavigationUI.onNavDestinationSelected(menuItem, navController)
+                }
+            }
         }
     }
 
@@ -251,6 +281,7 @@ class MainActivity : AppCompatActivity() {
                 val bundle = bundleOf("add_station" to true)
                 navController.navigate(
                     R.id.nav_item_stations, bundle, NavOptions.Builder()
+                        .setPopUpTo(navController.graph.startDestinationId, false)
                         .build()
                 )
 
@@ -289,9 +320,16 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
                 true
             }
-            //else -> super.onOptionsItemSelected(item)
-            else -> NavigationUI.onNavDestinationSelected(item, navController)
-                    || super.onOptionsItemSelected(item)
+
+            else -> {
+                // TODO: Title is null on Menu and not destinations, so this avoids warnings...
+                if (item.title != null) {
+                    NavigationUI.onNavDestinationSelected(item, navController) ||
+                            super.onOptionsItemSelected(item)
+                } else {
+                    super.onOptionsItemSelected(item)
+                }
+            }
         }
     }
 

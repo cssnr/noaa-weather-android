@@ -45,6 +45,8 @@ import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.ui.stations.updateStation
 import java.util.Locale
 
+const val LOG_TAG = "AddDialog"
+
 class AddDialogFragment : DialogFragment() {
 
     private val handler = Handler(Looper.getMainLooper())
@@ -52,10 +54,6 @@ class AddDialogFragment : DialogFragment() {
     private var emptyListView: LinearLayout? = null
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var adapter: AddDialogAdapter
-
-    companion object {
-        const val LOG_TAG = "AddDialogFragment"
-    }
 
     private val locationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
