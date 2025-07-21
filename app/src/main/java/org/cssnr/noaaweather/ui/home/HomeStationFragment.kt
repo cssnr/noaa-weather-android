@@ -151,6 +151,8 @@ interface UpdatableFragment {
 }
 
 fun formatDate(dateString: String?): String {
+    Log.d(LOG_TAG, "formatDate: \"$dateString\"")
+    if (dateString.isNullOrEmpty()) return ""
     val zonedDateTime = ZonedDateTime.parse(dateString)
     val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
     return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).format(formatter)

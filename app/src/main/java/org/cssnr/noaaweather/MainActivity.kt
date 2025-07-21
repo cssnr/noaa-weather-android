@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
@@ -179,10 +180,13 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "Initialize Shared Preferences Listener")
         preferences.registerOnSharedPreferenceChangeListener(listener)
 
-        // Update Drawer Header
+        // Update UI
         WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
             false
         //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
+
+        // NOTE: Testing hard coded bottom nav color and navigation bar color...
+        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.bottom_nav_color))
 
         val headerView = binding.navView.getHeaderView(0)
         ViewCompat.setOnApplyWindowInsetsListener(headerView) { view, insets ->
