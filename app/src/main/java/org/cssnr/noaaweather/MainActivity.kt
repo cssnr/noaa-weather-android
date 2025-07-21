@@ -186,7 +186,7 @@ class MainActivity : AppCompatActivity() {
         //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
 
         // NOTE: Testing hard coded bottom nav color and navigation bar color...
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.bottom_nav_color))
+        window.navigationBarColor = ContextCompat.getColor(this, R.color.bottom_nav_color)
 
         val headerView = binding.navView.getHeaderView(0)
         ViewCompat.setOnApplyWindowInsetsListener(headerView) { view, insets ->
@@ -274,6 +274,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        //// Only Handel Intent Once Here after App Start
+        //if (savedInstanceState?.getBoolean("intentHandled") != true) {
+        //    Log.i(LOG_TAG, "TRIGGER NEW INTENT FROM ONCREATE")
+        //    onNewIntent(intent)
+        //}
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -347,6 +353,19 @@ class MainActivity : AppCompatActivity() {
         //val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    //override fun onNewIntent(intent: Intent) {
+    //    super.onNewIntent(intent)
+    //    Log.d("onNewIntent", "intent: $intent")
+    //    val data = intent.data
+    //    val action = intent.action
+    //    Log.d("onNewIntent", "${action}: $data")
+    //}
+    //
+    //override fun onSaveInstanceState(outState: Bundle) {
+    //    super.onSaveInstanceState(outState)
+    //    outState.putBoolean("intentHandled", true)
+    //}
 
     //override fun onStart() {
     //    super.onStart()

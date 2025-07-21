@@ -125,9 +125,9 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
-        super.onPause()
         homeViewModel.position.value = binding.pager.currentItem
         Log.i(LOG_TAG, "onPause: position: ${homeViewModel.position.value}")
+        super.onPause()
     }
 
     override fun onDestroyView() {
