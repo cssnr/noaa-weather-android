@@ -20,6 +20,7 @@
 - [Features](#Features)
   - [Planned](#Planned)
   - [Known Issues](#Known-Issues)
+- [Screenshots](#Screenshots)
 - [Development](#Development)
   - [Android Studio](#Android-Studio)
   - [Command Line](#Command-Line)
@@ -27,6 +28,10 @@
 - [Contributing](#Contributing)
 
 NOAA Weather Android Application with Widget.
+
+Add multiple stations via search or GPS location.
+Select primary station to show on widget and startup.
+Custom update interval and notification settings.
 
 ## Install
 
@@ -84,7 +89,22 @@ For more information, see [Release through a website](https://developer.android.
 
 - [Open an Issue](https://github.com/cssnr/noaa-weather-android/issues)
 
-# Development
+## Screenshots
+
+<a title="Screenshot" href="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/1.jpg">
+    <img alt="Screenshot" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/1.jpg"></a>
+<a title="Screenshot" href="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/2.jpg">
+    <img alt="Screenshot" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/2.jpg"></a>
+<a title="Screenshot" href="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/3.jpg">
+    <img alt="Screenshot" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/3.jpg"></a>
+<a title="Screenshot" href="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/4.jpg">
+    <img alt="Screenshot" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/4.jpg"></a>
+<a title="Screenshot" href="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/5.jpg">
+    <img alt="Screenshot" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/5.jpg"></a>
+<a title="Screenshot" href="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/6.jpg">
+    <img alt="Screenshot" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/screenshots/6.jpg"></a>
+
+## Development
 
 This section briefly covers running and building in [Android Studio](#Android-Studio) and the [Command Line](#Command-Line).
 
@@ -152,7 +172,7 @@ _Note: you may have to uninstall before installing due to different certificate 
 
 For more details, see the [ADB Documentation](https://developer.android.com/tools/adb#move).
 
-# Support
+## Support
 
 For general help or to request a feature, see:
 
