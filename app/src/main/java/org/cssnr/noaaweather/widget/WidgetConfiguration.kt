@@ -11,12 +11,15 @@ import android.widget.SeekBar
 import android.widget.TextView
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 
 class WidgetConfiguration : Activity() {
 
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+
+    companion object {
+        const val LOG_TAG = "WidgetConfiguration"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

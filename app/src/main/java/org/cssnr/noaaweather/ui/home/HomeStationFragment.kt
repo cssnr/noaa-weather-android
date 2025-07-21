@@ -11,7 +11,6 @@ import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
-import org.cssnr.noaaweather.MainActivity.Companion.LOG_TAG
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomeBinding
 import org.cssnr.noaaweather.db.WeatherStation
@@ -152,6 +151,8 @@ interface UpdatableFragment {
 }
 
 fun formatDate(dateString: String?): String {
+    Log.d(LOG_TAG, "formatDate: \"$dateString\"")
+    if (dateString.isNullOrEmpty()) return ""
     val zonedDateTime = ZonedDateTime.parse(dateString)
     val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM)
     return zonedDateTime.withZoneSameInstant(ZoneId.systemDefault()).format(formatter)
