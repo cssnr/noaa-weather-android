@@ -128,12 +128,12 @@ class StationsFragment : Fragment() {
         //stationsViewModel.stationData.observe(requireActivity(), stationObserver)
 
         lifecycleScope.launch {
-            savedInstanceState?.size()?.let { if (it > 0) return@launch }
             val dao = StationDatabase.getInstance(ctx).stationDao()
             val stations = withContext(Dispatchers.IO) { dao.getAll() }
             Log.d(LOG_TAG, "stations.size ${stations.size}")
             adapter.updateData(stations)
             //stationsViewModel.stationData.value = stations
+            savedInstanceState?.size()?.let { if (it > 0) return@launch }
             if (stations.isEmpty()) {
                 if (!addDialogFragment.isAdded) {
                     Log.i(LOG_TAG, "No Stations Found - Showing Add Dialog Fragment...")
