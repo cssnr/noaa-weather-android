@@ -103,6 +103,31 @@
             tools:ignore="UseAppTint" />
     </FrameLayout>
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_gravity="bottom"
+        android:orientation="horizontal"
+        tools:ignore="UseCompoundDrawables">
+        <ImageView
+            android:id="@+id/update_interval_icon"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginTop="1dp"
+            android:contentDescription="STFU"
+            android:src="@drawable/md_avg_time_24px" />
+        <TextView
+            android:id="@+id/update_interval"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="2dp"
+            android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+            android:textSize="11sp"
+            android:text="Off"
+            tools:text="Off" />
+    </LinearLayout>
+
     <TextView
         android:id="@+id/update_time"
         android:layout_width="wrap_content"
