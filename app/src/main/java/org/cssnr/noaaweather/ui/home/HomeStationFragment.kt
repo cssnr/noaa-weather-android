@@ -34,6 +34,11 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
         return binding.root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val station = if (Build.VERSION.SDK_INT >= 33) {
             arguments?.getParcelable("station", WeatherStation::class.java)
@@ -102,11 +107,6 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
         //    binding.stationHeading.visibility = View.VISIBLE
         //    binding.stationMessage.text = station.rawMessage
         //}
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     private fun openLink(station: WeatherStation, tag: String?) {

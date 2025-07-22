@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -13,14 +15,13 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.get
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
@@ -138,26 +139,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //// Handle Custom Navigation Items
-        //val navLinks = mapOf(
-        //    R.id.nav_item_tiktok to getString(R.string.tiktok_url),
-        //    R.id.nav_itewm_youtube to getString(R.string.youtube_url),
-        //    R.id.nav_item_website to getString(R.string.website_url),
-        //)
-        //binding.navView.setNavigationItemSelectedListener { menuItem ->
-        //    binding.drawerLayout.closeDrawers()
-        //    val path = navLinks[menuItem.itemId]
-        //    if (path != null) {
-        //        Log.d("Drawer", "path: $path")
-        //        val intent = Intent(Intent.ACTION_VIEW, path.toUri())
-        //        startActivity(intent)
-        //        true
-        //    } else {
-        //        val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
-        //        Log.d("Drawer", "handled: $handled")
-        //        handled
-        //    }
-        //}
+        // Handle Custom Navigation Items
+        val navLinks = mapOf(
+            R.id.nav_item_github to getString(R.string.github_url),
+            R.id.nav_itewm_website to getString(R.string.website_url),
+        )
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            binding.drawerLayout.closeDrawers()
+            val path = navLinks[menuItem.itemId]
+            if (path != null) {
+                Log.d("Drawer", "path: $path")
+                val intent = Intent(Intent.ACTION_VIEW, path.toUri())
+                startActivity(intent)
+                true
+            } else {
+                val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
+                Log.d("Drawer", "handled: $handled")
+                handled
+            }
+        }
 
         // Set Debug Preferences
         Log.d(LOG_TAG, "Set Debug Preferences")
@@ -180,27 +180,29 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "Initialize Shared Preferences Listener")
         preferences.registerOnSharedPreferenceChangeListener(listener)
 
-        // Update UI
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
-            false
-        //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
+        // Update Status Bar
+        window.statusBarColor = Color.TRANSPARENT
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
-        // NOTE: Testing hard coded bottom nav color and navigation bar color...
-        window.setNavigationBarColor(ContextCompat.getColor(this, R.color.bottom_nav_color))
+        // Update Navigation Bar
+        window.navigationBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.setNavigationBarContrastEnforced(false)
+        }
 
+        // Set Nav Header Top Padding
         val headerView = binding.navView.getHeaderView(0)
         ViewCompat.setOnApplyWindowInsetsListener(headerView) { view, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            view.setPadding(
-                view.paddingLeft,
-                statusBarHeight,
-                view.paddingRight,
-                view.paddingBottom
-            )
+            val paddingTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            if (paddingTop > 0) {
+                Log.d("ViewCompat", "paddingTop: $paddingTop")
+                view.setPadding(view.paddingLeft, paddingTop, view.paddingRight, view.paddingBottom)
+            }
             insets
         }
         ViewCompat.requestApplyInsets(headerView)
 
+        // Update Header Text
         val packageInfo = packageManager.getPackageInfo(this.packageName, 0)
         val versionName = packageInfo.versionName
         Log.d(LOG_TAG, "versionName: $versionName")
@@ -209,8 +211,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
         versionTextView.text = formattedVersion
 
-        // Setup Work Manager
-        Log.d(LOG_TAG, "Setup Work Manager")
+        // Initialize Work Manager
+        Log.d(LOG_TAG, "Initialize Work Manager")
         val workInterval = preferences.getString("work_interval", null) ?: "60"
         Log.d(LOG_TAG, "workInterval: $workInterval")
         if (workInterval != "0") {
@@ -274,6 +276,12 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+
+        //// Only Handel Intent Once Here after App Start
+        //if (savedInstanceState?.getBoolean("intentHandled") != true) {
+        //    Log.i(LOG_TAG, "TRIGGER NEW INTENT FROM ONCREATE")
+        //    onNewIntent(intent)
+        //}
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -287,38 +295,12 @@ class MainActivity : AppCompatActivity() {
                         .setPopUpTo(navController.graph.startDestinationId, false)
                         .build()
                 )
-
-                //navController.navigate(R.id.nav_item_stations, bundle)
-                // TODO: YET ANOTHER GHETTO Navigation Hack...
-                //val dest = when (navController.currentDestination?.id!!) {
-                //    R.id.nav_item_settings_widget,
-                //    R.id.nav_item_settings_debug -> {
-                //        Log.d(LOG_TAG, "dest: nav_item_settings")
-                //        R.id.nav_item_settings
-                //    }
-                //
-                //    else -> navController.currentDestination?.id!!
-                //}
-                //Log.d(LOG_TAG, "dest: $dest")
-                //navController.navigate(
-                //    R.id.nav_item_stations, bundle, NavOptions.Builder()
-                //        .setPopUpTo(dest, true)
-                //        .build()
-                //)
                 true
             }
 
             R.id.option_github -> {
                 Log.d(LOG_TAG, "GITHUB")
                 val url = getString(R.string.github_url)
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                startActivity(intent)
-                true
-            }
-
-            R.id.option_developer -> {
-                Log.d(LOG_TAG, "DEVELOPER")
-                val url = getString(R.string.website_url)
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 startActivity(intent)
                 true
@@ -347,6 +329,19 @@ class MainActivity : AppCompatActivity() {
         //val navController = findNavController(R.id.nav_host_fragment_content_main)
         return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
+
+    //override fun onNewIntent(intent: Intent) {
+    //    super.onNewIntent(intent)
+    //    Log.d("onNewIntent", "intent: $intent")
+    //    val data = intent.data
+    //    val action = intent.action
+    //    Log.d("onNewIntent", "${action}: $data")
+    //}
+    //
+    //override fun onSaveInstanceState(outState: Bundle) {
+    //    super.onSaveInstanceState(outState)
+    //    outState.putBoolean("intentHandled", true)
+    //}
 
     //override fun onStart() {
     //    super.onStart()

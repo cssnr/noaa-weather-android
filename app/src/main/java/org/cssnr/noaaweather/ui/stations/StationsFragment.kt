@@ -47,6 +47,12 @@ class StationsFragment : Fragment() {
         return root
     }
 
+    override fun onDestroyView() {
+        Log.d(LOG_TAG, "StationsFragment - onDestroyView")
+        super.onDestroyView()
+        _binding = null
+    }
+
     @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -122,6 +128,7 @@ class StationsFragment : Fragment() {
         //stationsViewModel.stationData.observe(requireActivity(), stationObserver)
 
         lifecycleScope.launch {
+            savedInstanceState?.size()?.let { if (it > 0) return@launch }
             val dao = StationDatabase.getInstance(ctx).stationDao()
             val stations = withContext(Dispatchers.IO) { dao.getAll() }
             Log.d(LOG_TAG, "stations.size ${stations.size}")
@@ -176,10 +183,9 @@ class StationsFragment : Fragment() {
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d(LOG_TAG, "StationsFragment - onDestroyView")
-        _binding = null
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("intentHandled", true)
     }
 }
 

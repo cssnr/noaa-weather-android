@@ -7,13 +7,11 @@
         <item name="colorPrimaryInverse">@color/blue_light</item>
     </style>
 
-    <style name="Theme.NOAAWeather.White" parent="Theme.NOAAWeather">
-        <item name="android:textColor">@android:color/white</item>
-    </style>
-
     <style name="CustomMaterialButton" parent="Widget.Material3.Button">
-<!--        <item name="backgroundTint">@color/blue_light</item>-->
+        <!--<item name="backgroundTint">@color/blue_light</item>-->
         <item name="android:textColor">?attr/colorPrimaryFixed</item>
+        <!--<item name="android:drawableTint">?attr/colorPrimaryFixed</item>-->
+        <!--<item name="iconTint">?attr/colorPrimaryFixed</item>-->
     </style>
 
     <style name="Theme.NOAAWeather.NoActionBar">
@@ -48,6 +46,7 @@
     <style name="CustomOutlinedStyle" parent="Widget.Material3.Button.OutlinedButton">
         <item name="backgroundTint">@color/blue_light</item>
         <item name="android:textColor">?attr/colorPrimaryFixed</item>
+        <item name="iconTint">?attr/colorPrimaryFixed</item>
     </style>
 
 </resources>
