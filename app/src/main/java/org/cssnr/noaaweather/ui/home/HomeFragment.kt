@@ -41,6 +41,11 @@ class HomeFragment : Fragment() {
         return root
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.d(LOG_TAG, "HomeFragment - onViewCreated: ${savedInstanceState?.size()}")
@@ -128,11 +133,6 @@ class HomeFragment : Fragment() {
         homeViewModel.position.value = binding.pager.currentItem
         Log.i(LOG_TAG, "onPause: position: ${homeViewModel.position.value}")
         super.onPause()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
 
