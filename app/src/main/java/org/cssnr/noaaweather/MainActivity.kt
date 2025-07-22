@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -13,14 +15,13 @@ import android.view.MenuItem
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.get
 import androidx.core.view.size
 import androidx.lifecycle.lifecycleScope
@@ -180,27 +181,29 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "Initialize Shared Preferences Listener")
         preferences.registerOnSharedPreferenceChangeListener(listener)
 
-        // Update UI
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
-            false
-        //drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT)
+        // Update Status Bar
+        window.statusBarColor = Color.TRANSPARENT
+        WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
-        // NOTE: Testing hard coded bottom nav color and navigation bar color...
-        window.navigationBarColor = ContextCompat.getColor(this, R.color.bottom_nav_color)
+        // Update Navigation Bar
+        window.navigationBarColor = Color.TRANSPARENT
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            window.setNavigationBarContrastEnforced(false)
+        }
 
+        // Set Nav Header Top Padding
         val headerView = binding.navView.getHeaderView(0)
         ViewCompat.setOnApplyWindowInsetsListener(headerView) { view, insets ->
-            val statusBarHeight = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            view.setPadding(
-                view.paddingLeft,
-                statusBarHeight,
-                view.paddingRight,
-                view.paddingBottom
-            )
+            val paddingTop = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            if (paddingTop > 0) {
+                Log.d("ViewCompat", "paddingTop: $paddingTop")
+                view.setPadding(view.paddingLeft, paddingTop, view.paddingRight, view.paddingBottom)
+            }
             insets
         }
         ViewCompat.requestApplyInsets(headerView)
 
+        // Update Header Text
         val packageInfo = packageManager.getPackageInfo(this.packageName, 0)
         val versionName = packageInfo.versionName
         Log.d(LOG_TAG, "versionName: $versionName")
@@ -209,8 +212,8 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
         versionTextView.text = formattedVersion
 
-        // Setup Work Manager
-        Log.d(LOG_TAG, "Setup Work Manager")
+        // Initialize Work Manager
+        Log.d(LOG_TAG, "Initialize Work Manager")
         val workInterval = preferences.getString("work_interval", null) ?: "60"
         Log.d(LOG_TAG, "workInterval: $workInterval")
         if (workInterval != "0") {

@@ -46,6 +46,7 @@
     <style name="CustomOutlinedStyle" parent="Widget.Material3.Button.OutlinedButton">
         <item name="backgroundTint">@color/blue_light</item>
         <item name="android:textColor">?attr/colorPrimaryFixed</item>
+        <item name="iconTint">?attr/colorPrimaryFixed</item>
     </style>
 
 </resources>
