@@ -139,26 +139,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        //// Handle Custom Navigation Items
-        //val navLinks = mapOf(
-        //    R.id.nav_item_tiktok to getString(R.string.tiktok_url),
-        //    R.id.nav_itewm_youtube to getString(R.string.youtube_url),
-        //    R.id.nav_item_website to getString(R.string.website_url),
-        //)
-        //binding.navView.setNavigationItemSelectedListener { menuItem ->
-        //    binding.drawerLayout.closeDrawers()
-        //    val path = navLinks[menuItem.itemId]
-        //    if (path != null) {
-        //        Log.d("Drawer", "path: $path")
-        //        val intent = Intent(Intent.ACTION_VIEW, path.toUri())
-        //        startActivity(intent)
-        //        true
-        //    } else {
-        //        val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
-        //        Log.d("Drawer", "handled: $handled")
-        //        handled
-        //    }
-        //}
+        // Handle Custom Navigation Items
+        val navLinks = mapOf(
+            R.id.nav_item_github to getString(R.string.github_url),
+            R.id.nav_itewm_website to getString(R.string.website_url),
+        )
+        binding.navView.setNavigationItemSelectedListener { menuItem ->
+            binding.drawerLayout.closeDrawers()
+            val path = navLinks[menuItem.itemId]
+            if (path != null) {
+                Log.d("Drawer", "path: $path")
+                val intent = Intent(Intent.ACTION_VIEW, path.toUri())
+                startActivity(intent)
+                true
+            } else {
+                val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
+                Log.d("Drawer", "handled: $handled")
+                handled
+            }
+        }
 
         // Set Debug Preferences
         Log.d(LOG_TAG, "Set Debug Preferences")
@@ -296,38 +295,12 @@ class MainActivity : AppCompatActivity() {
                         .setPopUpTo(navController.graph.startDestinationId, false)
                         .build()
                 )
-
-                //navController.navigate(R.id.nav_item_stations, bundle)
-                // TODO: YET ANOTHER GHETTO Navigation Hack...
-                //val dest = when (navController.currentDestination?.id!!) {
-                //    R.id.nav_item_settings_widget,
-                //    R.id.nav_item_settings_debug -> {
-                //        Log.d(LOG_TAG, "dest: nav_item_settings")
-                //        R.id.nav_item_settings
-                //    }
-                //
-                //    else -> navController.currentDestination?.id!!
-                //}
-                //Log.d(LOG_TAG, "dest: $dest")
-                //navController.navigate(
-                //    R.id.nav_item_stations, bundle, NavOptions.Builder()
-                //        .setPopUpTo(dest, true)
-                //        .build()
-                //)
                 true
             }
 
             R.id.option_github -> {
                 Log.d(LOG_TAG, "GITHUB")
                 val url = getString(R.string.github_url)
-                val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                startActivity(intent)
-                true
-            }
-
-            R.id.option_developer -> {
-                Log.d(LOG_TAG, "DEVELOPER")
-                val url = getString(R.string.website_url)
                 val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                 startActivity(intent)
                 true
