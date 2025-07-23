@@ -79,7 +79,7 @@ class WidgetProvider : AppWidgetProvider() {
         Log.i("Widget[onUpdate]", "textColor: $textColor")
         val bgOpacity = preferences.getInt("widget_bg_opacity", 35)
         Log.d("Widget[onUpdate]", "bgOpacity: $bgOpacity")
-        val workInterval = preferences.getString("work_interval", null) ?: "0"
+        val workInterval = preferences.getString("work_interval", null)?.toIntOrNull() ?: 0
         Log.d("Widget[onUpdate]", "workInterval: $workInterval")
 
         val colorMap = mapOf(
@@ -117,11 +117,11 @@ class WidgetProvider : AppWidgetProvider() {
             views.setTextColor(R.id.station_temperature, selectedTextColor)
             views.setTextColor(R.id.station_humidity, selectedTextColor)
             views.setTextColor(R.id.update_time, selectedTextColor)
-            //views.setTextColor(R.id.update_interval, selectedTextColor)
+            views.setTextColor(R.id.update_interval, selectedTextColor)
             views.setInt(R.id.temperature_icon, "setColorFilter", selectedTextColor)
             views.setInt(R.id.humidity_icon, "setColorFilter", selectedTextColor)
             views.setInt(R.id.refresh_icon, "setColorFilter", selectedTextColor)
-            //views.setInt(R.id.update_interval_icon, "setColorFilter", selectedTextColor)
+            views.setInt(R.id.update_interval_icon, "setColorFilter", selectedTextColor)
 
             // Refresh
             val intent1 = Intent(context, WidgetProvider::class.java).apply {
@@ -156,10 +156,15 @@ class WidgetProvider : AppWidgetProvider() {
                 Log.d("Widget[onUpdate]", "humidity: $humidity")
                 views.setTextViewText(R.id.station_humidity, humidity)
 
-                //// Interval
-                //val interval = if (workInterval != "0") workInterval else "Off"
-                //Log.d("Widget[onUpdate]", "interval: $interval")
-                //views.setTextViewText(R.id.update_interval, interval)
+                // Interval
+                val intervalText = when {
+                    workInterval >= 1440 -> "${workInterval / 1440}d"
+                    workInterval >= 60 -> "${workInterval / 60}h"
+                    workInterval > 0 -> "${workInterval}m"
+                    else -> "Off"
+                }
+                Log.d("Widget[onUpdate]", "intervalText: $intervalText")
+                views.setTextViewText(R.id.update_interval, intervalText)
 
                 ////val formatted = DateFormat.getTimeFormat(context).format(Date())
                 //val zonedDateTime = ZonedDateTime.parse(station?.timestamp)
@@ -177,11 +182,6 @@ class WidgetProvider : AppWidgetProvider() {
                     Log.d("Widget[onUpdate]", "formatted: $formatted")
                     views.setTextViewText(R.id.update_time, formatted)
                 }
-
-                // TODO: Add Interval
-                //val interval = if (workInterval != "0") workInterval else "Off"
-                //Log.d("Widget[onUpdate]", "interval: $interval")
-                //views.setTextViewText(R.id.update_interval, interval)
 
                 Log.i("Widget[onUpdate]", "appWidgetManager.updateAppWidget: $appWidgetId")
                 appWidgetManager.updateAppWidget(appWidgetId, views)

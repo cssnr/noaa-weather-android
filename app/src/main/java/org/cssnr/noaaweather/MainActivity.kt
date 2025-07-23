@@ -290,9 +290,11 @@ class MainActivity : AppCompatActivity() {
             R.id.option_add_station -> {
                 Log.d(LOG_TAG, "ADD STATION")
                 val bundle = bundleOf("add_station" to true)
+                val menuItem = binding.navView.menu.findItem(R.id.nav_item_stations)
+                NavigationUI.onNavDestinationSelected(menuItem, navController)
                 navController.navigate(
                     R.id.nav_item_stations, bundle, NavOptions.Builder()
-                        .setPopUpTo(navController.graph.startDestinationId, false)
+                        .setPopUpTo(R.id.nav_item_stations, true)
                         .build()
                 )
                 true
