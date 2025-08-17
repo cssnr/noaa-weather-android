@@ -229,6 +229,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.dialog_feedback, null)
         val input = view.findViewById<EditText>(R.id.feedback_input)
+        val link = view.findViewById<TextView>(R.id.github_link)
+
+        link.paint?.isUnderlineText = true
+        link.setOnClickListener {
+            Log.d(LOG_TAG, "link.tag: ${link.tag}")
+            startActivity(Intent(Intent.ACTION_VIEW, link.tag.toString().toUri()))
+        }
 
         val dialog = MaterialAlertDialogBuilder(this)
             .setView(view)
@@ -270,14 +277,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
             input.requestFocus()
-
-            val link = view.findViewById<TextView>(R.id.github_link)
-            val linkText = getString(R.string.github_link, link.tag)
-            link.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
-            link.movementMethod = LinkMovementMethod.getInstance()
-
-            //val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            //imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
         }
 
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Send") { _, _ -> }
