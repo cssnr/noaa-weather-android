@@ -229,6 +229,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.dialog_feedback, null)
         val input = view.findViewById<EditText>(R.id.feedback_input)
+        val link = view.findViewById<TextView>(R.id.github_link)
+
+        link.paint?.isUnderlineText = true
+        link.setOnClickListener {
+            Log.d(LOG_TAG, "link.tag: ${link.tag}")
+            startActivity(Intent(Intent.ACTION_VIEW, link.tag.toString().toUri()))
+        }
 
         val dialog = MaterialAlertDialogBuilder(this)
             .setView(view)
@@ -270,14 +277,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
 
             input.requestFocus()
-
-            val link = view.findViewById<TextView>(R.id.github_link)
-            val linkText = getString(R.string.github_link, link.tag)
-            link.text = Html.fromHtml(linkText, Html.FROM_HTML_MODE_LEGACY)
-            link.movementMethod = LinkMovementMethod.getInstance()
-
-            //val imm = this.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            //imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT)
         }
 
         dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Send") { _, _ -> }
@@ -292,33 +291,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val sourceLink = view.findViewById<TextView>(R.id.source_link)
         val websiteLink = view.findViewById<TextView>(R.id.website_link)
 
-        val sourceText = getString(R.string.github_link, sourceLink.tag)
-        Log.d(LOG_TAG, "sourceText: $sourceText")
+        appId.text = packageName
+        val packageInfo = packageManager.getPackageInfo(packageName, 0)
+        val formattedVersion = getString(
+            R.string.version_code_string,
+            packageInfo.versionName,
+            packageInfo.versionCode.toString()
+        )
+        Log.d("showAppInfoDialog", "formattedVersion: $formattedVersion")
+        appVersion.text = formattedVersion
 
-        val websiteText = getString(R.string.website_link, websiteLink.tag)
-        Log.d(LOG_TAG, "websiteText: $websiteText")
+        sourceLink.paint?.isUnderlineText = true
+        sourceLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, sourceLink.tag.toString().toUri()))
+        }
+        websiteLink.paint?.isUnderlineText = true
+        websiteLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, websiteLink.tag.toString().toUri()))
+        }
 
-        val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
-        val versionName = packageInfo.versionName
-        Log.d(LOG_TAG, "versionName: $versionName")
-
-        val formattedVersion = getString(R.string.version_string, versionName)
-        Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
-
-        val dialog = MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this)
             .setView(view)
             .setNegativeButton("Close", null)
             .create()
-
-        dialog.setOnShowListener {
-            appId.text = this.packageName
-            appVersion.text = formattedVersion
-            sourceLink.text = Html.fromHtml(sourceText, Html.FROM_HTML_MODE_LEGACY)
-            sourceLink.movementMethod = LinkMovementMethod.getInstance()
-            websiteLink.text = Html.fromHtml(websiteText, Html.FROM_HTML_MODE_LEGACY)
-            websiteLink.movementMethod = LinkMovementMethod.getInstance()
-        }
-        dialog.show()
+            .show()
     }
 
     override fun onResume() {
@@ -415,7 +411,7 @@ fun Context.requestPerms(
     newValue: Boolean,
     channelId: String = "default_channel_id",
 ) {
-    if (newValue == false) {
+    if (!newValue) {
         launchNotificationSettings(channelId)
         return
     }

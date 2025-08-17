@@ -1,15 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     tools:ignore="HardcodedText">
+<ScrollView
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="24dp"
+    android:gravity="center_horizontal"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginVertical="24dp"
+        android:layout_marginBottom="24dp"
         android:gravity="center"
         tools:ignore="UseCompoundDrawables">
         <ImageView
@@ -55,11 +66,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
                 android:text="GitHub" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
                 android:text="Website" />
         </LinearLayout>
 
@@ -71,11 +84,11 @@
                 android:id="@+id/app_version"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
                 android:paddingVertical="@dimen/dialog_vertical_margin"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
-                android:maxLines="1"
-                android:ellipsize="end"
-                tools:text="v0.0.1" />
+                tools:text="v0.0.1 (1)" />
             <TextView
                 android:id="@+id/app_identifier"
                 android:layout_width="wrap_content"
@@ -84,7 +97,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 android:maxLines="1"
                 android:ellipsize="end"
-                tools:text="org.cssnr.noaaweather" />
+                tools:text="org.cssnr.remotewallpaper" />
             <TextView
                 android:id="@+id/app_name"
                 android:layout_width="wrap_content"
@@ -99,20 +112,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:tag="cssnr/noaa-weather-android"
-                android:text="cssnr/noaa-weather-android" />
+                android:textColor="?attr/colorPrimary"
+                android:text="cssnr/noaa-weather-android"
+                android:tag="https://github.com/cssnr/noaa-weather-android" />
             <TextView
                 android:id="@+id/website_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:tag="https://cssnr.com/"
-                android:text="www.cssnr.com" />
+                android:textColor="?attr/colorPrimary"
+                android:text="www.cssnr.com"
+                android:tag="https://cssnr.github.io/" />
         </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>
+</ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
