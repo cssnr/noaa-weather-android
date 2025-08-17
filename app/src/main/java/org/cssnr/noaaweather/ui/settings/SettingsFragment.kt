@@ -292,33 +292,30 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val sourceLink = view.findViewById<TextView>(R.id.source_link)
         val websiteLink = view.findViewById<TextView>(R.id.website_link)
 
-        val sourceText = getString(R.string.github_link, sourceLink.tag)
-        Log.d(LOG_TAG, "sourceText: $sourceText")
+        appId.text = packageName
+        val packageInfo = packageManager.getPackageInfo(packageName, 0)
+        val formattedVersion = getString(
+            R.string.version_code_string,
+            packageInfo.versionName,
+            packageInfo.versionCode.toString()
+        )
+        Log.d("showAppInfoDialog", "formattedVersion: $formattedVersion")
+        appVersion.text = formattedVersion
 
-        val websiteText = getString(R.string.website_link, websiteLink.tag)
-        Log.d(LOG_TAG, "websiteText: $websiteText")
+        sourceLink.paint?.isUnderlineText = true
+        sourceLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, sourceLink.tag.toString().toUri()))
+        }
+        websiteLink.paint?.isUnderlineText = true
+        websiteLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, websiteLink.tag.toString().toUri()))
+        }
 
-        val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
-        val versionName = packageInfo.versionName
-        Log.d(LOG_TAG, "versionName: $versionName")
-
-        val formattedVersion = getString(R.string.version_string, versionName)
-        Log.d(LOG_TAG, "formattedVersion: $formattedVersion")
-
-        val dialog = MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this)
             .setView(view)
             .setNegativeButton("Close", null)
             .create()
-
-        dialog.setOnShowListener {
-            appId.text = this.packageName
-            appVersion.text = formattedVersion
-            sourceLink.text = Html.fromHtml(sourceText, Html.FROM_HTML_MODE_LEGACY)
-            sourceLink.movementMethod = LinkMovementMethod.getInstance()
-            websiteLink.text = Html.fromHtml(websiteText, Html.FROM_HTML_MODE_LEGACY)
-            websiteLink.movementMethod = LinkMovementMethod.getInstance()
-        }
-        dialog.show()
+            .show()
     }
 
     override fun onResume() {
@@ -415,7 +412,7 @@ fun Context.requestPerms(
     newValue: Boolean,
     channelId: String = "default_channel_id",
 ) {
-    if (newValue == false) {
+    if (!newValue) {
         launchNotificationSettings(channelId)
         return
     }

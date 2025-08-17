@@ -65,12 +65,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
                 android:text="GitHub" />
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
                 android:text="Website" />
         </LinearLayout>
 
@@ -78,7 +80,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-
             <TextView
                 android:id="@+id/app_version"
                 android:layout_width="wrap_content"
@@ -88,7 +89,6 @@
                 android:paddingVertical="@dimen/dialog_vertical_margin"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body2"
                 tools:text="v0.0.1 (1)" />
-
             <TextView
                 android:id="@+id/app_identifier"
                 android:layout_width="wrap_content"
@@ -111,20 +111,24 @@
                 android:id="@+id/source_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:tag="cssnr/remote-wallpaper-android"
-                android:text="cssnr/remote-wallpaper-android" />
+                android:textColor="?attr/colorPrimary"
+                android:text="cssnr/noaa-weather-android"
+                android:tag="https://github.com/cssnr/noaa-weather-android" />
             <TextView
                 android:id="@+id/website_link"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingVertical="@dimen/dialog_vertical_margin"
+                android:gravity="center_vertical"
+                android:minHeight="48dp"
                 android:maxLines="1"
                 android:ellipsize="end"
-                android:tag="www.cssnr.com"
-                android:text="www.cssnr.com" />
+                android:textColor="?attr/colorPrimary"
+                android:text="www.cssnr.com"
+                android:tag="https://cssnr.github.io/" />
         </LinearLayout>
     </LinearLayout>
 
