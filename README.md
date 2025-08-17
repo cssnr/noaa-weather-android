@@ -13,7 +13,7 @@
 
 # NOAA Weather Android
 
-[![GitHub Release](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?style=for-the-badge&logo=android&label=Download%20Android%20APK&color=A4C639)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+[![GitHub Release](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?style=for-the-badge&logo=android&label=Download%20Android%20APK&color=3ddc84)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 
 - [Install](#Install)
   - [Setup](#Setup)
@@ -40,9 +40,9 @@ Custom update interval and notification settings and more...
 
 <details><summary>📲 Click to View QR Codes 📸 Supports Android 8 (API 26) 2017 +</summary>
 
-[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather-android/qr-code-github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/qr-code-github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 
-[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather-android/qr-code-obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android/)
+[![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/qr-code-obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android/)
 
 </details>
 
