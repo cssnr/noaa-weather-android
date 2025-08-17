@@ -1,8 +1,8 @@
-[![GitHub Downloads](https://img.shields.io/github/downloads/cssnr/noaa-weather-android/total?logo=github)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+[![GitHub Downloads](https://img.shields.io/github/downloads/cssnr/noaa-weather-android/total?logo=android)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?logo=github)](https://github.com/cssnr/noaa-weather-android/releases/latest)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/noaa-weather-android?logo=github&label=updated)](https://github.com/cssnr/noaa-weather-android/graphs/commit-activity)
 [![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/lint.yaml?logo=github&logoColor=white&label=lint)](https://github.com/cssnr/noaa-weather-android/actions/workflows/lint.yaml)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/noaa-weather-android?logo=htmx)](https://github.com/cssnr/noaa-weather-android)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/noaa-weather-android?logo=github&label=updated)](https://github.com/cssnr/noaa-weather-android/graphs/commit-activity)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/noaa-weather-android?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/noaa-weather-android)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/noaa-weather-android)](https://github.com/cssnr/noaa-weather-android/discussions)
 [![GitHub Forks](https://img.shields.io/github/forks/cssnr/noaa-weather-android?style=flat&logo=github)](https://github.com/cssnr/noaa-weather-android/forks)
@@ -38,7 +38,7 @@ Custom update interval and notification settings and more...
 [![Get on GitHub](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/android/get80/github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 [![Get on Obtainium](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/android/get80/obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android)
 
-<details><summary>📲 Click to View QR Codes 📸</summary>
+<details><summary>📲 Click to View QR Codes 📸 Supports Android 8 (API 26) 2017 +</summary>
 
 [![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather-android/qr-code-github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 
@@ -46,15 +46,13 @@ Custom update interval and notification settings and more...
 
 </details>
 
-_Note: Until published on the play store, you may need to allow installation of apps from unknown sources._
-
-- Supports Android 8 (API 26) 2017 +
-
-Downloading and Installing the [apk](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
-should take you to the settings area to allow installation if not already enabled.
-For more information, see [Release through a website](https://developer.android.com/studio/publish#publishing-website).
+_Note: If installing directly, you may need to allow installation of apps from unknown sources.  
+For more information, see [Release through a website](https://developer.android.com/studio/publish#publishing-website)._
 
 <details><summary>View Manual Steps to Install from Unknown Sources</summary>
+
+Note: Downloading and Installing the [apk](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+should take you to the settings area to allow installation if not already enabled. Otherwise:
 
 1. Go to your device settings.
 2. Search for "Install unknown apps" or similar.
@@ -142,7 +140,9 @@ To Build:
 
 ## Command Line
 
-_Note: This section is a WIP! For more details see the [release.yaml](.github/workflows/release.yaml)._
+> [!WARNING]  
+> This section may not be complete!
+> For more details see the [release.yaml](.github/workflows/release.yaml).
 
 You will need to have [ADB](https://developer.android.com/tools/adb) installed.
 
