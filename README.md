@@ -3,6 +3,7 @@
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/noaa-weather-android?logo=github&label=updated)](https://github.com/cssnr/noaa-weather-android/pulse)
 [![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/lint.yaml?logo=github&logoColor=white&label=lint)](https://github.com/cssnr/noaa-weather-android/actions/workflows/lint.yaml)
 [![Release](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/release.yaml?logo=github&logoColor=white&label=release)](https://github.com/cssnr/noaa-weather-android/actions/workflows/release.yaml)
+[![AGP Version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fnoaa-weather-android%2Frefs%2Fheads%2Fmaster%2Fgradle%2Flibs.versions.toml&query=%24.versions.agp&logo=gradle&label=AGP)](https://github.com/cssnr/noaa-weather-android/blob/master/gradle/libs.versions.toml#L2)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/noaa-weather-android?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/noaa-weather-android)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/noaa-weather-android?logo=htmx)](https://github.com/cssnr/noaa-weather-android)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/noaa-weather-android?logo=github)](https://github.com/cssnr/noaa-weather-android/discussions)
