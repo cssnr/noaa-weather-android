@@ -6,7 +6,6 @@
 
     <string name="github_url">https://github.com/cssnr/noaa-weather-android</string>
     <string name="github_link"><![CDATA[<a href="https://github.com/cssnr/noaa-weather-android">%s</a>]]></string>
-
     <string name="website_url">https://cssnr.com/</string>
     <string name="website_link"><![CDATA[<a href="https://cssnr.com/">%s</a>]]></string>
 

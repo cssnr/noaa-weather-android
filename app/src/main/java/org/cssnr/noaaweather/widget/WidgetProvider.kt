@@ -12,9 +12,9 @@ import android.widget.RemoteViews
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.preference.PreferenceManager
-import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.cssnr.noaaweather.MainActivity
 import org.cssnr.noaaweather.R
@@ -28,7 +28,6 @@ import java.util.Date
 
 class WidgetProvider : AppWidgetProvider() {
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         Log.d("Widget[onReceive]", "intent: $intent")
@@ -42,7 +41,7 @@ class WidgetProvider : AppWidgetProvider() {
                 return
             }
             Log.d("Widget[onReceive]", "GlobalScope.launch: START")
-            GlobalScope.launch(Dispatchers.IO) {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
                 val dao: StationDao =
                     StationDatabase.getInstance(context.applicationContext).stationDao()
                 val station = dao.getActive()
@@ -58,7 +57,6 @@ class WidgetProvider : AppWidgetProvider() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -138,7 +136,7 @@ class WidgetProvider : AppWidgetProvider() {
             appWidgetManager.updateAppWidget(appWidgetId, views)
 
             // Room Data
-            GlobalScope.launch(Dispatchers.IO) {
+            CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
                 val dao: StationDao =
                     StationDatabase.getInstance(context.applicationContext).stationDao()
                 val station = dao.getActive()
