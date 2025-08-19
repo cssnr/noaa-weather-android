@@ -225,16 +225,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
     }
 
-    fun Context.showFeedbackDialog() {
-        val inflater = LayoutInflater.from(context)
+    private fun Context.showFeedbackDialog() {
+        val inflater = LayoutInflater.from(this)
         val view = inflater.inflate(R.layout.dialog_feedback, null)
-        val input = view.findViewById<EditText>(R.id.feedback_input)
-        val link = view.findViewById<TextView>(R.id.github_link)
 
-        link.paint?.isUnderlineText = true
-        link.setOnClickListener {
-            Log.d(LOG_TAG, "link.tag: ${link.tag}")
-            startActivity(Intent(Intent.ACTION_VIEW, link.tag.toString().toUri()))
+        val input = view.findViewById<EditText>(R.id.feedback_input)
+        val websiteLink = view.findViewById<TextView>(R.id.website_link)
+        val githubLink = view.findViewById<TextView>(R.id.github_link)
+
+        websiteLink.paint?.isUnderlineText = true
+        websiteLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, websiteLink.tag.toString().toUri()))
+        }
+        githubLink.paint?.isUnderlineText = true
+        githubLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, githubLink.tag.toString().toUri()))
         }
 
         val dialog = MaterialAlertDialogBuilder(this)
@@ -260,11 +265,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             "Feedback Sent. Thank You!"
                         } else {
                             sendButton.isEnabled = true
-                            //val params = Bundle().apply {
-                            //    putString("message", response.message())
-                            //    putString("code", response.code().toString())
-                            //}
-                            //Firebase.analytics.logEvent("feedback_failed", params)
                             "Error: ${response.code()}"
                         }
                         Log.d("showFeedbackDialog", "msg: $msg")
@@ -275,40 +275,39 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     input.error = "Feedback is Required"
                 }
             }
-
             input.requestFocus()
         }
-
-        dialog.setButton(AlertDialog.BUTTON_POSITIVE, "Send") { _, _ -> }
         dialog.show()
     }
 
-    fun Context.showAppInfoDialog() {
+    private fun Context.showAppInfoDialog() {
         val inflater = LayoutInflater.from(this)
         val view = inflater.inflate(R.layout.dialog_app_info, null)
+
         val appId = view.findViewById<TextView>(R.id.app_identifier)
-        val appVersion = view.findViewById<TextView>(R.id.app_version)
-        val sourceLink = view.findViewById<TextView>(R.id.source_link)
+        val versionName = view.findViewById<TextView>(R.id.version_name)
+        val githubLink = view.findViewById<TextView>(R.id.github_link)
         val websiteLink = view.findViewById<TextView>(R.id.website_link)
 
-        appId.text = packageName
-        val packageInfo = packageManager.getPackageInfo(packageName, 0)
+        githubLink.paint?.isUnderlineText = true
+        githubLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, githubLink.tag.toString().toUri()))
+        }
+        websiteLink.paint?.isUnderlineText = true
+        websiteLink.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, websiteLink.tag.toString().toUri()))
+        }
+
+        val packageInfo = this.packageManager.getPackageInfo(this.packageName, 0)
         val formattedVersion = getString(
             R.string.version_code_string,
             packageInfo.versionName,
             packageInfo.versionCode.toString()
         )
         Log.d("showAppInfoDialog", "formattedVersion: $formattedVersion")
-        appVersion.text = formattedVersion
 
-        sourceLink.paint?.isUnderlineText = true
-        sourceLink.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, sourceLink.tag.toString().toUri()))
-        }
-        websiteLink.paint?.isUnderlineText = true
-        websiteLink.setOnClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, websiteLink.tag.toString().toUri()))
-        }
+        appId.text = this.packageName
+        versionName.text = formattedVersion
 
         MaterialAlertDialogBuilder(this)
             .setView(view)
