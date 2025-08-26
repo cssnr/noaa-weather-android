@@ -42,6 +42,7 @@ import org.cssnr.noaaweather.api.WeatherApi
 import org.cssnr.noaaweather.api.WeatherApi.ObservationStationsResponse
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
+import org.cssnr.noaaweather.log.debugLog
 import org.cssnr.noaaweather.ui.stations.updateStation
 import java.util.Locale
 
@@ -81,121 +82,120 @@ class AddDialogFragment : DialogFragment() {
     @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("InflateParams", "MissingPermission")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return activity?.let {
-            val builder = AlertDialog.Builder(it)
-            val inflater = requireActivity().layoutInflater
+        val builder = AlertDialog.Builder(requireActivity())
+        val inflater = requireActivity().layoutInflater
 
-            builder.setView(inflater.inflate(R.layout.dialog_add, null))
-            val dialog = builder.create()
+        builder.setView(inflater.inflate(R.layout.dialog_add, null))
+        val dialog = builder.create()
 
-            val appContext = requireContext()
+        val appContext = requireContext()
 
-            dialog.setOnShowListener {
-                emptyListView = dialog.findViewById<LinearLayout>(R.id.empty_layout)
+        dialog.setOnShowListener {
+            emptyListView = dialog.findViewById(R.id.empty_layout)
 
-                // Adapter
-                val suggestionsList = dialog.findViewById<RecyclerView>(R.id.suggestions_list)
-                suggestionsList?.layoutManager = LinearLayoutManager(appContext)
-                adapter = AddDialogAdapter(emptyList()) { data ->
-                    Log.d(LOG_TAG, "onItemClick: $data")
-                    CoroutineScope(Dispatchers.IO).launch {
-                        val dao = StationDatabase.getInstance(appContext).stationDao()
-                        //val existing = dao.getById(data.properties.stationIdentifier)
-                        //Log.d(LOG_TAG, "existing: $existing")
-                        val elevationValue =
-                            String.format(Locale.US, "%.1f", data.properties.elevation.value)
-                        val elevation =
-                            "$elevationValue ${data.properties.elevation.unitCode.split(":")[1]}"
-                        Log.d(LOG_TAG, "elevation: $elevation")
-                        dao.deactivateAllStations()
-                        val station = WeatherStation(
-                            stationId = data.properties.stationIdentifier,
-                            name = data.properties.name,
-                            elevation = elevation,
-                            coordinates = getCoordinates(data.geometry.coordinates),
-                            forecast = data.properties.forecast,
-                            active = true,
+            // Adapter
+            val suggestionsList = dialog.findViewById<RecyclerView>(R.id.suggestions_list)
+            suggestionsList?.layoutManager = LinearLayoutManager(appContext)
+            adapter = AddDialogAdapter(emptyList()) { data ->
+                Log.d(LOG_TAG, "onItemClick: $data")
+                CoroutineScope(Dispatchers.IO).launch {
+                    val dao = StationDatabase.getInstance(appContext).stationDao()
+                    //val existing = dao.getById(data.properties.stationIdentifier)
+                    //Log.d(LOG_TAG, "existing: $existing")
+                    val elevationValue =
+                        String.format(Locale.US, "%.1f", data.properties.elevation.value)
+                    val elevation =
+                        "$elevationValue ${data.properties.elevation.unitCode.split(":")[1]}"
+                    Log.d(LOG_TAG, "elevation: $elevation")
+                    dao.deactivateAllStations()
+                    val station = WeatherStation(
+                        stationId = data.properties.stationIdentifier,
+                        name = data.properties.name,
+                        elevation = elevation,
+                        coordinates = getCoordinates(data.geometry.coordinates),
+                        forecast = data.properties.forecast,
+                        active = true,
+                    )
+                    Log.d(LOG_TAG, "station: $station")
+                    dao.add(station)
+                    GlobalScope.launch { appContext.updateStation(station.stationId) }
+                    Log.i(LOG_TAG, "setFragmentResult: stations_updated: ${station.stationId}")
+                    withContext(Dispatchers.Main) {
+                        setFragmentResult(
+                            "stations_updated",
+                            bundleOf("stationId" to station.stationId)
                         )
-                        Log.d(LOG_TAG, "station: $station")
-                        dao.add(station)
-                        GlobalScope.launch { appContext.updateStation(station.stationId) }
-                        Log.i(LOG_TAG, "setFragmentResult: stations_updated: ${station.stationId}")
-                        withContext(Dispatchers.Main) {
-                            setFragmentResult(
-                                "stations_updated",
-                                bundleOf("stationId" to station.stationId)
-                            )
-                            dialog.dismiss()
-                        }
+                        dialog.dismiss()
                     }
-                }
-                suggestionsList?.adapter = adapter
-
-                // Input Text
-                val inputField = dialog.findViewById<EditText>(R.id.location)
-                inputField?.requestFocus()
-                inputField?.addTextChangedListener(object : TextWatcher {
-                    override fun afterTextChanged(text: Editable?) {
-                        Log.d(LOG_TAG, "afterTextChanged: $text")
-                        getPlaceLocation(text.toString()) { addresses ->
-                            Log.d(LOG_TAG, "addresses: $addresses")
-                            if (!addresses.isNullOrEmpty()) {
-                                lifecycleScope.launch {
-                                    val data = requireContext().getStations(
-                                        addresses[0].latitude,
-                                        addresses[0].longitude
-                                    )
-                                    Log.d(LOG_TAG, "data.features.size: ${data?.features?.size}")
-                                    if (data != null) {
-                                        withContext(Dispatchers.Main) {
-                                            emptyListView?.visibility = View.GONE
-                                            adapter.updateData(data)
-                                        }
-                                    } else {
-                                        Log.i(LOG_TAG, "NO STATION RESULTS!") // TODO: Handle Error
-                                    }
-                                }
-                            } else {
-                                Log.i(LOG_TAG, "NO LOCATION RESULTS!") // TODO: Handle Error
-                            }
-                        }
-                    }
-
-                    override fun beforeTextChanged(
-                        s: CharSequence?, start: Int, count: Int, after: Int
-                    ) {
-                    }
-
-                    override fun onTextChanged(
-                        s: CharSequence?, start: Int, before: Int, count: Int
-                    ) {
-                    }
-                })
-
-                // Cancel Button
-                dialog.findViewById<Button>(R.id.btn_cancel)?.setOnClickListener {
-                    Log.d(LOG_TAG, "CANCEL")
-                    dialog.cancel()
-                }
-
-                //// Search Button
-                //dialog.findViewById<Button>(R.id.btn_search)?.setOnClickListener {
-                //    Log.d(LOG_TAG, "SEARCH")
-                //    //dialog.dismiss()
-                //}
-
-                // Locate Button
-                fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(appContext)
-                val requestButton = dialog.findViewById<Button>(R.id.btn_locate)
-                requestButton?.setOnClickListener {
-                    //requestLocation()
-                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
                 }
             }
+            suggestionsList?.adapter = adapter
 
-            return dialog
-        } ?: throw IllegalStateException("Activity cannot be null")
+            // Input Text
+            val inputField = dialog.findViewById<EditText>(R.id.location)
+            inputField?.requestFocus()
+            inputField?.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(text: Editable?) {
+                    Log.d(LOG_TAG, "afterTextChanged: $text")
+                    getPlaceLocation(text.toString()) { addresses ->
+                        Log.d(LOG_TAG, "addresses: $addresses")
+                        context?.debugLog("Found ${addresses?.size} Addresses: ${addresses?.firstOrNull()?.featureName}")
+                        if (!addresses.isNullOrEmpty()) {
+                            lifecycleScope.launch {
+                                val data = requireContext().getStations(
+                                    addresses[0].latitude,
+                                    addresses[0].longitude
+                                )
+                                Log.d(LOG_TAG, "data.features.size: ${data?.features?.size}")
+                                if (data != null) {
+                                    withContext(Dispatchers.Main) {
+                                        emptyListView?.visibility = View.GONE
+                                        adapter.updateData(data)
+                                    }
+                                } else {
+                                    Log.i(LOG_TAG, "NO STATION RESULTS!") // TODO: Handle Error
+                                }
+                            }
+                        } else {
+                            Log.i(LOG_TAG, "NO LOCATION RESULTS!") // TODO: Handle Error
+                        }
+                    }
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(
+                    s: CharSequence?, start: Int, before: Int, count: Int
+                ) {
+                }
+            })
+
+            // Cancel Button
+            dialog.findViewById<Button>(R.id.btn_cancel)?.setOnClickListener {
+                Log.d(LOG_TAG, "CANCEL")
+                dialog.cancel()
+            }
+
+            //// Search Button
+            //dialog.findViewById<Button>(R.id.btn_search)?.setOnClickListener {
+            //    Log.d(LOG_TAG, "SEARCH")
+            //    //dialog.dismiss()
+            //}
+
+            // Locate Button
+            fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(appContext)
+            val requestButton = dialog.findViewById<Button>(R.id.btn_locate)
+            requestButton?.setOnClickListener {
+                //requestLocation()
+                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+        }
+
+        return dialog
     }
 
     private fun getPlaceLocation(place: String, callback: (MutableList<Address>?) -> Unit) {
@@ -203,6 +203,7 @@ class AddDialogFragment : DialogFragment() {
         searchRunnable?.let { handler.removeCallbacks(it) }
         searchRunnable = Runnable {
             if (place.isNotEmpty()) {
+                context?.debugLog("Searching Place: $place")
                 val geocoder = Geocoder(requireContext())
                 lifecycleScope.launch(Dispatchers.IO) {
                     geocoder.getLocation(place) { addresses ->
@@ -271,6 +272,7 @@ suspend fun Context.getStations(
     Log.d("getStations", "response: $response")
     val stationsResponse = response?.body()
     Log.d("getStations", "stationsResponse?.features?.size: ${stationsResponse?.features?.size}")
+    debugLog("Found ${stationsResponse?.features?.size} stations for: $latitude / $longitude")
     return stationsResponse
 }
 
