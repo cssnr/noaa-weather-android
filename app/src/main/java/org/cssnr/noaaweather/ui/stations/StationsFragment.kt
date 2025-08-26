@@ -293,7 +293,7 @@ fun responseToStation(
     }
     return WeatherStation(
         stationId = current.stationId,
-        active = current.active != false,
+        active = current.active,
         name = current.name,
         elevation = current.elevation,
         coordinates = current.coordinates,
