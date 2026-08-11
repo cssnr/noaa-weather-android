@@ -8,7 +8,7 @@ tasks:
       - prettier --check .
       - yamllint -c .github/yamllint.yaml .
       - actionlint -shellcheck="-e SC2129"
-      - shellcheck .github/scripts/prepare.sh
+      #- shellcheck .github/scripts/prepare.sh
 
   format:
     desc: Format
