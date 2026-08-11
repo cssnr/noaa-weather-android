@@ -1,5 +1,5 @@
+import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,9 +9,9 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
 }
 
-android {
+configure<ApplicationExtension> {
     namespace = "org.cssnr.noaaweather"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "org.cssnr.noaaweather"
@@ -45,11 +45,11 @@ android {
     //kotlinOptions {
     //    jvmTarget = "17"
     //}
-    tasks.withType<KotlinJvmCompile>().configureEach {
-        compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_17)
-        }
-    }
+    //tasks.withType<KotlinJvmCompile>().configureEach {
+    //    compilerOptions {
+    //        jvmTarget.set(JvmTarget.JVM_17)
+    //    }
+    //}
     buildFeatures {
         viewBinding = true
         buildConfig = true
@@ -60,6 +60,8 @@ android {
         exclude(group = "com.intellij", module = "annotations")
     }
 }
+
+kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 
 dependencies {
     implementation(libs.androidx.core.ktx)

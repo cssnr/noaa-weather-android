@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: "3"
+
+tasks:
+  lint:
+    desc: Lint
+    cmds:
+      - prettier --check .
+      - yamllint -c .github/yamllint.yaml .
+      - actionlint -shellcheck="-e SC2129"
+      - shellcheck .github/scripts/prepare.sh
+
+  format:
+    desc: Format
+    aliases: [prettier, prettier:write]
+    cmds:
+      - prettier --write .
+
+  build:
+    desc: Build (recommended android studio)
+    vars:
+      GRADLEW: 'gradlew{{if eq OS "windows"}}.bat{{end}}'
+    cmd: |
+      {{.GRADLEW}} assemble {{.CLI_ARGS}}
+
+  release:
+    desc: Build Release Only
+    vars:
+      GRADLEW: 'gradlew{{if eq OS "windows"}}.bat{{end}}'
+    cmd: |
+      {{.GRADLEW}} assembleRelease {{.CLI_ARGS}}
+
+  compile:
+    desc: Compile Kotlin (quick check)
+    vars:
+      GRADLEW: 'gradlew{{if eq OS "windows"}}.bat{{end}}'
+    cmd: |
+      {{.GRADLEW}} :app:compileDebugKotlin
+
+  gradle-status:
+    desc: Show Gradle daemon status
+    vars:
+      GRADLEW: 'gradlew{{if eq OS "windows"}}.bat{{end}}'
+    cmd: "{{.GRADLEW}} --status"
+
+  gradle-stop:
+    desc: Stop all Gradle daemons
+    vars:
+      GRADLEW: 'gradlew{{if eq OS "windows"}}.bat{{end}}'
+    cmd: "{{.GRADLEW}} --stop"
