@@ -19,7 +19,7 @@ ALWAYS use the `task *` commands
 
 Do NOT use `-q` or pipe Gradle output through `Select-Object` — both hide progress and make long builds look hung.
 
-# Rules
+## Rules
 
 Do NOT run task compile/build/release every turn unless it is REQUIRED!!!
 Do NOT run task compile/build/release every turn unless it is REQUIRED!!!
