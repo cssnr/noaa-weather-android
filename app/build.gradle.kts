@@ -3,8 +3,6 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.kotlin.kapt)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.parcelize)
 }
@@ -85,8 +83,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.okhttp3.integration)
     //implementation(libs.timber)
-    //noinspection KaptUsageInsteadOfKsp
-    kapt(libs.glide.compiler)
+    ksp(libs.glide.ksp)
     ksp(libs.androidx.room.compiler)
     ksp(libs.moshi.kotlin.codegen)
     testImplementation(libs.junit)
