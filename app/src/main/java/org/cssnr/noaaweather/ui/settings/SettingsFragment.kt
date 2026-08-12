@@ -25,6 +25,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -302,7 +303,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
         val formattedVersion = getString(
             R.string.version_code_string,
             packageInfo.versionName,
-            packageInfo.versionCode.toString()
+            PackageInfoCompat.getLongVersionCode(packageInfo).toString()
         )
         Log.d("showAppInfoDialog", "formattedVersion: $formattedVersion")
 

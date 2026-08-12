@@ -57,7 +57,7 @@ data class WeatherStation(
     val station: String? = null,
 
     var timestamp: String? = null,
-    var rawMessage: String?? = null,
+    var rawMessage: String? = null,
     var textDescription: String? = null,
     var icon: String? = null,
 
@@ -74,7 +74,7 @@ data class WeatherStation(
 ) : Parcelable
 
 
-@Database(entities = [WeatherStation::class], version = 3)
+@Database(entities = [WeatherStation::class], version = 3, exportSchema = false)
 abstract class StationDatabase : RoomDatabase() {
     abstract fun stationDao(): StationDao
 

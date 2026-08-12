@@ -6,7 +6,6 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +16,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.core.net.toUri
-import androidx.core.os.bundleOf
 import androidx.core.view.GravityCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -183,11 +181,11 @@ class MainActivity : AppCompatActivity() {
         preferences.registerOnSharedPreferenceChangeListener(listener)
 
         // Update Status Bar
-        window.statusBarColor = Color.TRANSPARENT
+        //NOTE: This is now handled by enableEdgeToEdge()
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         // Update Navigation Bar
-        window.navigationBarColor = Color.TRANSPARENT
+        //NOTE: This is now handled by enableEdgeToEdge()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.setNavigationBarContrastEnforced(false)
         }
@@ -298,7 +296,7 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
             R.id.option_add_station -> {
                 Log.d(LOG_TAG, "ADD STATION")
-                val bundle = bundleOf("add_station" to true)
+                val bundle = Bundle().apply { putBoolean("add_station", true) }
                 val menuItem = binding.navView.menu.findItem(R.id.nav_item_stations)
                 NavigationUI.onNavDestinationSelected(menuItem, navController)
                 navController.navigate(

@@ -37,7 +37,7 @@ class DiscordApi(
 
     @JsonClass(generateAdapter = true)
     data class Message(
-        @Json(name = "content")
+        @param:Json(name = "content")
         val content: String
     )
 

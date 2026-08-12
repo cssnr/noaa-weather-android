@@ -54,7 +54,7 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
         updateData(station)
     }
 
-    override fun updateData(station: WeatherStation) {
+    override fun updateData(newData: WeatherStation) {
         val appContext = requireContext()
 
         //val sharedPreferences =
@@ -64,48 +64,48 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
         //Log.d(LOG_TAG, "tempUnit: $tempUnit")
 
         // Top
-        binding.stationName.text = station.name
+        binding.stationName.text = newData.name
 
         // Top Middle
-        binding.stationId.text = station.stationId
-        binding.stationElevation.text = station.elevation
-        binding.stationCoordinates.text = station.coordinates
-        binding.stationTimestamp.text = formatDate(station.timestamp)
+        binding.stationId.text = newData.stationId
+        binding.stationElevation.text = newData.elevation
+        binding.stationCoordinates.text = newData.coordinates
+        binding.stationTimestamp.text = formatDate(newData.timestamp)
 
         // Left Middle
-        binding.stationTemperature.text = appContext.getTemp(station.temperature, tempUnit)
-        binding.stationDewpoint.text = appContext.getTemp(station.dewpoint, tempUnit)
+        binding.stationTemperature.text = appContext.getTemp(newData.temperature, tempUnit)
+        binding.stationDewpoint.text = appContext.getTemp(newData.dewpoint, tempUnit)
         binding.stationHumidity.text =
-            appContext.getValue(R.string.format_percent, station.relativeHumidity)
+            appContext.getValue(R.string.format_percent, newData.relativeHumidity)
         binding.stationWindSpeed.text =
-            appContext.getValue(R.string.format_km_h, station.windSpeed)
+            appContext.getValue(R.string.format_km_h, newData.windSpeed)
         binding.stationWindDirection.text =
-            appContext.getValue(R.string.format_direction, station.windDirection)
+            appContext.getValue(R.string.format_direction, newData.windDirection)
         binding.stationPressureBaro.text =
-            appContext.getValue(R.string.format_pa, station.barometricPressure)
+            appContext.getValue(R.string.format_pa, newData.barometricPressure)
         binding.stationPressureSea.text =
-            appContext.getValue(R.string.format_pa, station.seaLevelPressure)
+            appContext.getValue(R.string.format_pa, newData.seaLevelPressure)
         binding.stationVisibility.text =
-            appContext.getValue(R.string.format_meters, station.visibility)
+            appContext.getValue(R.string.format_meters, newData.visibility)
 
         // Right Middle
-        if (station.icon != null) {
-            Glide.with(appContext).load(station.icon).into(binding.stationIcon)
+        if (newData.icon != null) {
+            Glide.with(appContext).load(newData.icon).into(binding.stationIcon)
         } else {
             binding.stationIcon.setImageDrawable(null)
         }
         binding.linkForecast.setOnClickListener {
-            openLink(station, it.tag as? String)
+            openLink(newData, it.tag as? String)
         }
         binding.linkHourly.setOnClickListener {
-            openLink(station, it.tag as? String)
+            openLink(newData, it.tag as? String)
         }
 
         //// Bottom - Extras
-        //if (!station.rawMessage.isNullOrEmpty()) {
+        //if (!newData.rawMessage.isNullOrEmpty()) {
         //    binding.extrasDivider.visibility = View.VISIBLE
         //    binding.stationHeading.visibility = View.VISIBLE
-        //    binding.stationMessage.text = station.rawMessage
+        //    binding.stationMessage.text = newData.rawMessage
         //}
     }
 
