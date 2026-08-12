@@ -182,10 +182,12 @@ class MainActivity : AppCompatActivity() {
 
         // Update Status Bar
         //NOTE: This is now handled by enableEdgeToEdge()
+        //window.statusBarColor = Color.TRANSPARENT
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         // Update Navigation Bar
         //NOTE: This is now handled by enableEdgeToEdge()
+        //window.navigationBarColor = Color.TRANSPARENT
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.setNavigationBarContrastEnforced(false)
         }
