@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         Log.d("SharedPreferences", "OnSharedPreferenceChangeListener: $key")
         //if (key == "enable_debug_logs") {
         //    val value = prefs.getBoolean(key, false)
@@ -190,10 +190,11 @@ class MainActivity : AppCompatActivity() {
         //NOTE: enableEdgeToEdge() only makes this transparent on API 29+.
         //On API 26-28 it applies the platform's scrim instead, so force it here.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.setNavigationBarContrastEnforced(false)
+            window.isNavigationBarContrastEnforced = false
         }
 
         // Set Global Left/Right System Insets
@@ -267,7 +268,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             Log.d(LOG_TAG, "MainActivity: lifecycleScope.launch")
             lifecycleScope.launch {
-                val dao = StationDatabase.Companion.getInstance(applicationContext).stationDao()
+                val dao = StationDatabase.getInstance(applicationContext).stationDao()
                 val station = withContext(Dispatchers.IO) { dao.getActive() }
                 Log.d(LOG_TAG, "MainActivity: station: $station")
                 if (station == null) {
