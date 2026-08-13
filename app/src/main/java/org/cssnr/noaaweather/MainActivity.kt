@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetManager
 import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -186,8 +187,11 @@ class MainActivity : AppCompatActivity() {
         WindowInsetsControllerCompat(window, window.decorView).isAppearanceLightStatusBars = false
 
         // Update Navigation Bar
-        //NOTE: This is now handled by enableEdgeToEdge()
-        //window.navigationBarColor = Color.TRANSPARENT
+        //NOTE: enableEdgeToEdge() only makes this transparent on API 29+.
+        //On API 26-28 it applies the platform's scrim instead, so force it here.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            window.navigationBarColor = Color.TRANSPARENT
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             window.setNavigationBarContrastEnforced(false)
         }
