@@ -1,24 +1,32 @@
-[![GitHub Downloads](https://img.shields.io/github/downloads/cssnr/noaa-weather-android/total?logo=android)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+[![GitHub Downloads](https://img.shields.io/github/downloads/cssnr/noaa-weather-android/total?logo=android)](https://github.com/cssnr/noaa-weather-android/releases)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?logo=github)](https://github.com/cssnr/noaa-weather-android/releases/latest)
-[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/noaa-weather-android?logo=github&label=updated)](https://github.com/cssnr/noaa-weather-android/pulse)
-[![Lint](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/lint.yaml?logo=github&logoColor=white&label=lint)](https://github.com/cssnr/noaa-weather-android/actions/workflows/lint.yaml)
-[![Release](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/release.yaml?logo=github&logoColor=white&label=release)](https://github.com/cssnr/noaa-weather-android/actions/workflows/release.yaml)
-[![AGP Version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fnoaa-weather-android%2Frefs%2Fheads%2Fmaster%2Fgradle%2Flibs.versions.toml&query=%24.versions.agp&logo=gradle&label=AGP)](https://github.com/cssnr/noaa-weather-android/blob/master/gradle/libs.versions.toml#L2)
-[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/noaa-weather-android?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/noaa-weather-android)
-[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/noaa-weather-android?logo=htmx)](https://github.com/cssnr/noaa-weather-android)
-[![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/noaa-weather-android?logo=github)](https://github.com/cssnr/noaa-weather-android/discussions)
-[![GitHub Forks](https://img.shields.io/github/forks/cssnr/noaa-weather-android?style=flat&logo=github)](https://github.com/cssnr/noaa-weather-android/forks)
-[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/noaa-weather-android?style=flat&logo=github)](https://github.com/cssnr/noaa-weather-android/stargazers)
-[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=github&label=org%20stars)](https://cssnr.com/)
+[![APK Size](https://badges.cssnr.com/gh/release/cssnr/noaa-weather-android/latest/asset/app-release.apk/size?label=apk&color=darkgreen)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+[![AGP Version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fnoaa-weather-android%2Frefs%2Fheads%2Fmaster%2Fgradle%2Flibs.versions.toml&query=%24.versions.agp&logo=gradle&label=gradle)](https://github.com/cssnr/noaa-weather-android/blob/master/gradle/libs.versions.toml#L2)
+[![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/lint.yaml?logo=norton&logoColor=white&label=lint)](https://github.com/cssnr/noaa-weather-android/actions/workflows/lint.yaml)
+[![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/release.yaml?logo=norton&logoColor=white&label=release)](https://github.com/cssnr/noaa-weather-android/actions/workflows/release.yaml)
+[![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/noaa-weather-android?logo=listenhub&label=updated)](https://github.com/cssnr/noaa-weather-android/pulse)
+[![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/noaa-weather-android?logo=buffer&label=repo%20size)](https://github.com/cssnr/noaa-weather-android?tab=readme-ov-file#readme)
+[![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/noaa-weather-android?logo=devbox)](https://github.com/cssnr/noaa-weather-android?tab=readme-ov-file#readme)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/noaa-weather-android?logo=southwestairlines)](https://github.com/cssnr/noaa-weather-android/graphs/contributors)
+[![GitHub Issues](https://img.shields.io/github/issues/cssnr/noaa-weather-android?logo=codeforces&logoColor=white)](https://github.com/cssnr/noaa-weather-android/issues)
+[![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/noaa-weather-android?logo=theconversation)](https://github.com/cssnr/noaa-weather-android/discussions)
+[![GitHub Forks](https://img.shields.io/github/forks/cssnr/noaa-weather-android?style=flat&logo=forgejo&logoColor=white)](https://github.com/cssnr/noaa-weather-android/forks)
+[![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/noaa-weather-android?style=flat&logo=gleam&logoColor=white)](https://github.com/cssnr/noaa-weather-android/stargazers)
+[![GitHub Org Stars](https://img.shields.io/github/stars/cssnr?style=flat&logo=apachespark&logoColor=white&label=org%20stars)](https://cssnr.github.io/)
 [![Discord](https://img.shields.io/discord/899171661457293343?logo=discord&logoColor=white&label=discord&color=7289da)](https://discord.gg/wXy6m2X8wY)
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-72a5f2?logo=kofi&label=support)](https://ko-fi.com/cssnr)
 
+> [!CAUTION]  
+> :rotating_light: **Free and Open-Source Android is under threat!**  
+> Google will turn Android into a locked-down platform, restricting your essential freedom to install apps of your choice. Make your voice heard – [Keep Android Open](https://keepandroidopen.org/).
+
 # NOAA Weather Android
 
-[![GitHub Release](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?style=for-the-badge&logo=android&label=Download%20Android%20APK&color=3ddc84)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+<a title="NOAA Weather Android" href="https://cssnr.github.io/" target="_blank">
+<img alt="NOAA Weather Android" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/cssnr/noaa-weather-android/refs/heads/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"></a>
 
 - [Install](#Install)
-  - [Setup](#Setup)
+- [Setup](#Setup)
 - [Features](#Features)
   - [Planned](#Planned)
   - [Known Issues](#Known-Issues)
@@ -42,16 +50,25 @@ Custom update interval and notification settings and more...
 
 <details><summary>📲 Click to View QR Codes 📸 Supports Android 8 (API 26) 2017 +</summary>
 
+<br />
+
 [![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/qr-code-github.png)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
+
+<br />
 
 [![QR Code](https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/noaa-weather/qr-code-obtainium.png)](https://apps.obtainium.imranr.dev/redirect?r=obtainium://add/https://github.com/cssnr/noaa-weather-android/)
 
 </details>
 
+[![Latest Release](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?style=for-the-badge&logo=github&label=latest%20release&color=34A853)](https://github.com/cssnr/noaa-weather-android/releases/latest)
+[![Latest Pre-Release](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?style=for-the-badge&logo=github&include_prereleases&label=pre-release&color=blue)](https://github.com/cssnr/noaa-weather-android/releases)
+
 _Note: If installing directly, you may need to allow installation of apps from unknown sources.  
 For more information, see [Release through a website](https://developer.android.com/studio/publish#publishing-website)._
 
 <details><summary>View Manual Steps to Install from Unknown Sources</summary>
+
+<br />
 
 Note: Downloading and Installing the [apk](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
 should take you to the settings area to allow installation if not already enabled. Otherwise:
@@ -66,9 +83,19 @@ should take you to the settings area to allow installation if not already enable
 6. Choose Install and Accept any Play Protect notifications.
 7. The app is now installed. Proceed to the [Setup](#Setup) section below.
 
+---
+
 </details>
 
-### Setup
+_The GitHub APK has been registered with Google's [Android developer verification](https://developer.android.com/developer-verification)._
+
+```
+83:B6:40:9F:E6:AF:2B:D1:DD:4E:FC:5F:70:71:A5:A2:E2:A2:44:84:05:07:B1:FF:3C:D5:48:9B:F1:89:BC:22
+```
+
+[_How to Verify an APK Signature_](https://developer.android.com/tools/apksigner#usage-verify)
+
+## Setup
 
 1. [Install](#Install) and open the app on your device.
 2. Go to the Stations page and click the Add button.
@@ -188,6 +215,8 @@ _Note: you may have to uninstall before installing due to different certificate 
 For more details, see the [ADB Documentation](https://developer.android.com/tools/adb#move).
 
 # Contributing
+
+If you would like to submit a PR, please review the [CONTRIBUTING.md](#contributing-ov-file).
 
 Please consider making a donation to support the development of this project
 and [additional](https://cssnr.com/) open source projects.

@@ -1,8 +1,4 @@
-# IDE
-.idea/
-.vscode/
-
-# Build
-**/dist/
-**/node_modules/
-.github/assets/
+.github/assets
+.github/disabled
+.github/pull_request_template.md
+app/src/main/assets/preview
