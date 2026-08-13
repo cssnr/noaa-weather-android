@@ -190,10 +190,11 @@ class MainActivity : AppCompatActivity() {
         //NOTE: enableEdgeToEdge() only makes this transparent on API 29+.
         //On API 26-28 it applies the platform's scrim instead, so force it here.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            @Suppress("DEPRECATION")
             window.navigationBarColor = Color.TRANSPARENT
         }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            window.setNavigationBarContrastEnforced(false)
+            window.isNavigationBarContrastEnforced = false
         }
 
         // Set Global Left/Right System Insets
