@@ -23,7 +23,7 @@
 # NOAA Weather Android
 
 - [Install](#Install)
-  - [Setup](#Setup)
+- [Setup](#Setup)
 - [Features](#Features)
   - [Planned](#Planned)
   - [Known Issues](#Known-Issues)
@@ -92,7 +92,7 @@ _The GitHub APK has been registered with Google's [Android developer verificatio
 
 [_How to Verify an APK Signature_](https://developer.android.com/tools/apksigner#usage-verify)
 
-### Setup
+## Setup
 
 1. [Install](#Install) and open the app on your device.
 2. Go to the Stations page and click the Add button.
@@ -212,6 +212,8 @@ _Note: you may have to uninstall before installing due to different certificate 
 For more details, see the [ADB Documentation](https://developer.android.com/tools/adb#move).
 
 # Contributing
+
+If you would like to submit a PR, please review the [CONTRIBUTING.md](#contributing-ov-file).
 
 Please consider making a donation to support the development of this project
 and [additional](https://cssnr.com/) open source projects.
