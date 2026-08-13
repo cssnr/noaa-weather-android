@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
 
     private val preferences by lazy { PreferenceManager.getDefaultSharedPreferences(this) }
 
-    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+    private val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         Log.d("SharedPreferences", "OnSharedPreferenceChangeListener: $key")
         //if (key == "enable_debug_logs") {
         //    val value = prefs.getBoolean(key, false)
@@ -268,7 +268,7 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             Log.d(LOG_TAG, "MainActivity: lifecycleScope.launch")
             lifecycleScope.launch {
-                val dao = StationDatabase.Companion.getInstance(applicationContext).stationDao()
+                val dao = StationDatabase.getInstance(applicationContext).stationDao()
                 val station = withContext(Dispatchers.IO) { dao.getActive() }
                 Log.d(LOG_TAG, "MainActivity: station: $station")
                 if (station == null) {
