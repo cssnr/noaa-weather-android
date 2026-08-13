@@ -1,7 +1,7 @@
 [![GitHub Downloads](https://img.shields.io/github/downloads/cssnr/noaa-weather-android/total?logo=android)](https://github.com/cssnr/noaa-weather-android/releases)
 [![GitHub Release Version](https://img.shields.io/github/v/release/cssnr/noaa-weather-android?logo=github)](https://github.com/cssnr/noaa-weather-android/releases/latest)
 [![APK Size](https://badges.cssnr.com/gh/release/cssnr/noaa-weather-android/latest/asset/app-release.apk/size?label=apk&color=darkgreen)](https://github.com/cssnr/noaa-weather-android/releases/latest/download/app-release.apk)
-[![AGP Version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fremote-wallpaper-android%2Frefs%2Fheads%2Fmaster%2Fgradle%2Flibs.versions.toml&query=%24.versions.agp&logo=gradle&label=gradle)](https://github.com/cssnr/noaa-weather-android/blob/master/gradle/libs.versions.toml#L2)
+[![AGP Version](https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcssnr%2Fnoaa-weather-android%2Frefs%2Fheads%2Fmaster%2Fgradle%2Flibs.versions.toml&query=%24.versions.agp&logo=gradle&label=gradle)](https://github.com/cssnr/noaa-weather-android/blob/master/gradle/libs.versions.toml#L2)
 [![Workflow Lint](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/lint.yaml?logo=norton&logoColor=white&label=lint)](https://github.com/cssnr/noaa-weather-android/actions/workflows/lint.yaml)
 [![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/noaa-weather-android/release.yaml?logo=norton&logoColor=white&label=release)](https://github.com/cssnr/noaa-weather-android/actions/workflows/release.yaml)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/noaa-weather-android?logo=listenhub&label=updated)](https://github.com/cssnr/noaa-weather-android/pulse)
@@ -23,7 +23,7 @@
 # NOAA Weather Android
 
 <a title="NOAA Weather Android" href="https://cssnr.github.io/" target="_blank">
-<img alt="NOAA Weather Android" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/cssnr/noaa-weather-android/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"></a>
+<img alt="NOAA Weather Android" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/cssnr/noaa-weather-android/refs/heads/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"></a>
 
 - [Install](#Install)
 - [Setup](#Setup)
