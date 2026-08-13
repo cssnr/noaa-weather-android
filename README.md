@@ -22,6 +22,9 @@
 
 # NOAA Weather Android
 
+<a title="NOAA Weather Android" href="https://cssnr.github.io/" target="_blank">
+<img alt="NOAA Weather Android" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/cssnr/noaa-weather-android/master/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp"></a>
+
 - [Install](#Install)
 - [Setup](#Setup)
 - [Features](#Features)
