@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">NOAA Weather</string>
     <string name="version_string">v%s</string>
     <string name="version_code_string">%1$s (%2$s)</string>
@@ -70,7 +70,7 @@
         <item>Light Blue</item>
         <item>Dark Blue</item>
     </string-array>
-    <string-array name="widget_color_values">
+    <string-array name="widget_color_values" tools:ignore="Typos">
         <item>white</item>
         <item>black</item>
         <item>blue1</item>
