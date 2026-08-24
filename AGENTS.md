@@ -6,17 +6,27 @@ Android client for [NOAA Weather](https://www.weather.gov/).
 - `gradle/libs.versions.toml` - Library versions
 - `Taskfile.yml` - [task](https://github.com/go-task/task) commands
 
+## Android
+
+- applicationId = "org.cssnr.noaaweather" Release
+- applicationId = "org.cssnr.noaaweather.dev" Debug
+
+- minSdk = 26
+- targetSdk = 36
+- compileSdk = 37
+
 ## Commands
 
 ALWAYS use the `task *` commands
 
 | Command        | Purpose                                  |
 | -------------- | ---------------------------------------- |
+| `task lint`    | Gradle Lint                              |
 | `task compile` | Compile Kotlin                           |
 | `task debug`   | Build debug variant (APK)                |
 | `task release` | Build release variant (APK)              |
 | `task bundle`  | Build Android App Bundle (AAB)           |
-| `task lint`    | Prettier check + yamllint + actionlint   |
+| `task check`   | Prettier check (check non-kotlin files)  |
 | `task format`  | Prettier write (format non-kotlin files) |
 
 Do NOT use `-q` or pipe Gradle output through `Select-Object` — both hide progress and make long builds look hung.

@@ -16,6 +16,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Url
 
+// NOTE: This file is not currently used anywhere in the app.
 class DiscordApi(
     val context: Context,
     webhookUrl: String = "",
@@ -74,7 +75,7 @@ class DiscordApi(
             .build()
     }
 
-    inner class SimpleCookieJar : CookieJar {
+    class SimpleCookieJar : CookieJar {
         private val cookieStore = mutableMapOf<String, List<Cookie>>()
 
         override fun saveFromResponse(url: HttpUrl, cookies: List<Cookie>) {

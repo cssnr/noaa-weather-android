@@ -19,7 +19,7 @@ class AddDialogAdapter(
 
     private lateinit var context: Context
 
-    inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val propertiesName: TextView = view.findViewById(R.id.properties_name)
         val propertiesID: TextView = view.findViewById(R.id.properties_id)
         val propertiesElevation: TextView = view.findViewById(R.id.properties_elevation)

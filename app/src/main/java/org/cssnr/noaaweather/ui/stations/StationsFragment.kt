@@ -157,8 +157,9 @@ class StationsFragment : Fragment() {
             }
         }
 
-        binding.addStation.setOnClickListener { view ->
+        binding.addStation.setOnClickListener { _ ->
             Log.d(LOG_TAG, "binding.addStation.setOnClickListener")
+            // NOTE: Arg view was changed to _ (revert if needed)
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //    .setAction("Action", null)
             //    .setAnchorView(R.id.fab).show()

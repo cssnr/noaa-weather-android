@@ -20,7 +20,7 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
         // Update Current Conditions
         Log.d("AppWorker", "Update Current Conditions")
         try {
-            val dao = StationDatabase.Companion.getInstance(applicationContext).stationDao()
+            val dao = StationDatabase.getInstance(applicationContext).stationDao()
             val station = dao.getActive()
             Log.d("AppWorker", "station: $station")
             if (station != null) {
