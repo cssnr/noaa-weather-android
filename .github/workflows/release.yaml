@@ -93,7 +93,7 @@ jobs:
       - name: "Write Secret Properties"
         run: |
           echo "${{ secrets.SECRET_PROPERTIES }}" | base64 --decode > secret.properties
-          stat secret.properties
+          wc -l secret.properties
 
       - name: "Write Keystore File"
         run: |
