@@ -172,6 +172,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
             false
         }
 
+        // Crash Reporting - with disable confirmation
+        val acraEnable = findPreference<SwitchPreferenceCompat>("acra.enable")
+        acraEnable?.setOnPreferenceChangeListener { _, newValue ->
+            Log.d(LOG_TAG, "acra.enable: $newValue")
+            ctx.toggleAcra(acraEnable, newValue)
+            false
+        }
+
         // Debugging
         val enableDebugLogs = findPreference<SwitchPreferenceCompat>("enable_debug_logs")
         val viewDebugLogs = findPreference<Preference>("view_debug_logs")
@@ -221,6 +229,24 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 )
                 return true
             }
+        }
+    }
+
+    private fun Context.toggleAcra(switchPreference: SwitchPreferenceCompat, newValue: Any) {
+        Log.d(LOG_TAG, "toggleAcra: $newValue")
+        if (newValue as Boolean) {
+            Log.d(LOG_TAG, "ENABLE ACRA")
+            switchPreference.isChecked = true
+        } else {
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Please Reconsider")
+                .setMessage("Crash reports help fix bugs and only anonymous data is sent.")
+                .setPositiveButton("Disable Anyway") { _, _ ->
+                    Log.d(LOG_TAG, "DISABLE ACRA")
+                    switchPreference.isChecked = false
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
         }
     }
 
