@@ -1,5 +1,12 @@
 import com.android.build.api.dsl.ApplicationExtension
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+// ACRA - Load credentials from secret.properties
+val secretProperties = Properties().apply {
+    val file = rootProject.file("secret.properties")
+    if (file.exists()) file.inputStream().use { load(it) }
+}
 
 plugins {
     alias(libs.plugins.android.application)
@@ -19,6 +26,11 @@ configure<ApplicationExtension> {
         versionName = "0.0.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // ACRA - Acrarium backend setup: https://www.acra.ch/docs/Setup
+        buildConfigField("String", "ACRA_URI", "\"${secretProperties.getProperty("acra.uri") ?: ""}\"")
+        buildConfigField("String", "ACRA_USER", "\"${secretProperties.getProperty("acra.user") ?: ""}\"")
+        buildConfigField("String", "ACRA_PASS", "\"${secretProperties.getProperty("acra.pass") ?: ""}\"")
     }
 
     buildTypes {
@@ -82,6 +94,7 @@ dependencies {
     implementation(libs.play.services.location)
     implementation(libs.glide)
     implementation(libs.okhttp3.integration)
+    implementation(libs.acra.http)
     //implementation(libs.timber)
     ksp(libs.glide.ksp)
     ksp(libs.androidx.room.compiler)
