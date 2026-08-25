@@ -98,7 +98,6 @@ jobs:
       - name: "Write Keystore File"
         run: |
           echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.key_file }}
-
           echo ${{ secrets.ANDROID_KEYSTORE_PASS }} | keytool -list -keystore ${{ env.key_file }}
 
       #- name: "Setup Node 24"
