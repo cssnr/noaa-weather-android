@@ -95,6 +95,7 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.okhttp3.integration)
     implementation(libs.acra.http)
+    implementation(libs.acra.toast)
     //implementation(libs.timber)
     ksp(libs.glide.ksp)
     ksp(libs.androidx.room.compiler)

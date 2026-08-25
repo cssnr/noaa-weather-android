@@ -59,6 +59,7 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
 okhttp3-integration = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
 acra-http = { group = "ch.acra", name = "acra-http", version.ref = "acra" }
+acra-toast = { group = "ch.acra", name = "acra-toast", version.ref = "acra" }
 # timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 [plugins]
