@@ -25,6 +25,7 @@ retrofit = "3.0.0"
 moshiKotlinCodegen = "1.15.2"
 playServicesLocation = "21.4.0"
 glide = "5.0.9"
+acra = "5.13.1"
 # timber = "5.0.1"
 
 [libraries]
@@ -57,6 +58,8 @@ play-services-location = { group = "com.google.android.gms", name = "play-servic
 glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "glide" }
 glide-ksp = { group = "com.github.bumptech.glide", name = "ksp", version.ref = "glide" }
 okhttp3-integration = { group = "com.github.bumptech.glide", name = "okhttp3-integration", version.ref = "glide" }
+acra-http = { group = "ch.acra", name = "acra-http", version.ref = "acra" }
+acra-toast = { group = "ch.acra", name = "acra-toast", version.ref = "acra" }
 # timber = { group = "com.jakewharton.timber", name = "timber", version.ref = "timber" }
 
 [plugins]

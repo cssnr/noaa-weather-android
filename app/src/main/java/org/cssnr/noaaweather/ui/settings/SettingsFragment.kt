@@ -12,8 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.PowerManager
 import android.provider.Settings
-import android.text.Html
-import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText

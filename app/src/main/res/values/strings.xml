@@ -76,4 +76,8 @@
         <item>blue1</item>
         <item>blue2</item>
     </string-array>
+
+    <!-- ACRA Toast -->
+    <!--<string name="acra_toast_text">The app crashed! A report was sent. Disable in the Settings…</string>-->
+    <string name="acra_toast_text">App crashed. Report sent. Disable in Settings.</string>
 </resources>
