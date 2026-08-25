@@ -35,8 +35,6 @@ class StationsFragment : Fragment() {
 
     private lateinit var adapter: StationsAdapter
 
-    private val addDialogFragment by lazy { AddDialogFragment() }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -135,9 +133,9 @@ class StationsFragment : Fragment() {
             //stationsViewModel.stationData.value = stations
             savedInstanceState?.size()?.let { if (it > 0) return@launch }
             if (stations.isEmpty()) {
-                if (!addDialogFragment.isAdded) {
+                if (parentFragmentManager.findFragmentByTag("AddDialogFragment") == null) {
                     Log.i(LOG_TAG, "No Stations Found - Showing Add Dialog Fragment...")
-                    addDialogFragment.show(parentFragmentManager, "AddDialogFragment")
+                    AddDialogFragment().show(parentFragmentManager, "AddDialogFragment")
                 }
             }
         }
@@ -163,9 +161,8 @@ class StationsFragment : Fragment() {
             //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
             //    .setAction("Action", null)
             //    .setAnchorView(R.id.fab).show()
-            Log.d(LOG_TAG, "addDialogFragment.isAdded: ${addDialogFragment.isAdded}")
-            if (!addDialogFragment.isAdded) {
-                addDialogFragment.show(parentFragmentManager, "AddDialogFragment")
+            if (parentFragmentManager.findFragmentByTag("AddDialogFragment") == null) {
+                AddDialogFragment().show(parentFragmentManager, "AddDialogFragment")
             }
         }
 
@@ -177,9 +174,8 @@ class StationsFragment : Fragment() {
         //Log.i(LOG_TAG, "addStationState: $addStationState")
         if (addStationArg) {
             arguments?.remove("add_station")
-            Log.d(LOG_TAG, "addDialogFragment.isAdded: ${addDialogFragment.isAdded}")
-            if (!addDialogFragment.isAdded) {
-                addDialogFragment.show(parentFragmentManager, "AddDialogFragment")
+            if (parentFragmentManager.findFragmentByTag("AddDialogFragment") == null) {
+                AddDialogFragment().show(parentFragmentManager, "AddDialogFragment")
             }
         }
     }
