@@ -13,7 +13,7 @@ class MainApplication : Application() {
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(base)
         initAcra {
-            //core configuration:
+            // core configuration
             buildConfigClass = BuildConfig::class.java
             reportFormat = StringFormat.JSON
             httpSender {
@@ -22,6 +22,7 @@ class MainApplication : Application() {
                 basicAuthPassword = BuildConfig.ACRA_PASS
                 httpMethod = HttpSender.Method.POST
             }
+            // toast configuration
             toast {
                 text = base.getString(R.string.acra_toast_text)
                 length = Toast.LENGTH_LONG
