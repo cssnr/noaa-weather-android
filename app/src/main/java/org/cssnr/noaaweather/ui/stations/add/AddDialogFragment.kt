@@ -25,6 +25,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -43,6 +44,7 @@ import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.log.debugLog
 import org.cssnr.noaaweather.ui.stations.updateStation
+import java.io.IOException
 import java.util.Locale
 
 const val LOG_TAG = "AddDialog"
@@ -189,8 +191,9 @@ class AddDialogFragment : DialogFragment() {
                 LocationServices.getFusedLocationProviderClient(appContext)
             val requestButton = dialog.findViewById<Button>(R.id.btn_locate)
             requestButton?.setOnClickListener {
-                //requestLocation()
-                locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                if (isAdded && lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    locationPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+                }
             }
         }
 
@@ -297,8 +300,18 @@ suspend fun Geocoder.getLocation(
         })
     } else {
         Log.d("getLocation", "DEPRECATION: SDK_INT < 33")
+        if (!Geocoder.isPresent()) {
+            Log.w("getLocation", "Geocoder not present")
+            callback(null)
+            return
+        }
         val result = withContext(Dispatchers.IO) {
-            this@getLocation.getFromLocationName(name, maxResults)
+            try {
+                this@getLocation.getFromLocationName(name, maxResults)
+            } catch (e: IOException) {
+                Log.e("getLocation", "Geocoder IOException: ${e.message}")
+                null
+            }
         }
         if (!result.isNullOrEmpty()) {
             callback(result)
