@@ -72,7 +72,7 @@ class StationsFragment : Fragment() {
                         dao.getAll()
                     }
                     //Log.d(LOG_TAG, "stations: $stations")
-                    if (!isAdded) return@launch
+                    if (!isAdded || _binding == null) return@launch
                     adapter.updateData(stations)
                 }
 
@@ -102,7 +102,7 @@ class StationsFragment : Fragment() {
                         }
                         dao.getAll()
                     }
-                    if (!isAdded) return@launch
+                    if (!isAdded || _binding == null) return@launch
                     adapter.updateData(stations)
                     //stationsViewModel.stationData.value = stations
                 }
@@ -135,7 +135,7 @@ class StationsFragment : Fragment() {
             if (!isAdded) return@launch
             val dao = StationDatabase.getInstance(ctx).stationDao()
             val stations = withContext(Dispatchers.IO) { dao.getAll() }
-            if (!isAdded) return@launch
+            if (!isAdded || _binding == null) return@launch
             Log.d(LOG_TAG, "stations.size ${stations.size}")
             adapter.updateData(stations)
             //stationsViewModel.stationData.value = stations
@@ -157,11 +157,11 @@ class StationsFragment : Fragment() {
                     if (!isAdded) return@launch
                     val dao = StationDatabase.getInstance(ctx).stationDao()
                     val stations = withContext(Dispatchers.IO) { dao.getAll() }
-                    if (!isAdded) return@launch
+                    if (!isAdded || _binding == null) return@launch
                     Log.d(LOG_TAG, "stations.size: ${stations.size}")
                     //stationsViewModel.stationData.value = stations
                     withContext(Dispatchers.Main) {
-                        if (!isAdded) return@withContext
+                        if (!isAdded || _binding == null) return@withContext
                         adapter.updateData(stations)
                     }
                 }
