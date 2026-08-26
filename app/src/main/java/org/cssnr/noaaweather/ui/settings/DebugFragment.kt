@@ -46,14 +46,18 @@ class DebugFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(LOG_TAG, "savedInstanceState: ${savedInstanceState?.size()}")
 
-        val ctx = requireContext()
+        val appCtx = requireContext().applicationContext
 
-        lifecycleScope.launch { binding.textView.text = ctx.readLogFile() }
+        lifecycleScope.launch {
+            if (!isAdded || _binding == null) return@launch
+            binding.textView.text = appCtx.readLogFile()
+        }
 
         binding.copyLogs.setOnClickListener {
+            if (!isAdded) return@setOnClickListener
             Log.d(LOG_TAG, "copyLogs")
             val text = binding.textView.text.toString().trim()
-            if (text.isNotEmpty()) ctx.copyToClipboard(text, "Logs Copied")
+            if (text.isNotEmpty()) appCtx.copyToClipboard(text, "Logs Copied")
         }
 
         binding.shareLogs.setOnClickListener {
@@ -70,25 +74,29 @@ class DebugFragment : Fragment() {
         binding.reloadLogs.setOnClickListener {
             Log.d(LOG_TAG, "reloadLogs")
             lifecycleScope.launch {
-                binding.textView.text = ctx.readLogFile()
-                Toast.makeText(ctx, "Logs Reloaded.", Toast.LENGTH_SHORT).show()
+                if (!isAdded || _binding == null) return@launch
+                binding.textView.text = appCtx.readLogFile()
+                Toast.makeText(appCtx, "Logs Reloaded.", Toast.LENGTH_SHORT).show()
             }
         }
 
         binding.clearLogs.setOnClickListener {
+            if (!isAdded) return@setOnClickListener
             Log.d(LOG_TAG, "clearLogs")
             val text = binding.textView.text.toString().trim()
             if (text.isEmpty()) return@setOnClickListener
-            MaterialAlertDialogBuilder(ctx, R.style.AlertDialogTheme)
+            val activityCtx = requireContext()
+            MaterialAlertDialogBuilder(activityCtx, R.style.AlertDialogTheme)
                 .setIcon(R.drawable.md_delete_24px)
                 .setTitle("Confirm")
                 .setMessage("Delete All Logs?")
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Clear") { _, _ ->
-                    val logFile = File(ctx.filesDir, "debug_log.txt")
+                    if (_binding == null) return@setPositiveButton
+                    val logFile = File(appCtx.filesDir, "debug_log.txt")
                     logFile.writeText("")
                     binding.textView.text = ""
-                    Toast.makeText(ctx, "Logs Cleared.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(appCtx, "Logs Cleared.", Toast.LENGTH_SHORT).show()
                 }
                 .show()
         }
@@ -97,8 +105,9 @@ class DebugFragment : Fragment() {
             override fun onRefresh() {
                 Log.d(LOG_TAG, "setOnRefreshListener: onRefresh")
                 lifecycleScope.launch {
-                    binding.textView.text = ctx.readLogFile()
-                    Toast.makeText(ctx, "Logs Reloaded.", Toast.LENGTH_SHORT).show()
+                    if (!isAdded || _binding == null) return@launch
+                    binding.textView.text = appCtx.readLogFile()
+                    Toast.makeText(appCtx, "Logs Reloaded.", Toast.LENGTH_SHORT).show()
                     binding.swiperefresh.isRefreshing = false
                 }
             }
@@ -108,7 +117,11 @@ class DebugFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         Log.d(LOG_TAG, "DebugFragment - onResume")
-        lifecycleScope.launch { binding.textView.text = requireContext().readLogFile() }
+        lifecycleScope.launch {
+            if (!isAdded || _binding == null) return@launch
+            val ctx = context ?: return@launch
+            binding.textView.text = ctx.readLogFile()
+        }
     }
 
     //suspend fun Context.readLogFile(): String = withContext(Dispatchers.IO) {

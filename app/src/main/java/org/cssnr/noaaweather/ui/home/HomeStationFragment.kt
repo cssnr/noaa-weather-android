@@ -55,7 +55,9 @@ class HomeStationFragment : Fragment(), UpdatableFragment {
     }
 
     override fun updateData(newData: WeatherStation) {
-        val appContext = requireContext()
+        if (_binding == null) return
+        if (!isAdded) return
+        val appContext = context ?: return
 
         //val sharedPreferences =
         //    appContext.getSharedPreferences("org.cssnr.noaaweather", MODE_PRIVATE)

@@ -32,9 +32,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
@@ -61,11 +59,13 @@ class AddDialogFragment : DialogFragment() {
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         Log.d(LOG_TAG, "locationPermissionLauncher: isGranted: $isGranted")
+        if (!isAdded) return@registerForActivityResult
         if (isGranted) {
             requestLocation()
         } else {
+            val ctx = context ?: return@registerForActivityResult
             val msg = "Location Not Allowed"
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
             //val permanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
             //    requireActivity(),
             //    Manifest.permission.ACCESS_FINE_LOCATION
@@ -80,7 +80,6 @@ class AddDialogFragment : DialogFragment() {
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     @SuppressLint("InflateParams", "MissingPermission")
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         val builder = AlertDialog.Builder(requireActivity())
@@ -89,7 +88,7 @@ class AddDialogFragment : DialogFragment() {
         builder.setView(inflater.inflate(R.layout.dialog_add, null))
         val dialog = builder.create()
 
-        val appContext = requireContext()
+        val appContext = requireContext().applicationContext
 
         dialog.setOnShowListener {
             emptyListView = dialog.findViewById(R.id.empty_layout)
@@ -99,7 +98,7 @@ class AddDialogFragment : DialogFragment() {
             suggestionsList?.layoutManager = LinearLayoutManager(appContext)
             adapter = AddDialogAdapter(emptyList()) { data ->
                 Log.d(LOG_TAG, "onItemClick: $data")
-                CoroutineScope(Dispatchers.IO).launch {
+                lifecycleScope.launch(Dispatchers.IO) {
                     val dao = StationDatabase.getInstance(appContext).stationDao()
                     //val existing = dao.getById(data.properties.stationIdentifier)
                     //Log.d(LOG_TAG, "existing: $existing")
@@ -119,14 +118,17 @@ class AddDialogFragment : DialogFragment() {
                     )
                     Log.d(LOG_TAG, "station: $station")
                     dao.add(station)
-                    GlobalScope.launch { appContext.updateStation(station.stationId) }
+                    // Fire-and-forget station update using application context (safe after detach)
+                    CoroutineScope(Dispatchers.IO).launch { appContext.updateStation(station.stationId) }
                     Log.i(LOG_TAG, "setFragmentResult: stations_updated: ${station.stationId}")
                     withContext(Dispatchers.Main) {
+                        if (!isAdded) return@withContext
                         setFragmentResult(
                             "stations_updated",
                             Bundle().apply { putString("stationId", station.stationId) }
                         )
-                        dialog.dismiss()
+                        // dialog may already be dismissed if fragment detached
+                        if (dialog.isShowing) dialog.dismiss()
                     }
                 }
             }
@@ -139,11 +141,14 @@ class AddDialogFragment : DialogFragment() {
                 override fun afterTextChanged(text: Editable?) {
                     Log.d(LOG_TAG, "afterTextChanged: $text")
                     getPlaceLocation(text.toString()) { addresses ->
+                        if (!isAdded) return@getPlaceLocation
                         Log.d(LOG_TAG, "addresses: $addresses")
                         context?.debugLog("Found ${addresses?.size} Addresses: ${addresses?.firstOrNull()?.featureName}")
                         if (!addresses.isNullOrEmpty()) {
                             lifecycleScope.launch {
-                                val data = requireContext().getStations(
+                                if (!isAdded) return@launch
+                                val ctx = context ?: return@launch
+                                val data = ctx.getStations(
                                     addresses[0].latitude,
                                     addresses[0].longitude
                                 )
@@ -204,12 +209,15 @@ class AddDialogFragment : DialogFragment() {
         Log.d(LOG_TAG, "getPlaceLocation: place: $place")
         searchRunnable?.let { handler.removeCallbacks(it) }
         searchRunnable = Runnable {
+            if (!isAdded) return@Runnable
             if (place.isNotEmpty()) {
-                context?.debugLog("Searching Place: $place")
-                val geocoder = Geocoder(requireContext())
+                val ctx = context ?: return@Runnable
+                ctx.debugLog("Searching Place: $place")
+                val geocoder = Geocoder(ctx)
                 lifecycleScope.launch(Dispatchers.IO) {
                     geocoder.getLocation(place) { addresses ->
                         lifecycleScope.launch(Dispatchers.Main) {
+                            if (!isAdded) return@launch
                             Log.d(LOG_TAG, "addresses?.size: ${addresses?.size}")
                             Log.d(LOG_TAG, "addresses: $addresses")
                             callback(addresses)
@@ -221,13 +229,25 @@ class AddDialogFragment : DialogFragment() {
         handler.postDelayed(searchRunnable!!, 1000)
     }
 
+    override fun onDestroyView() {
+        searchRunnable?.let { handler.removeCallbacks(it) }
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        searchRunnable?.let { handler.removeCallbacks(it) }
+        super.onDestroy()
+    }
+
     //@RequiresPermission(anyOf = [Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION])
     private fun requestLocation() {
         Log.d("requestLocation", "START")
-        val context = requireContext()
-        if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION)
+        if (!isAdded) return
+        val ctx = context ?: return
+        if (ContextCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION)
             != PackageManager.PERMISSION_GRANTED
         ) {
+            if (!isAdded) return
             ActivityCompat.requestPermissions(
                 requireActivity(),
                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 100
@@ -236,16 +256,20 @@ class AddDialogFragment : DialogFragment() {
             return
         }
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (!isAdded) return@addOnSuccessListener
             if (location != null) {
                 Log.d("Location", "location: $location")
                 Log.d("Location", "lat/lon: ${location.latitude} / ${location.longitude}")
-                CoroutineScope(Dispatchers.IO).launch {
-                    val data = requireContext().getStations(location.latitude, location.longitude)
+                lifecycleScope.launch(Dispatchers.IO) {
+                    if (!isAdded) return@launch
+                    val ioCtx = context ?: return@launch
+                    val data = ioCtx.getStations(location.latitude, location.longitude)
                     Log.d("Location", "data.features.size: ${data?.features?.size}")
                     if (data != null) {
                         //val stringData = data.features.map { it.properties.name }
                         //Log.d("Location", "stringData: $stringData")
                         withContext(Dispatchers.Main) {
+                            if (!isAdded) return@withContext
                             emptyListView?.visibility = View.GONE
                             adapter.updateData(data)
                         }

@@ -56,12 +56,13 @@ class StationsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Log.d(LOG_TAG, "onViewCreated: ${savedInstanceState?.size()}")
 
-        val ctx = requireContext()
+        val ctx = requireContext().applicationContext
         //val stationsViewModel = ViewModelProvider(this)[StationsViewModel::class.java]
 
         fun onClick(data: WeatherStation) {
             Log.i(LOG_TAG, "onClick: $data")
             lifecycleScope.launch {
+                if (!isAdded) return@launch
                 if (!data.active) {
                     val dao = StationDatabase.getInstance(ctx).stationDao()
                     Log.d(LOG_TAG, "Activating: ${data.stationId}")
@@ -71,6 +72,7 @@ class StationsFragment : Fragment() {
                         dao.getAll()
                     }
                     //Log.d(LOG_TAG, "stations: $stations")
+                    if (!isAdded) return@launch
                     adapter.updateData(stations)
                 }
 
@@ -89,6 +91,7 @@ class StationsFragment : Fragment() {
             fun callback(station: WeatherStation) {
                 Log.d(LOG_TAG, "callback: ${data.stationId}")
                 lifecycleScope.launch {
+                    if (!isAdded) return@launch
                     val dao = StationDatabase.getInstance(ctx).stationDao()
                     Log.i(LOG_TAG, "DELETING: ${data.stationId}")
                     val stations = withContext(Dispatchers.IO) {
@@ -99,11 +102,14 @@ class StationsFragment : Fragment() {
                         }
                         dao.getAll()
                     }
+                    if (!isAdded) return@launch
                     adapter.updateData(stations)
                     //stationsViewModel.stationData.value = stations
                 }
             }
-            ctx.deleteConfirmDialog(data, ::callback)
+            // deleteConfirmDialog needs Activity context for dialog, use requireContext() with guard
+            if (!isAdded) return
+            (requireContext()).deleteConfirmDialog(data, ::callback)
         }
 
         // Initialize Adapter
@@ -126,8 +132,10 @@ class StationsFragment : Fragment() {
         //stationsViewModel.stationData.observe(requireActivity(), stationObserver)
 
         lifecycleScope.launch {
+            if (!isAdded) return@launch
             val dao = StationDatabase.getInstance(ctx).stationDao()
             val stations = withContext(Dispatchers.IO) { dao.getAll() }
+            if (!isAdded) return@launch
             Log.d(LOG_TAG, "stations.size ${stations.size}")
             adapter.updateData(stations)
             //stationsViewModel.stationData.value = stations
@@ -146,11 +154,16 @@ class StationsFragment : Fragment() {
             if (stationId != null) {
                 Log.i("setFragmentResultListener", "Added stationId: $stationId")
                 lifecycleScope.launch {
+                    if (!isAdded) return@launch
                     val dao = StationDatabase.getInstance(ctx).stationDao()
                     val stations = withContext(Dispatchers.IO) { dao.getAll() }
+                    if (!isAdded) return@launch
                     Log.d(LOG_TAG, "stations.size: ${stations.size}")
                     //stationsViewModel.stationData.value = stations
-                    withContext(Dispatchers.Main) { adapter.updateData(stations) }
+                    withContext(Dispatchers.Main) {
+                        if (!isAdded) return@withContext
+                        adapter.updateData(stations)
+                    }
                 }
             }
         }
