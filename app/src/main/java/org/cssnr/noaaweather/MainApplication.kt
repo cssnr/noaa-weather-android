@@ -33,7 +33,8 @@ class MainApplication : Application() {
         // PhoneFallbackEventHandler sending CLOSE_SYSTEM_DIALOGS broadcast.
         // This crashes on Android 12 emulators and older devices with physical
         // CALL/CAMERA buttons. The fix was applied in AOSP QPR1 but not all
-        // builds received it. See: https://android-review.googlesource.com/c/15836011
+        // builds received it.
+        // https://android.googlesource.com/platform/frameworks/base/+/1538b7fda7608f40ee85020785504539a0f02e78%5E%21/
         val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             if (throwable.hasCloseSystemDialogsCause()) {
