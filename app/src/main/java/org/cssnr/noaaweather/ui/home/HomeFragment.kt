@@ -51,7 +51,7 @@ class HomeFragment : Fragment() {
         Log.d(LOG_TAG, "HomeFragment - onViewCreated: ${savedInstanceState?.size()}")
 
         homeViewModel = ViewModelProvider(this)[HomeViewModel::class.java]
-        val appContext = requireContext()
+        val appContext = requireContext().applicationContext
 
         homeStationAdapter = HomeStationAdapter(this, emptyList())
         viewPager = binding.pager
@@ -59,6 +59,7 @@ class HomeFragment : Fragment() {
 
         // TODO: Cleanup Logic for Updating Fragments and Setting Start Position...
         homeViewModel.data.observe(viewLifecycleOwner) { stations ->
+            if (!isAdded || _binding == null) return@observe
             Log.d(LOG_TAG, "data.observe: stations.size: ${stations.size}")
             val activeStationPos = stations.indexOfFirst { it.active }
             Log.d(LOG_TAG, "data.observe: activeStationPos: $activeStationPos")
@@ -75,6 +76,7 @@ class HomeFragment : Fragment() {
                 viewPager.setCurrentItem(homeViewModel.position.value ?: activeStationPos, false)
                 childFragmentManager.fragments.forEach { fragment ->
                     if (fragment is UpdatableFragment) {
+                        if (!fragment.isAdded) return@forEach
                         val itemId =
                             fragment.tag?.removePrefix("f")?.toLongOrNull() ?: return@forEach
                         //Log.d(LOG_TAG, "itemId: $itemId")
@@ -89,10 +91,12 @@ class HomeFragment : Fragment() {
         }
 
         lifecycleScope.launch {
+            if (!isAdded) return@launch
             val dao = StationDatabase.getInstance(appContext).stationDao()
             val stations = withContext(Dispatchers.IO) {
                 dao.getAll()
             }
+            if (!isAdded) return@launch
             Log.d(LOG_TAG, "lifecycleScope.launch: stations.size: ${stations.size}")
             if (!stations.isEmpty()) {
                 if (homeViewModel.data.value != stations) {
@@ -110,6 +114,7 @@ class HomeFragment : Fragment() {
         // TODO: Update Refresh for ViewPager2...
         binding.refreshDashboard.setOnClickListener { view ->
             Log.d(LOG_TAG, "binding.refreshDashboard.setOnClickListener")
+            if (!isAdded || _binding == null) return@setOnClickListener
             homeViewModel.position.value = binding.pager.currentItem
             Log.i(LOG_TAG, "position.value set to: ${binding.pager.currentItem}")
             binding.refreshDashboard.isEnabled = false
@@ -118,9 +123,11 @@ class HomeFragment : Fragment() {
                 val stations = withContext(Dispatchers.IO) {
                     appContext.updateStations()
                 }
+                if (!isAdded) return@launch
                 Log.d(LOG_TAG, "current: $stations")
                 homeViewModel.data.value = stations
                 withContext(Dispatchers.Main) {
+                    if (!isAdded || _binding == null) return@withContext
                     Snackbar.make(view, "All Stations Refreshed.", Snackbar.LENGTH_LONG)
                         .setAction("Action", null)
                         .setAnchorView(R.id.refresh_dashboard).show()
@@ -130,8 +137,10 @@ class HomeFragment : Fragment() {
     }
 
     override fun onPause() {
-        homeViewModel.position.value = binding.pager.currentItem
-        Log.i(LOG_TAG, "onPause: position: ${homeViewModel.position.value}")
+        if (_binding != null) {
+            homeViewModel.position.value = binding.pager.currentItem
+            Log.i(LOG_TAG, "onPause: position: ${homeViewModel.position.value}")
+        }
         super.onPause()
     }
 }
