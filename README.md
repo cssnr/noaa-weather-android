@@ -153,13 +153,13 @@ Without crash reporting, fixing a bug requires you to:
 - Explain exactly what you were doing when the app crashed
 - Hope I can re-create the bug myself to get the stack trace
 
-That's a heavy ask for an app that's already not working,
-and leaves these users with a bad experience or broken app.
+That's a heavy ask for an app that's already broken, and it leaves you
+with a bad experience and me without enough data to fix it.
 
 To close that gap without compromising your data or privacy, this app uses
 [ACRA](https://github.com/ACRA/acra) — an open-source crash reporting library. Reports are received by a
 self-hosted [Acrarium](https://github.com/F43nd1r/Acrarium) backend that runs on my own infrastructure,
-so crash data does not go to any third-party (Google or other big data) services.
+so crash data doesn't go to any third parties — no Google, no other big-data services.
 
 **You can turn crash reporting on or off at any time with a toggle on the Settings page.**
 
@@ -172,9 +172,9 @@ it only sends the technical context needed to diagnose the crash:
 - Basic **device context** — e.g. the device model and OS version
 - A short extract of the app's **own logcat** (the last ~200 lines)
 
-It does **not** track usage or activities. Furthermore, it does not collect a **device identifier**
-or send system or other app logs. Each report is **anonymized** and sent **directly** to my server,
-so only I receive the data.
+It does **not** track usage or activity. It doesn't collect a **device identifier**,
+and it doesn't send system logs or logs from other apps. Each report is **anonymized**
+and sent directly to my server, so only I receive the data.
 
 # Development
 
