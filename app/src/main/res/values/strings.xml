@@ -78,6 +78,8 @@
     </string-array>
 
     <!-- ACRA Toast -->
-    <!--<string name="acra_toast_text">The app crashed! A report was sent. Disable in the Settings…</string>-->
-    <string name="acra_toast_text">App crashed. Report sent. Disable in Settings.</string>
+    <string name="acra_toast_text">App crashed and report sent. Disable reporting in Settings.</string>
+    <!-- ACRA Disable Dialog -->
+    <string name="acra_disable_message">Reports are only sent when the app crashes. This helps fix bugs and no personal data is sent.</string>
+    <string name="acra_info_link">https://github.com/cssnr/noaa-weather-android#crash-reporting</string>
 </resources>
