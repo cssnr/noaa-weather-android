@@ -146,20 +146,19 @@ If you are experiencing an issue/bug or getting unexpected results, you can:
 
 ## Crash Reporting
 
-Without crash reporting, fixing a bug requires a lot from you:
+Without crash reporting, fixing a bug requires you to:
 
 - Stop what you're doing and open a browser
 - Go to the GitHub repo and create an Issue
 - Explain exactly what you were doing when the app crashed
 - Hope I can re-create the bug myself to get the stack trace
 
-That's a heavy ask on for an app that's already not working, and it
-leaves these users with a bad experience or an app that is not working.
+That's a heavy ask for an app that's already not working,
+and leaves these users with a bad experience or broken app.
 
-To close that gap without compromising your data or privacy, the app embeds
-[ACRA](https://github.com/ACRA/acra) — an open-source crash reporting library.
-
-Reports are received by a self-hosted [Acrarium](https://github.com/F43nd1r/Acrarium) backend that runs on my own infrastructure,
+To close that gap without compromising your data or privacy, this app uses
+[ACRA](https://github.com/ACRA/acra) — an open-source crash reporting library. Reports are received by a
+self-hosted [Acrarium](https://github.com/F43nd1r/Acrarium) backend that runs on my own infrastructure,
 so crash data does not go to any third-party (Google or other Big Data) services.
 
 **You can turn crash reporting on or off at any time with a toggle on the Settings page.**
@@ -167,14 +166,14 @@ so crash data does not go to any third-party (Google or other Big Data) services
 ### What Gets Collected
 
 ACRA only runs when the app hits an unhandled crash. By default,
-it bundles just the technical context needed to diagnose it:
+it only sends the technical context needed to diagnose the crash:
 
 - The **stack trace** of the crash, plus the app and Android versions
 - Basic **device context** — e.g. the device model and OS version
 - A short extract of the app's **own logcat** (the last ~200 lines)
 
-It does **not** track usage or activities. It also does not collect a **device identifier**,
-and does not grab system-wide or other-app logs.
+It does **not** track usage or activities. Furthermore, it also does not collect a
+**device identifier** or send system/other apps logs.
 
 Each report is **anonymized** and sent **directly** to my server, so only I receive the data.
 
