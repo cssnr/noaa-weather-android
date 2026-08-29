@@ -159,7 +159,7 @@ and leaves these users with a bad experience or broken app.
 To close that gap without compromising your data or privacy, this app uses
 [ACRA](https://github.com/ACRA/acra) — an open-source crash reporting library. Reports are received by a
 self-hosted [Acrarium](https://github.com/F43nd1r/Acrarium) backend that runs on my own infrastructure,
-so crash data does not go to any third-party (Google or other Big Data) services.
+so crash data does not go to any third-party (Google or other big data) services.
 
 **You can turn crash reporting on or off at any time with a toggle on the Settings page.**
 
@@ -172,10 +172,9 @@ it only sends the technical context needed to diagnose the crash:
 - Basic **device context** — e.g. the device model and OS version
 - A short extract of the app's **own logcat** (the last ~200 lines)
 
-It does **not** track usage or activities. Furthermore, it also does not collect a
-**device identifier** or send system/other apps logs.
-
-Each report is **anonymized** and sent **directly** to my server, so only I receive the data.
+It does **not** track usage or activities. Furthermore, it does not collect a **device identifier**
+or send system or other app logs. Each report is **anonymized** and sent **directly** to my server,
+so only I receive the data.
 
 # Development
 
