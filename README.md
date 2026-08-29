@@ -144,6 +144,40 @@ If you are experiencing an issue/bug or getting unexpected results, you can:
 - Chat with us on Discord: https://discord.gg/wXy6m2X8wY
 - Provide General Feedback: [https://cssnr.github.io/feedback/](https://cssnr.github.io/feedback/?app=NOAA%20Weather%20Android)
 
+## Crash Reporting
+
+Without crash reporting, fixing a bug requires a lot from you:
+
+- Stop what you're doing and open a browser
+- Go to the GitHub repo and create an Issue
+- Explain exactly what you were doing when the app crashed
+- Hope I can re-create the bug myself to get the stack trace
+
+That's a heavy ask on for an app that's already not working, and it
+leaves these users with a bad experience or an app that is not working.
+
+To close that gap without compromising your data or privacy, the app embeds
+[ACRA](https://github.com/ACRA/acra) — an open-source crash reporting library.
+
+Reports are received by a self-hosted [Acrarium](https://github.com/F43nd1r/Acrarium) backend that runs on my own infrastructure,
+so crash data does not go to any third-party (Google or other Big Data) services.
+
+**You can turn crash reporting on or off at any time with a toggle on the Settings page.**
+
+### What Gets Collected
+
+ACRA only runs when the app hits an unhandled crash. By default,
+it bundles just the technical context needed to diagnose it:
+
+- The **stack trace** of the crash, plus the app and Android versions
+- Basic **device context** — e.g. the device model and OS version
+- A short extract of the app's **own logcat** (the last ~200 lines)
+
+It does **not** track usage or activities. It also does not collect a **device identifier**,
+and does not grab system-wide or other-app logs.
+
+Each report is **anonymized** and sent **directly** to my server, so only I receive the data.
+
 # Development
 
 This section briefly covers running and building in [Android Studio](#Android-Studio) and the [Command Line](#Command-Line).
