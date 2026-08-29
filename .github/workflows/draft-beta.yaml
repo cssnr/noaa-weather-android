@@ -25,7 +25,7 @@ jobs:
         id: draft
         uses: cssnr/draft-release-action@master
         with:
-          semver: patch
+          semver: prerelease
           prerelease: true
 
       - name: "Process Release Draft URL"
