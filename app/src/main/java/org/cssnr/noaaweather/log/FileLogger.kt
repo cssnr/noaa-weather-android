@@ -108,39 +108,11 @@ object DebugFileLogger {
             }
         }
 
-        val retained = lines.toMutableList()
-        while (retained.size > 1 && encodedSize(retained) > MAX_LOG_SIZE_BYTES) {
-            retained.removeAt(0)
-        }
-        if (retained.size == 1 && encodedSize(retained) > MAX_LOG_SIZE_BYTES) {
-            retained[0] = retained[0].takeUtf8Prefix((MAX_LOG_SIZE_BYTES - 1).toInt())
-        }
-
-        val trimmed = retained.joinToString("\n", postfix = if (retained.isEmpty()) "" else "\n")
+        val trimmed = lines.joinToString("\n", postfix = if (lines.isEmpty()) "" else "\n")
         OutputStreamWriter(
             FileOutputStream(logFile, false), Charsets.UTF_8
         ).buffered().use { it.write(trimmed) }
-        Log.i(TAG, "Log truncated to ${retained.size} lines")
-    }
-
-    private fun encodedSize(lines: List<String>): Long =
-        lines.sumOf { it.toByteArray(Charsets.UTF_8).size.toLong() + 1L }
-
-    private fun String.takeUtf8Prefix(maxBytes: Int): String {
-        if (maxBytes <= 0) return ""
-        if (toByteArray(Charsets.UTF_8).size <= maxBytes) return this
-
-        var low = 0
-        var high = minOf(length, maxBytes)
-        while (low < high) {
-            val middle = (low + high + 1) / 2
-            if (substring(0, middle).toByteArray(Charsets.UTF_8).size <= maxBytes) {
-                low = middle
-            } else {
-                high = middle - 1
-            }
-        }
-        return substring(0, low)
+        Log.i(TAG, "Log truncated to ${lines.size} lines")
     }
 }
 
