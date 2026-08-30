@@ -235,10 +235,8 @@ class MainActivity : AppCompatActivity() {
             packageInfo.versionCode.toLong()
         }
         Log.d(LOG_TAG, "currentVersionCode: $currentVersionCode")
-
         val previousVersionCode = preferences.getLong("previous_version_code", -1L)
         Log.d(LOG_TAG, "previousVersionCode: $previousVersionCode")
-
         when {
             currentVersionCode > previousVersionCode -> {
                 Log.i(LOG_TAG, "APP UPGRADE DETECTED: $previousVersionCode -> $currentVersionCode")
@@ -249,7 +247,6 @@ class MainActivity : AppCompatActivity() {
                 // TODO: Downgrade - this will never actually happen and should probably be removed
             }
         }
-
         if (previousVersionCode != currentVersionCode) {
             preferences.edit {
                 putLong("previous_version_code", currentVersionCode)
