@@ -9,7 +9,8 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.log.debugLog
-import org.cssnr.noaaweather.ui.stations.updateStation
+import org.cssnr.noaaweather.ui.stations.StationUpdateStatus
+import org.cssnr.noaaweather.ui.stations.updateStationResult
 import org.cssnr.noaaweather.widget.WidgetProvider
 
 class AppWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -24,8 +25,16 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             val station = dao.getActive()
             Log.d("AppWorker", "station: $station")
             if (station != null) {
-                val result = applicationContext.updateStation(station.stationId)
-                applicationContext.debugLog("AppWorker: Update Station ${result?.stationId}")
+                val result = applicationContext.updateStationResult(station.stationId)
+                val status = when (result.status) {
+                    StationUpdateStatus.UPDATED -> "Updated"
+                    StationUpdateStatus.UNCHANGED -> "Unchanged"
+                    StationUpdateStatus.FAILED -> "Update Failed"
+                    StationUpdateStatus.NOT_FOUND -> "Not Found"
+                }
+                applicationContext.debugLog(
+                    "AppWorker: $status Station ${result.station?.stationId ?: station.stationId}"
+                )
             } else {
                 applicationContext.debugLog("AppWorker: No Active Station")
             }

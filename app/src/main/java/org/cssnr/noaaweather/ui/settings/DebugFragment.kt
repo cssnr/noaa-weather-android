@@ -15,12 +15,10 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout.OnRefreshListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentDebugBinding
-import java.io.File
+import org.cssnr.noaaweather.log.DebugFileLogger
 
 class DebugFragment : Fragment() {
 
@@ -93,10 +91,16 @@ class DebugFragment : Fragment() {
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Clear") { _, _ ->
                     if (_binding == null) return@setPositiveButton
-                    val logFile = File(appCtx.filesDir, "debug_log.txt")
-                    logFile.writeText("")
-                    binding.textView.text = ""
-                    Toast.makeText(appCtx, "Logs Cleared.", Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        val cleared = DebugFileLogger.clear(appCtx)
+                        if (!isAdded || _binding == null) return@launch
+                        if (cleared) {
+                            binding.textView.text = ""
+                            Toast.makeText(appCtx, "Logs Cleared.", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(appCtx, "Unable to clear logs.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
                 .show()
         }
@@ -128,19 +132,7 @@ class DebugFragment : Fragment() {
     //    File(filesDir, "debug_log.txt").readLines().asReversed().joinToString("\n")
     //}
 
-    suspend fun Context.readLogFile(): String = withContext(Dispatchers.IO) {
-        try {
-            val file = File(filesDir, "debug_log.txt")
-            if (!file.canRead()) {
-                Log.e("readLogFile", "Log File Not Found or Not Readable: ${file.absolutePath}")
-                return@withContext "Unable to read log file: ${file.absolutePath}"
-            }
-            file.readLines().asReversed().joinToString("\n")
-        } catch (e: Exception) {
-            Log.e("readLogFile", "Exception", e)
-            "Exception reading logs: ${e.message}"
-        }
-    }
+    suspend fun Context.readLogFile(): String = DebugFileLogger.read(this)
 
     fun Context.copyToClipboard(text: String, msg: String? = null) {
         val clipboard = this.getSystemService(CLIPBOARD_SERVICE) as ClipboardManager

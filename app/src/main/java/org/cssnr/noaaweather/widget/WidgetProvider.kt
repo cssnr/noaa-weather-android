@@ -20,9 +20,11 @@ import org.cssnr.noaaweather.MainActivity
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.db.StationDao
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.log.debugLog
 import org.cssnr.noaaweather.ui.home.getTemp
 import org.cssnr.noaaweather.ui.home.getValue
-import org.cssnr.noaaweather.ui.stations.updateStation
+import org.cssnr.noaaweather.ui.stations.StationUpdateStatus
+import org.cssnr.noaaweather.ui.stations.updateStationResult
 import java.time.ZonedDateTime
 import java.util.Date
 
@@ -47,8 +49,17 @@ class WidgetProvider : AppWidgetProvider() {
                 val station = dao.getActive()
                 Log.d("Widget[onReceive]", "station: $station")
                 if (station != null) {
-                    val current = context.updateStation(station.stationId)
-                    Log.d("Widget[onReceive]", "current: $current")
+                    val result = context.updateStationResult(station.stationId)
+                    Log.d("Widget[onReceive]", "result: $result")
+                    val status = when (result.status) {
+                        StationUpdateStatus.UPDATED -> "Updated"
+                        StationUpdateStatus.UNCHANGED -> "Unchanged"
+                        StationUpdateStatus.FAILED -> "Update Failed"
+                        StationUpdateStatus.NOT_FOUND -> "Not Found"
+                    }
+                    context.debugLog("Widget: $status Station ${result.station?.stationId ?: station.stationId}")
+                } else {
+                    context.debugLog("Widget: No Active Station")
                 }
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 onUpdate(context, appWidgetManager, intArrayOf(appWidgetId))

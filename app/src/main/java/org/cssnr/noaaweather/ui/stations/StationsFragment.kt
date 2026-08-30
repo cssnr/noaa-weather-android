@@ -213,7 +213,22 @@ private fun Context.deleteConfirmDialog(
         .show()
 }
 
-suspend fun Context.updateStation(stationId: String): WeatherStation? {
+enum class StationUpdateStatus {
+    UPDATED,
+    UNCHANGED,
+    FAILED,
+    NOT_FOUND,
+}
+
+data class StationUpdateResult(
+    val station: WeatherStation?,
+    val status: StationUpdateStatus,
+)
+
+suspend fun Context.updateStation(stationId: String): WeatherStation? =
+    updateStationResult(stationId).station
+
+suspend fun Context.updateStationResult(stationId: String): StationUpdateResult {
     // TODO: This attempts to update a station and fails silently and should be refactored...
     val api = WeatherApi(this)
     val response = api.getLatest(stationId)
@@ -225,6 +240,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
 
     if (!response.isSuccessful) {
         debugLog("updateStation: Error: ${response.code()} - ${response.message()}")
+        return StationUpdateResult(current, StationUpdateStatus.FAILED)
     } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
@@ -233,19 +249,19 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
                 // TODO: Fix this and return a non-nullable WeatherStation
                 Log.e(LOG_TAG, "TODO: THIS SHOULD NEVER HAPPEN!!!")
                 debugLog("updateStation: Station Not Found: $stationId")
-                return null
+                return StationUpdateResult(null, StationUpdateStatus.NOT_FOUND)
             }
             val station = responseToStation(current, latest)
             Log.d(LOG_TAG, "station: $station")
             if (station == null) {
                 Log.w(LOG_TAG, "New Data Rejected!")
-                return current
+                return StationUpdateResult(current, StationUpdateStatus.UNCHANGED)
             }
             dao.add(station)
-            return station
+            return StationUpdateResult(station, StationUpdateStatus.UPDATED)
         }
     }
-    return current
+    return StationUpdateResult(current, StationUpdateStatus.FAILED)
 }
 
 suspend fun Context.updateStations(): List<WeatherStation> {
