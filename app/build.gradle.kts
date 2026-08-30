@@ -21,7 +21,7 @@ configure<ApplicationExtension> {
     defaultConfig {
         applicationId = "org.cssnr.noaaweather"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 1
         versionName = "0.0.1"
 
