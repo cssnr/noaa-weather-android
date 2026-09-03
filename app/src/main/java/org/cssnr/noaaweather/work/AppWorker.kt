@@ -8,7 +8,7 @@ import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import org.cssnr.noaaweather.db.StationDatabase
-import org.cssnr.noaaweather.log.debugLog
+import org.cssnr.noaaweather.log.DebugLogger
 import org.cssnr.noaaweather.ui.stations.updateStation
 import org.cssnr.noaaweather.widget.WidgetProvider
 
@@ -25,13 +25,13 @@ class AppWorker(appContext: Context, workerParams: WorkerParameters) :
             Log.d("AppWorker", "station: $station")
             if (station != null) {
                 val result = applicationContext.updateStation(station.stationId)
-                applicationContext.debugLog("AppWorker: Update Station ${result?.stationId}")
+                DebugLogger.i(applicationContext, "AppWorker: Update Station ${result?.stationId}")
             } else {
-                applicationContext.debugLog("AppWorker: No Active Station")
+                DebugLogger.w(applicationContext, "AppWorker: No Active Station")
             }
         } catch (e: Exception) {
             Log.e("AppWorker", "Exception: $e")
-            applicationContext.debugLog("AppWorker: Exception: ${e.message}")
+            DebugLogger.e(applicationContext, "AppWorker: Exception: ${e.message}")
         }
 
         // Update Widget

@@ -116,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         // Destinations w/ a Parent Item
         val destinationToBottomNavItem = mapOf(
             R.id.nav_item_settings_widget to R.id.nav_item_settings,
-            R.id.nav_item_settings_debug to R.id.nav_item_settings,
+            R.id.nav_item_logs to R.id.nav_item_settings,
         )
         // Destination w/ No Parent
         val hiddenDestinations = setOf<Int>(
@@ -164,18 +164,6 @@ class MainActivity : AppCompatActivity() {
                 val handled = NavigationUI.onNavDestinationSelected(menuItem, navController)
                 Log.d("Drawer", "handled: $handled")
                 handled
-            }
-        }
-
-        // Set Debug Preferences
-        Log.d(LOG_TAG, "Set Debug Preferences")
-        if (BuildConfig.DEBUG) {
-            Log.i(LOG_TAG, "DEBUG BUILD DETECTED!")
-            if (!preferences.contains("enable_debug_logs")) {
-                Log.i(LOG_TAG, "ENABLING DEBUG LOGGING...")
-                preferences.edit {
-                    putBoolean("enable_debug_logs", true)
-                }
             }
         }
 

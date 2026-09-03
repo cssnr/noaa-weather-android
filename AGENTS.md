@@ -8,9 +8,7 @@ Android client for [NOAA Weather](https://www.weather.gov/).
 
 ## Android
 
-- applicationId = "org.cssnr.noaaweather" Release
-- applicationId = "org.cssnr.noaaweather.dev" Debug
-
+- applicationId = org.cssnr.noaaweather.dev
 - minSdk = 26
 - targetSdk = 37
 - compileSdk = 37
@@ -21,8 +19,8 @@ ALWAYS use the `task *` commands
 
 | Command        | Purpose                                  |
 | -------------- | ---------------------------------------- |
-| `task lint`    | Gradle Lint                              |
-| `task compile` | Compile Kotlin                           |
+| `task lint`    | Gradle Lint - DO NOT RUN                 |
+| `task compile` | Compile Kotlin - DO NOT truncate output  |
 | `task debug`   | Build debug variant (APK)                |
 | `task release` | Build release variant (APK)              |
 | `task bundle`  | Build Android App Bundle (AAB)           |

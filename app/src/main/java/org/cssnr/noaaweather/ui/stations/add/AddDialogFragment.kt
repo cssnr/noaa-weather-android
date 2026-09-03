@@ -40,7 +40,7 @@ import org.cssnr.noaaweather.api.WeatherApi
 import org.cssnr.noaaweather.api.WeatherApi.ObservationStationsResponse
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
-import org.cssnr.noaaweather.log.debugLog
+import org.cssnr.noaaweather.log.DebugLogger
 import org.cssnr.noaaweather.ui.stations.updateStation
 import java.io.IOException
 import java.util.Locale
@@ -143,7 +143,11 @@ class AddDialogFragment : DialogFragment() {
                     getPlaceLocation(text.toString()) { addresses ->
                         if (!isAdded) return@getPlaceLocation
                         Log.d(LOG_TAG, "addresses: $addresses")
-                        context?.debugLog("Found ${addresses?.size} Addresses: ${addresses?.firstOrNull()?.featureName}")
+                        context?.let { ctx ->
+                            lifecycleScope.launch {
+                                DebugLogger.d(ctx, "Found ${addresses?.size} Addresses: ${addresses?.firstOrNull()?.featureName}")
+                            }
+                        }
                         if (!addresses.isNullOrEmpty()) {
                             lifecycleScope.launch {
                                 if (!isAdded) return@launch
@@ -212,7 +216,7 @@ class AddDialogFragment : DialogFragment() {
             if (!isAdded) return@Runnable
             if (place.isNotEmpty()) {
                 val ctx = context ?: return@Runnable
-                ctx.debugLog("Searching Place: $place")
+                lifecycleScope.launch { DebugLogger.d(ctx, "Searching Place: $place") }
                 val geocoder = Geocoder(ctx)
                 lifecycleScope.launch(Dispatchers.IO) {
                     geocoder.getLocation(place) { addresses ->
@@ -298,7 +302,7 @@ suspend fun Context.getStations(
     Log.d("getStations", "response: $response")
     val stationsResponse = response?.body()
     Log.d("getStations", "stationsResponse?.features?.size: ${stationsResponse?.features?.size}")
-    debugLog("Found ${stationsResponse?.features?.size} stations for: $latitude / $longitude")
+    DebugLogger.i(this, "Found ${stationsResponse?.features?.size} stations for: $latitude / $longitude")
     return stationsResponse
 }
 
