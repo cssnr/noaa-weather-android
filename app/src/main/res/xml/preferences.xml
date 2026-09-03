@@ -108,19 +108,11 @@
             android:icon="@drawable/md_frame_bug_24px"
             android:defaultValue="true" />
 
-        <SwitchPreferenceCompat
-            android:defaultValue="false"
-            android:key="enable_debug_logs"
-            android:title="Enable Debug Logs"
-            android:summary="For Debugging"
-            android:icon="@drawable/md_bug_report_24px" />
-
         <Preference
-            android:key="view_debug_logs"
-            android:title="View Debug Logs"
-            android:summary="For Debugging"
-            android:icon="@drawable/md_manage_search_24px"
-            android:enabled="false" />
+            android:key="view_logs"
+            android:title="View Logs"
+            android:summary="View Application Logs"
+            android:icon="@drawable/md_bug_report_24px" />
 
     </PreferenceCategory>
 

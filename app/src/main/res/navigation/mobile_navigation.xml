@@ -29,10 +29,10 @@
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_right" />
-        <!-- Debug Settings -->
+        <!-- View Logs -->
         <action
-            android:id="@+id/nav_action_settings_debug"
-            app:destination="@id/nav_item_settings_debug"
+            android:id="@+id/nav_action_view_logs"
+            app:destination="@id/nav_item_logs"
             app:exitAnim="@anim/slide_out_left"
             app:enterAnim="@anim/slide_in_left"
             app:popEnterAnim="@anim/slide_in_right"
@@ -43,7 +43,7 @@
         android:name="org.cssnr.noaaweather.ui.settings.WidgetSettingsFragment"
         android:label="Widget Settings" />
     <fragment
-        android:id="@+id/nav_item_settings_debug"
-        android:name="org.cssnr.noaaweather.ui.settings.DebugFragment"
-        android:label="Debug Logs" />
+        android:id="@+id/nav_item_logs"
+        android:name="org.cssnr.noaaweather.ui.logs.LogsFragment"
+        android:label="View Logs" />
 </navigation>

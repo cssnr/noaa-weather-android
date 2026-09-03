@@ -20,7 +20,7 @@ import org.cssnr.noaaweather.api.WeatherApi
 import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
-import org.cssnr.noaaweather.log.debugLog
+import org.cssnr.noaaweather.log.DebugLogger
 import org.cssnr.noaaweather.ui.stations.add.AddDialogFragment
 
 //import androidx.lifecycle.Observer
@@ -224,7 +224,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
     Log.d(LOG_TAG, "current: $current")
 
     if (!response.isSuccessful) {
-        debugLog("updateStation: Error: ${response.code()} - ${response.message()}")
+        DebugLogger.e(this, "updateStation: Error: ${response.code()} - ${response.message()}")
     } else if (response.code() == 200) {
         val latest = response.body()
         Log.d(LOG_TAG, "latest: $latest")
@@ -232,7 +232,7 @@ suspend fun Context.updateStation(stationId: String): WeatherStation? {
             if (current == null) {
                 // TODO: Fix this and return a non-nullable WeatherStation
                 Log.e(LOG_TAG, "TODO: THIS SHOULD NEVER HAPPEN!!!")
-                debugLog("updateStation: Station Not Found: $stationId")
+                DebugLogger.w(this, "updateStation: Station Not Found: $stationId")
                 return null
             }
             val station = responseToStation(current, latest)
@@ -284,7 +284,7 @@ suspend fun Context.updateStations(): List<WeatherStation> {
         }
     }
     Log.i("updateStations", "FINISHED - successful: ${success}/${stations.size}")
-    debugLog("updateStations: Updated ${success}/${stations.size} Stations")
+    DebugLogger.i(this, "updateStations: Updated ${success}/${stations.size} Stations")
     return dao.getAll()
 }
 

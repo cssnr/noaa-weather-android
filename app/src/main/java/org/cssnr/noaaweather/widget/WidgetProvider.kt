@@ -20,6 +20,7 @@ import org.cssnr.noaaweather.MainActivity
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.db.StationDao
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.log.DebugLogger
 import org.cssnr.noaaweather.ui.home.getTemp
 import org.cssnr.noaaweather.ui.home.getValue
 import org.cssnr.noaaweather.ui.stations.updateStation
@@ -49,6 +50,9 @@ class WidgetProvider : AppWidgetProvider() {
                 if (station != null) {
                     val current = context.updateStation(station.stationId)
                     Log.d("Widget[onReceive]", "current: $current")
+                    DebugLogger.i(context, "Widget: updateStation: $current")
+                } else {
+                    DebugLogger.w(context, "Widget: no station to update.")
                 }
                 val appWidgetManager = AppWidgetManager.getInstance(context)
                 onUpdate(context, appWidgetManager, intArrayOf(appWidgetId))
