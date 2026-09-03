@@ -1,4 +1,4 @@
-package org.cssnr.noaaweather.ui.logs
+package org.cssnr.noaaweather.ui.settings.logs
 
 import android.annotation.SuppressLint
 import android.content.ClipData

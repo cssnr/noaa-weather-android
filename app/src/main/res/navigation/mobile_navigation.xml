@@ -44,6 +44,6 @@
         android:label="Widget Settings" />
     <fragment
         android:id="@+id/nav_item_logs"
-        android:name="org.cssnr.noaaweather.ui.logs.LogsFragment"
+        android:name="org.cssnr.noaaweather.ui.settings.logs.LogsFragment"
         android:label="View Logs" />
 </navigation>
