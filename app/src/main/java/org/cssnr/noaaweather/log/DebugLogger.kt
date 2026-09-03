@@ -9,6 +9,7 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.preference.PreferenceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
@@ -69,6 +70,7 @@ abstract class LogDatabase : RoomDatabase() {
 object DebugLogger {
 
     private const val PURGE_DAYS = 7L
+    private const val ENABLED_KEY = "enable_debug_logs"
 
     @Volatile
     private var purged = false
@@ -81,7 +83,12 @@ object DebugLogger {
             instance ?: LogDatabase.getInstance(context).also { instance = it }
         }
 
+    private fun isEnabled(context: Context): Boolean =
+        PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(ENABLED_KEY, true)
+
     suspend fun log(context: Context, level: LogLevel, message: String) {
+        if (!isEnabled(context)) return
         purgeIfNeeded(context)
         withContext(Dispatchers.IO) {
             database(context).logDao().insert(

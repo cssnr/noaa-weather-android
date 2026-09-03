@@ -50,7 +50,7 @@ class WidgetProvider : AppWidgetProvider() {
                 if (station != null) {
                     val current = context.updateStation(station.stationId)
                     Log.d("Widget[onReceive]", "current: $current")
-                    DebugLogger.i(context, "Widget: updateStation: $current")
+                    DebugLogger.i(context, "Widget: updateStation ID: ${station.stationId}")
                 } else {
                     DebugLogger.w(context, "Widget: no station to update.")
                 }
