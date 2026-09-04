@@ -3,7 +3,7 @@ package org.cssnr.noaaweather.ui
 import android.view.View
 import com.google.android.material.snackbar.Snackbar
 
-fun View?.showSnackbar(
+fun View?.showSnack(
     message: String,
     long: Boolean = false,
     anchorView: View? = null,
