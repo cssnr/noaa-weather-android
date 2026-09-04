@@ -17,6 +17,7 @@ import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomePagerBinding
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.ui.showSnackbar
 import org.cssnr.noaaweather.ui.stations.updateStations
 import java.util.Locale
 
@@ -128,9 +129,11 @@ class HomeFragment : Fragment() {
                 homeViewModel.data.value = stations
                 withContext(Dispatchers.Main) {
                     if (!isAdded || _binding == null) return@withContext
-                    Snackbar.make(view, "All Stations Refreshed.", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.refresh_dashboard).show()
+                    view.showSnackbar(
+                        "All Stations Refreshed.",
+                        Snackbar.LENGTH_SHORT,
+                        binding.refreshDashboard,
+                    )
                 }
             }
         }

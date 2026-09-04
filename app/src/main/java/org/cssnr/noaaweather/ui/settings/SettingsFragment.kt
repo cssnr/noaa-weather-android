@@ -16,7 +16,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AlertDialog
@@ -36,11 +35,13 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.FeedbackApi
+import org.cssnr.noaaweather.ui.showSnackbar
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
 import java.util.concurrent.TimeUnit
@@ -286,7 +287,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             "Error: ${response.code()}"
                         }
                         Log.d("showFeedbackDialog", "msg: $msg")
-                        Toast.makeText(this@showFeedbackDialog, msg, Toast.LENGTH_LONG).show()
+                        this@SettingsFragment.view.showSnackbar(msg, Snackbar.LENGTH_LONG)
                     }
                 } else {
                     sendButton.isEnabled = true
