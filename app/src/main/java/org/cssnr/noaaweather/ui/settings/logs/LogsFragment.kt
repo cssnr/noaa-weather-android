@@ -60,6 +60,7 @@ class LogsFragment : Fragment() {
             Log.d("LogsFragment", "btnCopy")
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
+                if (!isAdded || _binding == null) return@launch
                 when (result) {
                     LogExportResult.Error ->
                         view.showSnack("Failed to export logs", true, binding.logToolbar)
@@ -76,6 +77,7 @@ class LogsFragment : Fragment() {
             Log.d("LogsFragment", "btnShare")
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
+                if (!isAdded || _binding == null) return@launch
                 when (result) {
                     LogExportResult.Error ->
                         view.showSnack("Failed to export logs", true, binding.logToolbar)
@@ -98,6 +100,7 @@ class LogsFragment : Fragment() {
                 .setPositiveButton("Delete") { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) { DebugLogger.clear(ctx) }
+                        if (!isAdded || _binding == null) return@launch
                         view.showSnack("Logs Deleted", false, binding.logToolbar)
                     }
                 }
