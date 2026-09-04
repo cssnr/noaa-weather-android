@@ -22,7 +22,7 @@ import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentLogsBinding
 import org.cssnr.noaaweather.log.DebugLogger
 import org.cssnr.noaaweather.log.LogExportResult
-import org.cssnr.noaaweather.ui.showSnack
+import org.cssnr.noaaweather.ui.SnackbarManager
 
 class LogsFragment : Fragment() {
 
@@ -60,13 +60,12 @@ class LogsFragment : Fragment() {
             Log.d("LogsFragment", "btnCopy")
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
-                if (!isAdded || _binding == null) return@launch
                 when (result) {
                     LogExportResult.Error ->
-                        view.showSnack("Failed to export logs", true, binding.logToolbar)
+                        SnackbarManager.show("Failed to export logs", true)
 
                     LogExportResult.Empty ->
-                        view.showSnack("No Logs to Copy", false, binding.logToolbar)
+                        SnackbarManager.show("No Logs to Copy")
 
                     is LogExportResult.Success -> ctx.copyToClipboard(result.text)
                 }
@@ -77,13 +76,12 @@ class LogsFragment : Fragment() {
             Log.d("LogsFragment", "btnShare")
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
-                if (!isAdded || _binding == null) return@launch
                 when (result) {
                     LogExportResult.Error ->
-                        view.showSnack("Failed to export logs", true, binding.logToolbar)
+                        SnackbarManager.show("Failed to export logs", true)
 
                     LogExportResult.Empty ->
-                        view.showSnack("No Logs to Share", false, binding.logToolbar)
+                        SnackbarManager.show("No Logs to Share")
 
                     is LogExportResult.Success -> ctx.shareLogs(result.text)
                 }
@@ -100,8 +98,7 @@ class LogsFragment : Fragment() {
                 .setPositiveButton("Delete") { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) { DebugLogger.clear(ctx) }
-                        if (!isAdded || _binding == null) return@launch
-                        view.showSnack("Logs Deleted", false, binding.logToolbar)
+                        SnackbarManager.show("Logs Deleted")
                     }
                 }
                 .show()
@@ -125,7 +122,7 @@ class LogsFragment : Fragment() {
     private fun Context.copyToClipboard(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipboard.setPrimaryClip(ClipData.newPlainText("Logs", text))
-        binding.logToolbar.showSnack("Logs Copied to Clipboard", false, binding.logToolbar)
+        SnackbarManager.show("Logs Copied to Clipboard")
     }
 
     private fun Context.shareLogs(text: String) {

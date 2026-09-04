@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.FeedbackApi
-import org.cssnr.noaaweather.ui.showSnack
+import org.cssnr.noaaweather.ui.SnackbarManager
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
 import java.util.concurrent.TimeUnit
@@ -288,7 +288,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             "Error: ${response.code()}"
                         }
                         Log.d("showFeedbackDialog", "msg: $msg")
-                        this@SettingsFragment.view.showSnack(msg, true)
+                        SnackbarManager.show(msg, true)
                     }
                 } else {
                     sendButton.isEnabled = true

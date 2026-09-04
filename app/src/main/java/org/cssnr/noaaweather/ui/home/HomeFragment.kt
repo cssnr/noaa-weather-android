@@ -16,7 +16,7 @@ import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentHomePagerBinding
 import org.cssnr.noaaweather.db.StationDatabase
-import org.cssnr.noaaweather.ui.showSnack
+import org.cssnr.noaaweather.ui.SnackbarManager
 import org.cssnr.noaaweather.ui.stations.updateStations
 import java.util.Locale
 
@@ -112,7 +112,7 @@ class HomeFragment : Fragment() {
         }
 
         // TODO: Update Refresh for ViewPager2...
-        binding.refreshDashboard.setOnClickListener { view ->
+        binding.refreshDashboard.setOnClickListener { _ ->
             Log.d(LOG_TAG, "binding.refreshDashboard.setOnClickListener")
             if (!isAdded || _binding == null) return@setOnClickListener
             homeViewModel.position.value = binding.pager.currentItem
@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
                 homeViewModel.data.value = stations
                 withContext(Dispatchers.Main) {
                     if (!isAdded || _binding == null) return@withContext
-                    view.showSnack("All Stations Refreshed.", false, binding.refreshDashboard)
+                    SnackbarManager.show("All Stations Refreshed.")
                 }
             }
         }
