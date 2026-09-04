@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -129,11 +128,7 @@ class HomeFragment : Fragment() {
                 homeViewModel.data.value = stations
                 withContext(Dispatchers.Main) {
                     if (!isAdded || _binding == null) return@withContext
-                    view.showSnackbar(
-                        "All Stations Refreshed.",
-                        Snackbar.LENGTH_SHORT,
-                        binding.refreshDashboard,
-                    )
+                    view.showSnackbar("All Stations Refreshed.",false,binding.refreshDashboard)
                 }
             }
         }

@@ -18,6 +18,7 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -30,7 +31,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -41,7 +41,6 @@ import org.cssnr.noaaweather.api.WeatherApi.ObservationStationsResponse
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.log.DebugLogger
-import org.cssnr.noaaweather.ui.showSnackbar
 import org.cssnr.noaaweather.ui.stations.updateStation
 import java.io.IOException
 import java.util.Locale
@@ -64,8 +63,11 @@ class AddDialogFragment : DialogFragment() {
         if (isGranted) {
             requestLocation()
         } else {
+            val ctx = context ?: return@registerForActivityResult
             val msg = "Location Not Allowed"
-            dialog?.window?.decorView.showSnackbar(msg, Snackbar.LENGTH_LONG)
+            Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
+            //dialog?.window?.decorView.showSnackbar(msg, true)
+
             //val permanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
             //    requireActivity(),
             //    Manifest.permission.ACCESS_FINE_LOCATION
