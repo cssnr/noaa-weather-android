@@ -61,8 +61,12 @@ class LogsFragment : Fragment() {
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
                 when (result) {
-                    LogExportResult.Error -> view.showSnackbar("Failed to export logs", true, binding.logToolbar)
-                    LogExportResult.Empty -> view.showSnackbar("No Logs to Copy", false, binding.logToolbar)
+                    LogExportResult.Error ->
+                        view.showSnackbar("Failed to export logs", true, binding.logToolbar)
+
+                    LogExportResult.Empty ->
+                        view.showSnackbar("No Logs to Copy", false, binding.logToolbar)
+
                     is LogExportResult.Success -> ctx.copyToClipboard(result.text)
                 }
             }
@@ -73,8 +77,12 @@ class LogsFragment : Fragment() {
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
                 when (result) {
-                    LogExportResult.Error -> view.showSnackbar("Failed to export logs", true, binding.logToolbar)
-                    LogExportResult.Empty -> view.showSnackbar("No Logs to Share", false, binding.logToolbar)
+                    LogExportResult.Error ->
+                        view.showSnackbar("Failed to export logs", true, binding.logToolbar)
+
+                    LogExportResult.Empty ->
+                        view.showSnackbar("No Logs to Share", false, binding.logToolbar)
+
                     is LogExportResult.Success -> ctx.shareLogs(result.text)
                 }
             }

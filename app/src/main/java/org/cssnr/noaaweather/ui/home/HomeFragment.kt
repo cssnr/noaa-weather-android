@@ -128,7 +128,7 @@ class HomeFragment : Fragment() {
                 homeViewModel.data.value = stations
                 withContext(Dispatchers.Main) {
                     if (!isAdded || _binding == null) return@withContext
-                    view.showSnackbar("All Stations Refreshed.",false,binding.refreshDashboard)
+                    view.showSnackbar("All Stations Refreshed.", false, binding.refreshDashboard)
                 }
             }
         }

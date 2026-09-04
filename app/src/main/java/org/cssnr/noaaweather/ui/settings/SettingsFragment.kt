@@ -232,7 +232,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 .setTitle("Please Reconsider")
                 .setMessage(getString(R.string.acra_disable_message))
                 .setNeutralButton("More Info") { _, _ ->
-                    startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.acra_info_link).toUri()))
+                    startActivity(
+                        Intent(Intent.ACTION_VIEW, getString(R.string.acra_info_link).toUri())
+                    )
                 }
                 .setPositiveButton("Disable") { _, _ ->
                     Log.d(LOG_TAG, "DISABLE ACRA")

@@ -147,7 +147,9 @@ class AddDialogFragment : DialogFragment() {
                         Log.d(LOG_TAG, "addresses: $addresses")
                         context?.let { ctx ->
                             lifecycleScope.launch {
-                                DebugLogger.d(ctx, "Found ${addresses?.size} Addresses: ${addresses?.firstOrNull()?.featureName}")
+                                val message =
+                                    "Found ${addresses?.size} Addresses: ${addresses?.firstOrNull()?.featureName}"
+                                DebugLogger.d(ctx, message)
                             }
                         }
                         if (!addresses.isNullOrEmpty()) {
@@ -304,7 +306,8 @@ suspend fun Context.getStations(
     Log.d("getStations", "response: $response")
     val stationsResponse = response?.body()
     Log.d("getStations", "stationsResponse?.features?.size: ${stationsResponse?.features?.size}")
-    DebugLogger.i(this, "Found ${stationsResponse?.features?.size} stations for: $latitude / $longitude")
+    val message = "Found ${stationsResponse?.features?.size} stations for: $latitude / $longitude"
+    DebugLogger.i(this, message)
     return stationsResponse
 }
 
