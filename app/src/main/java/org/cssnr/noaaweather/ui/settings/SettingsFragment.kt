@@ -16,7 +16,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AlertDialog
@@ -41,6 +40,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.FeedbackApi
+import org.cssnr.noaaweather.ui.SnackbarManager
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
 import java.util.concurrent.TimeUnit
@@ -232,7 +232,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 .setTitle("Please Reconsider")
                 .setMessage(getString(R.string.acra_disable_message))
                 .setNeutralButton("More Info") { _, _ ->
-                    startActivity(Intent(Intent.ACTION_VIEW, getString(R.string.acra_info_link).toUri()))
+                    startActivity(
+                        Intent(Intent.ACTION_VIEW, getString(R.string.acra_info_link).toUri())
+                    )
                 }
                 .setPositiveButton("Disable") { _, _ ->
                     Log.d(LOG_TAG, "DISABLE ACRA")
@@ -277,16 +279,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     lifecycleScope.launch {
                         val response = withContext(Dispatchers.IO) { api.sendFeedback(message) }
                         Log.d("showFeedbackDialog", "response: $response")
-                        val msg = if (response.isSuccessful) {
+                        if (response.isSuccessful) {
                             findPreference<Preference>("send_feedback")?.isEnabled = false
                             dialog.dismiss()
-                            "Feedback Sent. Thank You!"
+                            SnackbarManager.show("Feedback Sent. Thank You!", true)
                         } else {
                             sendButton.isEnabled = true
-                            "Error: ${response.code()}"
+                            input.error = "Error: ${response.code()}"
                         }
-                        Log.d("showFeedbackDialog", "msg: $msg")
-                        Toast.makeText(this@showFeedbackDialog, msg, Toast.LENGTH_LONG).show()
                     }
                 } else {
                     sendButton.isEnabled = true

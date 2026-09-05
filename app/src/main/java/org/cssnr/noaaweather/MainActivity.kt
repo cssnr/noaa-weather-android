@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.cssnr.noaaweather.databinding.ActivityMainBinding
 import org.cssnr.noaaweather.db.StationDatabase
+import org.cssnr.noaaweather.ui.SnackbarManager
 import org.cssnr.noaaweather.widget.WidgetProvider
 import org.cssnr.noaaweather.work.APP_WORKER_CONSTRAINTS
 import org.cssnr.noaaweather.work.AppWorker
@@ -102,6 +103,7 @@ class MainActivity : AppCompatActivity() {
         // Bottom Navigation
         val bottomNav = binding.appBarMain.contentMain.bottomNav
         bottomNav.setupWithNavController(navController)
+        SnackbarManager.init(bottomNav)
 
         // Navigation Drawer
         binding.navView.setupWithNavController(navController)
@@ -227,11 +229,12 @@ class MainActivity : AppCompatActivity() {
         Log.d(LOG_TAG, "previousVersionCode: $previousVersionCode")
         when {
             currentVersionCode > previousVersionCode -> {
-                Log.i(LOG_TAG, "APP UPGRADE DETECTED: $previousVersionCode -> $currentVersionCode")
+                Log.i(LOG_TAG, "APP UPGRADE: $previousVersionCode -> $currentVersionCode")
                 // TODO: Upgrade - this is where to add upgrade logic...
             }
+
             currentVersionCode < previousVersionCode -> {
-                Log.w(LOG_TAG, "APP DOWNGRADE DETECTED: $previousVersionCode -> $currentVersionCode")
+                Log.w(LOG_TAG, "APP DOWNGRADE: $previousVersionCode -> $currentVersionCode")
                 // TODO: Downgrade - this will never actually happen and should probably be removed
             }
         }

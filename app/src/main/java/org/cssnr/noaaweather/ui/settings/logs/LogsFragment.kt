@@ -10,7 +10,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,6 +22,7 @@ import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.databinding.FragmentLogsBinding
 import org.cssnr.noaaweather.log.DebugLogger
 import org.cssnr.noaaweather.log.LogExportResult
+import org.cssnr.noaaweather.ui.SnackbarManager
 
 class LogsFragment : Fragment() {
 
@@ -61,8 +61,12 @@ class LogsFragment : Fragment() {
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
                 when (result) {
-                    LogExportResult.Error -> Toast.makeText(ctx, "Failed to export logs", Toast.LENGTH_SHORT).show()
-                    LogExportResult.Empty -> Toast.makeText(ctx, "No Logs to Copy", Toast.LENGTH_SHORT).show()
+                    LogExportResult.Error ->
+                        SnackbarManager.show("Failed to export logs", true)
+
+                    LogExportResult.Empty ->
+                        SnackbarManager.show("No Logs to Copy")
+
                     is LogExportResult.Success -> ctx.copyToClipboard(result.text)
                 }
             }
@@ -73,8 +77,12 @@ class LogsFragment : Fragment() {
             lifecycleScope.launch {
                 val result = withContext(Dispatchers.IO) { DebugLogger.exportAsText(ctx) }
                 when (result) {
-                    LogExportResult.Error -> Toast.makeText(ctx, "Failed to export logs", Toast.LENGTH_SHORT).show()
-                    LogExportResult.Empty -> Toast.makeText(ctx, "No Logs to Share", Toast.LENGTH_SHORT).show()
+                    LogExportResult.Error ->
+                        SnackbarManager.show("Failed to export logs", true)
+
+                    LogExportResult.Empty ->
+                        SnackbarManager.show("No Logs to Share")
+
                     is LogExportResult.Success -> ctx.shareLogs(result.text)
                 }
             }
@@ -90,7 +98,7 @@ class LogsFragment : Fragment() {
                 .setPositiveButton("Delete") { _, _ ->
                     lifecycleScope.launch {
                         withContext(Dispatchers.IO) { DebugLogger.clear(ctx) }
-                        Toast.makeText(ctx, "Logs Deleted", Toast.LENGTH_SHORT).show()
+                        SnackbarManager.show("Logs Deleted")
                     }
                 }
                 .show()
@@ -114,7 +122,7 @@ class LogsFragment : Fragment() {
     private fun Context.copyToClipboard(text: String) {
         val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         clipboard.setPrimaryClip(ClipData.newPlainText("Logs", text))
-        Toast.makeText(this, "Logs Copied to Clipboard", Toast.LENGTH_SHORT).show()
+        SnackbarManager.show("Logs Copied to Clipboard")
     }
 
     private fun Context.shareLogs(text: String) {
