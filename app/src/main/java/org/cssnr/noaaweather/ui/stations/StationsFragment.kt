@@ -8,8 +8,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.setFragmentResultListener
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +21,7 @@ import org.cssnr.noaaweather.databinding.FragmentStationsBinding
 import org.cssnr.noaaweather.db.StationDatabase
 import org.cssnr.noaaweather.db.WeatherStation
 import org.cssnr.noaaweather.log.DebugLogger
-import org.cssnr.noaaweather.ui.stations.add.AddDialogFragment
+import org.cssnr.noaaweather.ui.SnackbarManager
 
 //import androidx.lifecycle.Observer
 //import androidx.lifecycle.ViewModelProvider
@@ -141,42 +141,36 @@ class StationsFragment : Fragment() {
             //stationsViewModel.stationData.value = stations
             savedInstanceState?.size()?.let { if (it > 0) return@launch }
             if (stations.isEmpty()) {
-                if (parentFragmentManager.findFragmentByTag("AddDialogFragment") == null) {
-                    Log.i(LOG_TAG, "No Stations Found - Showing Add Dialog Fragment...")
-                    AddDialogFragment().show(parentFragmentManager, "AddDialogFragment")
+                if (findNavController().currentDestination?.id != R.id.nav_item_add_station) {
+                    Log.i(LOG_TAG, "No Stations Found - Showing Add Station Fragment...")
+                    findNavController().navigate(R.id.nav_action_add_station)
                 }
             }
         }
 
-        setFragmentResultListener("stations_updated") { _, bundle ->
-            val stationId = bundle.getString("stationId")
-            Log.d("setFragmentResultListener", "stationId: $stationId")
-            if (stationId != null) {
-                Log.i("setFragmentResultListener", "Added stationId: $stationId")
-                lifecycleScope.launch {
-                    if (!isAdded) return@launch
-                    val dao = StationDatabase.getInstance(ctx).stationDao()
-                    val stations = withContext(Dispatchers.IO) { dao.getAll() }
-                    if (!isAdded || _binding == null) return@launch
-                    Log.d(LOG_TAG, "stations.size: ${stations.size}")
-                    //stationsViewModel.stationData.value = stations
-                    withContext(Dispatchers.Main) {
-                        if (!isAdded || _binding == null) return@withContext
+        findNavController().currentBackStackEntry
+            ?.savedStateHandle
+            ?.getLiveData<String>("stations_updated")
+            ?.observe(viewLifecycleOwner) { stationId ->
+                Log.d(LOG_TAG, "savedStateHandle stations_updated: $stationId")
+                if (stationId != null) {
+                    SnackbarManager.show("Added $stationId")
+                    findNavController().currentBackStackEntry
+                        ?.savedStateHandle?.set("stations_updated", null)
+                    lifecycleScope.launch {
+                        if (!isAdded) return@launch
+                        val dao = StationDatabase.getInstance(ctx).stationDao()
+                        val stations = withContext(Dispatchers.IO) { dao.getAll() }
+                        if (!isAdded || _binding == null) return@launch
+                        Log.d(LOG_TAG, "stations.size: ${stations.size}")
                         adapter.updateData(stations)
                     }
                 }
             }
-        }
 
         binding.addStation.setOnClickListener { _ ->
             Log.d(LOG_TAG, "binding.addStation.setOnClickListener")
-            // NOTE: Arg view was changed to _ (revert if needed)
-            //Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-            //    .setAction("Action", null)
-            //    .setAnchorView(R.id.fab).show()
-            if (parentFragmentManager.findFragmentByTag("AddDialogFragment") == null) {
-                AddDialogFragment().show(parentFragmentManager, "AddDialogFragment")
-            }
+            findNavController().navigate(R.id.nav_action_add_station)
         }
 
         val addStationArg = arguments?.getBoolean("add_station", false) == true
@@ -187,9 +181,7 @@ class StationsFragment : Fragment() {
         //Log.i(LOG_TAG, "addStationState: $addStationState")
         if (addStationArg) {
             arguments?.remove("add_station")
-            if (parentFragmentManager.findFragmentByTag("AddDialogFragment") == null) {
-                AddDialogFragment().show(parentFragmentManager, "AddDialogFragment")
-            }
+            findNavController().navigate(R.id.nav_action_add_station)
         }
     }
 
