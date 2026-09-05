@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.stations.add.AddStationFragment">
+
+    <EditText
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        android:autofillHints="Location"
+        android:inputType="textEmailAddress"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:hint="City, State (or Use Locate)" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:gravity="center_horizontal">
+
+        <Button
+            android:id="@+id/btn_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Go Back" />
+
+        <Space
+            android:layout_width="48dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/btn_locate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Locate" />
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/suggestions_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:paddingBottom="96dp"
+        android:contentDescription="Station Suggestions"
+        tools:itemCount="8"
+        tools:viewBindingType="androidx.recyclerview.widget.RecyclerView"
+        tools:layoutManager="LinearLayoutManager"
+        tools:listitem="@layout/item_suggestion" />
+
+</LinearLayout>

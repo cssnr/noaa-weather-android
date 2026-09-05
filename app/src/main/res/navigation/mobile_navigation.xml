@@ -15,7 +15,16 @@
         android:id="@+id/nav_item_stations"
         android:name="org.cssnr.noaaweather.ui.stations.StationsFragment"
         android:label="@string/stations"
-        tools:layout="@layout/fragment_stations" />
+        tools:layout="@layout/fragment_stations">
+        <!-- Add Station -->
+        <action
+            android:id="@+id/nav_action_add_station"
+            app:destination="@id/nav_item_add_station"
+            app:exitAnim="@anim/slide_out_left"
+            app:enterAnim="@anim/slide_in_left"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_item_settings"
@@ -42,6 +51,11 @@
         android:id="@+id/nav_item_settings_widget"
         android:name="org.cssnr.noaaweather.ui.settings.WidgetSettingsFragment"
         android:label="Widget Settings" />
+    <fragment
+        android:id="@+id/nav_item_add_station"
+        android:name="org.cssnr.noaaweather.ui.stations.add.AddStationFragment"
+        android:label="Add Station"
+        tools:layout="@layout/fragment_add_station" />
     <fragment
         android:id="@+id/nav_item_logs"
         android:name="org.cssnr.noaaweather.ui.settings.logs.LogsFragment"

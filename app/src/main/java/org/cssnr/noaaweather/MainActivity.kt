@@ -119,6 +119,7 @@ class MainActivity : AppCompatActivity() {
         val destinationToBottomNavItem = mapOf(
             R.id.nav_item_settings_widget to R.id.nav_item_settings,
             R.id.nav_item_logs to R.id.nav_item_settings,
+            R.id.nav_item_add_station to R.id.nav_item_stations,
         )
         // Destination w/ No Parent
         val hiddenDestinations = setOf<Int>(
