@@ -279,16 +279,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     lifecycleScope.launch {
                         val response = withContext(Dispatchers.IO) { api.sendFeedback(message) }
                         Log.d("showFeedbackDialog", "response: $response")
-                        val msg = if (response.isSuccessful) {
+                        if (response.isSuccessful) {
                             findPreference<Preference>("send_feedback")?.isEnabled = false
                             dialog.dismiss()
-                            "Feedback Sent. Thank You!"
+                            SnackbarManager.show("Feedback Sent. Thank You!", true)
                         } else {
                             sendButton.isEnabled = true
-                            "Error: ${response.code()}"
+                            input.error = "Error: ${response.code()}"
                         }
-                        Log.d("showFeedbackDialog", "msg: $msg")
-                        SnackbarManager.show(msg, true)
                     }
                 } else {
                     sendButton.isEnabled = true

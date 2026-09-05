@@ -66,7 +66,6 @@ class AddDialogFragment : DialogFragment() {
             val ctx = context ?: return@registerForActivityResult
             val msg = "Location Not Allowed"
             Toast.makeText(ctx, msg, Toast.LENGTH_SHORT).show()
-            //dialog?.window?.decorView.showSnack(msg, true)
 
             //val permanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
             //    requireActivity(),
