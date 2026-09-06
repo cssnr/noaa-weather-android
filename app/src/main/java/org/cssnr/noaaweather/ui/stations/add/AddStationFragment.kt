@@ -61,18 +61,6 @@ class AddStationFragment : Fragment() {
             requestLocation()
         } else {
             SnackbarManager.show("Location Not Allowed", true)
-
-            //val permanentlyDenied = !ActivityCompat.shouldShowRequestPermissionRationale(
-            //    requireActivity(),
-            //    Manifest.permission.ACCESS_FINE_LOCATION
-            //)
-            //Log.d(LOG_TAG, "permanentlyDenied: $permanentlyDenied")
-            //if (permanentlyDenied) {
-            //    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            //        data = Uri.fromParts("package", requireContext().packageName, null)
-            //    }
-            //    requireContext().startActivity(intent)
-            //}
         }
     }
 
