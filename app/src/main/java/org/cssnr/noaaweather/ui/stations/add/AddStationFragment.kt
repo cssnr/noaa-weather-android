@@ -1,7 +1,6 @@
 package org.cssnr.noaaweather.ui.stations.add
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Address
@@ -127,6 +126,7 @@ class AddStationFragment : Fragment() {
                                             if (!isAdded || _binding == null) return@launch
                                             adapter.updateData(data.response)
                                         }
+
                                         is StationsResult.Error -> {
                                             if (!isAdded || _binding == null) return@launch
                                             showMessage(data.message)
@@ -137,6 +137,7 @@ class AddStationFragment : Fragment() {
                                 showMessage("No results found for \"$query\"")
                             }
                         }
+
                         is AddressResult.Error -> {
                             Log.e(LOG_TAG, "getPlaceLocation error: ${result.message}")
                             showMessage(result.message)
