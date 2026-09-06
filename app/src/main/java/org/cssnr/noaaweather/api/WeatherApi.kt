@@ -52,15 +52,25 @@ class WeatherApi(val context: Context) {
         Log.d("getStationFromPoint", "$latitude / $longitude")
         val formatted = String.format(Locale.US, "%.4f,%.4f", latitude, longitude)
         Log.d("getStationFromPoint", "formatted: $formatted")
-        val pointResponse = api.getPointData(formatted)
+        val pointResponse = try {
+            api.getPointData(formatted)
+        } catch (e: Exception) {
+            Log.e("getStationFromPoint", "Failed to get point data: ${e.message}")
+            return null
+        }
         Log.d("getStationFromPoint", "pointResponse: $pointResponse")
         val pointData = pointResponse.body()
         Log.d("getStationFromPoint", "pointData: $pointData")
         if (pointData != null) {
-            val stationsResponse = api.getStationData(
-                pointData.properties.gridId,
-                "${pointData.properties.gridX},${pointData.properties.gridY}"
-            )
+            val stationsResponse = try {
+                api.getStationData(
+                    pointData.properties.gridId,
+                    "${pointData.properties.gridX},${pointData.properties.gridY}"
+                )
+            } catch (e: Exception) {
+                Log.e("getStationFromPoint", "Failed to get station data: ${e.message}")
+                return null
+            }
             Log.d("getStationFromPoint", "stationsResponse: $stationsResponse")
             return stationsResponse
         }

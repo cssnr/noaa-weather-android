@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi.ObservationStationsResponse
 
-class AddDialogAdapter(
+class AddStationAdapter(
     private var items: List<ObservationStationsResponse.Feature>,
     private val onItemClick: (ObservationStationsResponse.Feature) -> Unit
 ) :
-    RecyclerView.Adapter<AddDialogAdapter.ViewHolder>() {
+    RecyclerView.Adapter<AddStationAdapter.ViewHolder>() {
 
     private lateinit var context: Context
 

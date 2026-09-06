@@ -119,6 +119,7 @@ class MainActivity : AppCompatActivity() {
         val destinationToBottomNavItem = mapOf(
             R.id.nav_item_settings_widget to R.id.nav_item_settings,
             R.id.nav_item_logs to R.id.nav_item_settings,
+            R.id.nav_item_add_station to R.id.nav_item_stations,
         )
         // Destination w/ No Parent
         val hiddenDestinations = setOf<Int>(
@@ -291,21 +292,12 @@ class MainActivity : AppCompatActivity() {
                 val station = withContext(Dispatchers.IO) { dao.getActive() }
                 Log.d(LOG_TAG, "MainActivity: station: $station")
                 if (station == null) {
-                    //navController.navigate(R.id.nav_item_stations, bundleOf("add_station" to true))
-
-                    //val bundle = bundleOf("add_station" to true)
-                    //navController.navigate(
-                    //    R.id.nav_item_stations, bundle, NavOptions.Builder()
-                    //        .build()
-                    //)
-
-                    Log.i(LOG_TAG, "navController.previousBackStackEntry: add_station: true")
-                    //navController.currentBackStackEntry?.savedStateHandle?.set("add_station", true)
-                    navController.previousBackStackEntry?.savedStateHandle?.set("add_station", true)
-
-                    //binding.appBarMain.contentMain.bottomNav.selectedItemId = R.id.nav_item_stations
-                    val menuItem = binding.navView.menu.findItem(R.id.nav_item_stations)
-                    NavigationUI.onNavDestinationSelected(menuItem, navController)
+                    val bundle = Bundle().apply { putBoolean("add_station", true) }
+                    navController.navigate(
+                        R.id.nav_item_stations,
+                        bundle,
+                        NavOptions.Builder().setPopUpTo(R.id.nav_item_home, true).build()
+                    )
                 }
             }
         }
