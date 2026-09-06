@@ -139,13 +139,6 @@ class StationsFragment : Fragment() {
             Log.d(LOG_TAG, "stations.size ${stations.size}")
             adapter.updateData(stations)
             //stationsViewModel.stationData.value = stations
-            savedInstanceState?.size()?.let { if (it > 0) return@launch }
-            if (stations.isEmpty()) {
-                if (findNavController().currentDestination?.id != R.id.nav_item_add_station) {
-                    Log.i(LOG_TAG, "No Stations Found - Showing Add Station Fragment...")
-                    findNavController().navigate(R.id.nav_action_add_station)
-                }
-            }
         }
 
         findNavController().currentBackStackEntry

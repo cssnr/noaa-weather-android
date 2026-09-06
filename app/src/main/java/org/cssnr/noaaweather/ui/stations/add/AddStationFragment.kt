@@ -28,7 +28,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.cssnr.noaaweather.R
 import org.cssnr.noaaweather.api.WeatherApi
 import org.cssnr.noaaweather.api.WeatherApi.ObservationStationsResponse
 import org.cssnr.noaaweather.databinding.FragmentAddStationBinding
@@ -49,6 +48,7 @@ class AddStationFragment : Fragment() {
 
     private val handler = Handler(Looper.getMainLooper())
     private var searchRunnable: Runnable? = null
+    private var isAddingStation = false
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var adapter: AddStationAdapter
 
@@ -106,6 +106,10 @@ class AddStationFragment : Fragment() {
                 Log.d(LOG_TAG, "afterTextChanged: $text")
                 val query = text?.toString().orEmpty()
                 if (query.isEmpty()) {
+                    searchRunnable?.let { handler.removeCallbacks(it) }
+                    if (::adapter.isInitialized) {
+                        adapter.updateData(ObservationStationsResponse(features = emptyList()))
+                    }
                     return
                 }
                 getPlaceLocation(query) { result ->
@@ -261,35 +265,41 @@ class AddStationFragment : Fragment() {
     }
 
     private fun addStation(data: ObservationStationsResponse.Feature) {
+        if (isAddingStation) return
+        isAddingStation = true
         val appContext = requireContext().applicationContext
         lifecycleScope.launch(Dispatchers.IO) {
-            val dao = StationDatabase.getInstance(appContext).stationDao()
-            //val existing = dao.getById(data.properties.stationIdentifier)
-            //Log.d(LOG_TAG, "existing: $existing")
-            val elevationValue =
-                String.format(Locale.US, "%.1f", data.properties.elevation.value)
-            val elevation =
-                "$elevationValue ${data.properties.elevation.unitCode.split(":")[1]}"
-            Log.d(LOG_TAG, "elevation: $elevation")
-            dao.deactivateAllStations()
-            val station = WeatherStation(
-                stationId = data.properties.stationIdentifier,
-                name = data.properties.name,
-                elevation = elevation,
-                coordinates = getCoordinates(data.geometry.coordinates),
-                forecast = data.properties.forecast,
-                active = true,
-            )
-            Log.d(LOG_TAG, "station: $station")
-            dao.add(station)
-            // Fire-and-forget station update using application context (safe after detach)
-            CoroutineScope(Dispatchers.IO).launch { appContext.updateStation(station.stationId) }
-            Log.i(LOG_TAG, "savedStateHandle: stations_updated: ${station.stationId}")
-            withContext(Dispatchers.Main) {
-                if (!isAdded) return@withContext
-                findNavController().previousBackStackEntry?.savedStateHandle
-                    ?.set("stations_updated", station.stationId)
-                findNavController().navigateUp()
+            try {
+                val dao = StationDatabase.getInstance(appContext).stationDao()
+                //val existing = dao.getById(data.properties.stationIdentifier)
+                //Log.d(LOG_TAG, "existing: $existing")
+                val elevationValue =
+                    String.format(Locale.US, "%.1f", data.properties.elevation.value)
+                val elevation =
+                    "$elevationValue ${data.properties.elevation.unitCode.split(":")[1]}"
+                Log.d(LOG_TAG, "elevation: $elevation")
+                dao.deactivateAllStations()
+                val station = WeatherStation(
+                    stationId = data.properties.stationIdentifier,
+                    name = data.properties.name,
+                    elevation = elevation,
+                    coordinates = getCoordinates(data.geometry.coordinates),
+                    forecast = data.properties.forecast,
+                    active = true,
+                )
+                Log.d(LOG_TAG, "station: $station")
+                dao.add(station)
+                // Fire-and-forget station update using application context (safe after detach)
+                CoroutineScope(Dispatchers.IO).launch { appContext.updateStation(station.stationId) }
+                Log.i(LOG_TAG, "savedStateHandle: stations_updated: ${station.stationId}")
+                withContext(Dispatchers.Main) {
+                    if (!isAdded) return@withContext
+                    findNavController().previousBackStackEntry?.savedStateHandle
+                        ?.set("stations_updated", station.stationId)
+                    findNavController().navigateUp()
+                }
+            } finally {
+                isAddingStation = false
             }
         }
     }
