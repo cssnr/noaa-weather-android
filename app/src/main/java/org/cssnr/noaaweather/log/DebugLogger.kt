@@ -1,6 +1,7 @@
 package org.cssnr.noaaweather.log
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.preference.PreferenceManager
 import androidx.room.Dao
@@ -11,10 +12,10 @@ import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
-import org.acra.ACRA
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -34,10 +35,10 @@ data class LogEntry(
 
 @Dao
 interface LogDao {
-    @Query("SELECT * FROM logentry ORDER BY timestamp DESC")
+    @Query("SELECT * FROM logentry ORDER BY id DESC")
     fun getAll(): Flow<List<LogEntry>>
 
-    @Query("SELECT * FROM logentry ORDER BY timestamp DESC")
+    @Query("SELECT * FROM logentry ORDER BY id DESC")
     suspend fun getAllNow(): List<LogEntry>
 
     @Insert
@@ -84,17 +85,32 @@ object DebugLogger {
     @Volatile
     private var purged = false
 
-    @Volatile
-    private var instance: LogDatabase? = null
+    private fun database(context: Context): LogDatabase = LogDatabase.getInstance(context)
 
-    private fun database(context: Context): LogDatabase =
-        instance ?: synchronized(this) {
-            instance ?: LogDatabase.getInstance(context).also { instance = it }
+    @Volatile
+    private var enabled = true
+
+    @Volatile
+    private var prefsInitialized = false
+
+    private val preferenceListener =
+        SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
+            if (key == ENABLED_KEY) enabled = prefs.getBoolean(ENABLED_KEY, true)
         }
 
-    private fun isEnabled(context: Context): Boolean =
-        PreferenceManager.getDefaultSharedPreferences(context)
-            .getBoolean(ENABLED_KEY, true)
+    private fun isEnabled(context: Context): Boolean {
+        if (!prefsInitialized) {
+            synchronized(this) {
+                if (!prefsInitialized) {
+                    val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+                    enabled = preferences.getBoolean(ENABLED_KEY, true)
+                    preferences.registerOnSharedPreferenceChangeListener(preferenceListener)
+                    prefsInitialized = true
+                }
+            }
+        }
+        return enabled
+    }
 
     suspend fun log(context: Context, level: LogLevel, message: String) {
         if (!isEnabled(context)) return
@@ -105,6 +121,8 @@ object DebugLogger {
                     LogEntry(level = level.ordinal, message = message)
                 )
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to write log entry", e)
         }
@@ -123,12 +141,11 @@ object DebugLogger {
 
     suspend fun clear(context: Context) {
         try {
-            withContext(Dispatchers.IO) {
-                database(context).logDao().clearAll()
-            }
+            withContext(Dispatchers.IO) { database(context).logDao().clearAll() }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to clear logs", e)
-            ACRA.errorReporter.handleSilentException(e)
         }
     }
 
@@ -150,9 +167,10 @@ object DebugLogger {
                     )
                 }
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to export logs", e)
-            ACRA.errorReporter.handleSilentException(e)
             LogExportResult.Error
         }
     }
@@ -164,9 +182,10 @@ object DebugLogger {
                 val cutoff = System.currentTimeMillis() - PURGE_DAYS * 24 * 60 * 60 * 1000L
                 database(context).logDao().deleteOlderThan(cutoff)
             }
+        } catch (e: CancellationException) {
+            throw e
         } catch (e: Exception) {
             Log.e(LOG_TAG, "Failed to purge old logs", e)
-            ACRA.errorReporter.handleSilentException(e)
         }
         purged = true
     }
