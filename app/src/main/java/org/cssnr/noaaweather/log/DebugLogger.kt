@@ -26,12 +26,10 @@ enum class LogLevel { DEBUG, INFO, WARNING, ERROR }
 @Entity
 data class LogEntry(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
-    val level: Int,
+    val level: LogLevel,
     val message: String,
     val timestamp: Long = System.currentTimeMillis(),
-) {
-    val levelEnum: LogLevel get() = LogLevel.entries[level]
-}
+)
 
 @Dao
 interface LogDao {
@@ -51,7 +49,7 @@ interface LogDao {
     suspend fun deleteOlderThan(before: Long)
 }
 
-@Database(entities = [LogEntry::class], version = 1, exportSchema = false)
+@Database(entities = [LogEntry::class], version = 2, exportSchema = false)
 abstract class LogDatabase : RoomDatabase() {
     abstract fun logDao(): LogDao
 
@@ -65,7 +63,7 @@ abstract class LogDatabase : RoomDatabase() {
                     context.applicationContext,
                     LogDatabase::class.java,
                     "log-database"
-                ).build().also { instance = it }
+                ).fallbackToDestructiveMigration(true).build().also { instance = it }
             }
     }
 }
@@ -118,7 +116,7 @@ object DebugLogger {
             purgeIfNeeded(context)
             withContext(Dispatchers.IO) {
                 database(context).logDao().insert(
-                    LogEntry(level = level.ordinal, message = message)
+                    LogEntry(level = level, message = message)
                 )
             }
         } catch (e: CancellationException) {
@@ -162,7 +160,7 @@ object DebugLogger {
                             val time = Instant.ofEpochMilli(entry.timestamp)
                                 .atZone(ZoneId.systemDefault())
                                 .format(formatter)
-                            "$time ${entry.levelEnum.name}: ${entry.message}"
+                            "$time ${entry.level.name}: ${entry.message}"
                         }
                     )
                 }
