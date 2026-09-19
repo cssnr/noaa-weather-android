@@ -22,6 +22,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
@@ -227,22 +228,31 @@ class SettingsFragment : PreferenceFragmentCompat() {
         if (newValue as Boolean) {
             Log.d(LOG_TAG, "ENABLE ACRA")
             switchPreference.isChecked = true
-        } else {
-            MaterialAlertDialogBuilder(this)
-                .setTitle("Please Reconsider")
-                .setMessage(getString(R.string.acra_disable_message))
-                .setNeutralButton("More Info") { _, _ ->
-                    startActivity(
-                        Intent(Intent.ACTION_VIEW, getString(R.string.acra_info_link).toUri())
-                    )
-                }
-                .setPositiveButton("Disable") { _, _ ->
-                    Log.d(LOG_TAG, "DISABLE ACRA")
-                    switchPreference.isChecked = false
-                }
-                .setNegativeButton("Cancel", null)
-                .show()
+            return
         }
+        val disableCount = preferences.getInt("ui_acra_disable_count", 0)
+        Log.d(LOG_TAG, "toggleAcra - disableCount: $disableCount")
+        if (disableCount >= 2) {
+            Log.d(LOG_TAG, "DISABLE ACRA")
+            switchPreference.isChecked = false
+            return
+        }
+        Log.d(LOG_TAG, "toggleAcra - SHOW ACRA Dialog")
+        MaterialAlertDialogBuilder(this)
+            .setTitle("Please Reconsider")
+            .setMessage(getString(R.string.acra_disable_message))
+            .setNeutralButton("More Info") { _, _ ->
+                startActivity(
+                    Intent(Intent.ACTION_VIEW, getString(R.string.acra_info_link).toUri())
+                )
+            }
+            .setPositiveButton("Disable") { _, _ ->
+                Log.d(LOG_TAG, "toggleAcra - Dialog DISABLE ACRA")
+                preferences.edit { putInt("ui_acra_disable_count", disableCount + 1) }
+                switchPreference.isChecked = false
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 
     private fun Context.showFeedbackDialog() {
