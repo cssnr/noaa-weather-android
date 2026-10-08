@@ -25,7 +25,7 @@ retrofit = "3.0.0"
 moshiKotlinCodegen = "1.15.2"
 playServicesLocation = "21.4.0"
 glide = "5.0.9"
-acra = "5.13.1"
+acra = "5.14.2"
 # timber = "5.0.1"
 
 [libraries]
