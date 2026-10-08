@@ -12,6 +12,7 @@ concurrency:
 env:
   key_name: noaa-release
   package_name: org.cssnr.noaaweather
+  acra_id: 1
 
 jobs:
   release:
@@ -169,6 +170,16 @@ jobs:
         with:
           name: mapping
           path: ${{ env.mapping_file }}
+
+      - name: "Upload Mapping to Acrarium"
+        if: ${{ env.acra_id }}
+        continue-on-error: true
+        run: |
+          curl -m 120 \
+            -H "Content-Type: text/plain" \
+            -u "${{ secrets.ACRARIUM_USER }}:${{ secrets.ACRARIUM_PASS }}" \
+            --data-binary "@${{ env.mapping_file }}" \
+            "${{ secrets.ACRARIUM_HOST }}/api/apps/${{ env.acra_id }}/version/upload/${{ github.run_number }}?name=${{ github.ref_name }}"
 
       - name: "Upload APK to Artifacts"
         uses: actions/upload-artifact@v7
